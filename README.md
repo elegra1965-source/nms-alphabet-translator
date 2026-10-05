@@ -6,6 +6,8 @@ Write in the alien alphabet of *No Man's Sky*, or decode it back to English. Fre
 
 Part of the [No Man's Sky Hub](https://nomansskyhub.app) family of fan tools.
 
+![NMS Alphabet Translator home screen](screenshots/01-home.jpg)
+
 ## What it does
 
 - **Text to NMS font.** Type and see your words rendered live in the alien alphabet, then copy them.
@@ -13,6 +15,8 @@ Part of the [No Man's Sky Hub](https://nomansskyhub.app) family of fan tools.
 - **Seven languages.** English, Español, Français, Deutsch, Português, 中文 and Русский. Accented and non-Latin text is converted to A–Z automatically.
 - **Reference chart.** Every letter, digit, period and colon side by side with its glyph. It opens on your first keystroke and folds away when you clear the box.
 - **Installable app** that also works offline.
+
+![Live translation with the alphabet reference chart open](screenshots/02-translate-and-chart.jpg)
 
 ## How it's built
 
