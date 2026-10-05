@@ -1,0 +1,96 @@
+/* NMS Alphabet Translator — "Hub skin" v3.0
+   Restyles the existing translator to match No Man's Sky Hub / Weather
+   (Orbitron + Rajdhani + Share Tech Mono, glass HUD panels, cyan/amber).
+   Layered on top of the original styles: delete the two lines in
+   index.html to roll back. Fonts are loaded by hub-skin.js. */
+
+:root{
+  --hs-bg:#070b11;--hs-text:#cfe0f0;--hs-dim:rgba(207,224,240,.6);--hs-white:#eaf6ff;
+  --hs-cyan:#00e5ff;--hs-gold:#f0a500;--hs-on-cyan:#00131a;
+  --hs-mono:'Share Tech Mono',monospace;--hs-disp:Orbitron,monospace;--hs-body:Rajdhani,'Segoe UI',sans-serif;
+  --hs-panel:radial-gradient(120% 60% at 0% 0%,rgba(0,229,255,.07),transparent 55%),linear-gradient(180deg,rgba(15,22,32,.92),rgba(8,13,20,.92));
+}
+
+html,body{background:var(--hs-bg) !important;color:var(--hs-text);font-family:var(--hs-body) !important;font-size:17px}
+body{min-height:100vh;overflow-x:hidden}
+
+/* ---------- atmosphere (same layers as the Weather App) ---------- */
+.hs-atm{position:fixed;inset:0;pointer-events:none;z-index:0}
+.hs-grid{background-image:linear-gradient(rgba(0,229,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(0,229,255,.035) 1px,transparent 1px);background-size:44px 44px;animation:hsGrid 22s linear infinite}
+.hs-orb1{top:-200px;left:-160px;right:auto;bottom:auto;width:620px;height:620px;border-radius:50%;background:radial-gradient(circle,rgba(0,229,255,.10),transparent 65%);filter:blur(20px)}
+.hs-orb2{top:auto;left:auto;bottom:-260px;right:-220px;width:700px;height:700px;border-radius:50%;background:radial-gradient(circle,rgba(240,165,0,.07),transparent 65%);filter:blur(20px)}
+.hs-scan{background:repeating-linear-gradient(0deg,rgba(0,0,0,.12) 0 1px,transparent 1px 3px);opacity:.5}
+.hs-vig{box-shadow:inset 0 0 220px rgba(0,0,0,.7)}
+@keyframes hsGrid{to{background-position:0 44px,44px 0}}
+
+.page{position:relative;z-index:1;max-width:760px !important;margin:0 auto;padding:28px 20px 40px !important}
+
+/* ---------- hero ---------- */
+.hs-hero{text-align:center;margin:8px 0 4px}
+.hs-badge{display:inline-flex;align-items:center;gap:8px;padding:5px 14px;border-radius:999px;border:1px solid rgba(0,229,255,.22);background:rgba(0,229,255,.05);
+  font-family:var(--hs-mono);font-size:12px;letter-spacing:2.5px;color:var(--hs-cyan);text-transform:uppercase}
+.hs-badge i{width:7px;height:7px;border-radius:50%;background:var(--hs-gold);box-shadow:0 0 8px var(--hs-gold);animation:hsPulse 2.4s ease-in-out infinite}
+@keyframes hsPulse{50%{opacity:.35}}
+.hs-glyphs{font-family:NMSAlphabet,monospace;font-size:clamp(34px,8vw,64px);line-height:1.15;letter-spacing:.08em;color:var(--hs-cyan);margin:18px 0 6px;
+  text-shadow:0 0 14px rgba(0,229,255,.65),0 0 42px rgba(0,229,255,.28);word-break:break-word}
+
+.page > h1{font-family:var(--hs-disp) !important;font-weight:800 !important;letter-spacing:.06em;text-transform:uppercase;color:var(--hs-white) !important;
+  font-size:clamp(22px,4.6vw,34px) !important;margin:6px 0 4px !important;text-shadow:0 0 28px rgba(0,229,255,.22)}
+#modeSub{font-family:var(--hs-disp) !important;font-size:11px !important;font-weight:600;letter-spacing:4px !important;color:var(--hs-gold) !important;text-transform:uppercase}
+
+/* ---------- language + mode switch ---------- */
+.lang-row{margin-top:18px !important}
+.lang-sel{font-family:var(--hs-mono) !important;font-size:14px !important;letter-spacing:1px;color:var(--hs-white) !important;
+  background:rgba(255,255,255,.035) !important;border:1px solid rgba(0,229,255,.18) !important;border-radius:10px !important}
+.lang-ic{color:var(--hs-cyan)}
+.mode-toggle{position:relative;background:rgba(255,255,255,.03) !important;border:1px solid rgba(0,229,255,.14) !important;border-radius:14px !important;padding:5px !important}
+.mode-btn{font-family:var(--hs-disp) !important;font-size:12px !important;font-weight:700 !important;letter-spacing:2px !important;text-transform:uppercase;
+  color:var(--hs-dim) !important;border-radius:10px !important;transition:color .2s,background .2s,box-shadow .2s}
+.mode-btn.active{color:var(--hs-on-cyan) !important;background:linear-gradient(135deg,#22e8ff,#0090ff) !important;
+  box-shadow:0 0 22px rgba(0,229,255,.35) !important;border:0 !important}
+
+/* ---------- glass HUD panels ---------- */
+.trans-box,.chart{position:relative;border-radius:16px !important;border:1px solid rgba(0,229,255,.14) !important;background:var(--hs-panel) !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.05),0 20px 50px rgba(0,0,0,.35) !important;-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
+.hs-c{position:absolute;width:10px;height:10px;pointer-events:none;z-index:2}
+.hs-c.tl{top:8px;left:8px;border-top:1.5px solid rgba(0,229,255,.6);border-left:1.5px solid rgba(0,229,255,.6)}
+.hs-c.br{bottom:8px;right:8px;border-bottom:1.5px solid rgba(0,229,255,.6);border-right:1.5px solid rgba(0,229,255,.6)}
+.chart .hs-c{border-color:rgba(240,165,0,.6)}
+
+.trans-label,.kick{font-family:var(--hs-disp) !important;font-size:11px !important;font-weight:600;letter-spacing:3px !important;color:var(--hs-gold) !important;text-transform:uppercase}
+.trans-input{font-family:var(--hs-mono) !important;font-size:18px !important;letter-spacing:1px;color:var(--hs-white) !important;
+  background:rgba(0,0,0,.35) !important;border:1px solid rgba(0,229,255,.18) !important;border-radius:12px !important;transition:border-color .2s,box-shadow .2s}
+.trans-input:focus{outline:none !important;border-color:rgba(0,229,255,.55) !important;box-shadow:0 0 0 3px rgba(0,229,255,.12),0 0 24px rgba(0,229,255,.18) !important}
+
+/* glyph output — never an empty hole: a dim ghost line shows until you type */
+.trans-output{min-height:72px;color:var(--hs-cyan) !important;text-shadow:0 0 12px rgba(0,229,255,.6),0 0 34px rgba(0,229,255,.25)}
+.trans-output:empty::before{content:"EXPLORE THE ATLAS";font-family:NMSAlphabet,monospace;opacity:.16;text-shadow:none;letter-spacing:.06em}
+.trans-hint{font-family:var(--hs-body) !important;font-size:14px !important;color:var(--hs-dim) !important}
+
+.copy-btn{font-family:var(--hs-disp) !important;font-size:11px !important;font-weight:700;letter-spacing:2px !important;border-radius:10px !important;transition:box-shadow .2s,transform .2s}
+.copy-btn:hover{transform:translateY(-1px)}
+.install-btn{font-family:var(--hs-disp) !important;font-size:10px !important;letter-spacing:2px !important;text-transform:uppercase}
+
+/* ---------- reference chart ---------- */
+.chart-head .ttl{font-family:var(--hs-disp) !important;font-weight:700;letter-spacing:1px;color:var(--hs-white) !important}
+.group-label{font-family:var(--hs-disp) !important;font-size:10px !important;letter-spacing:3px !important;color:var(--hs-dim) !important;text-transform:uppercase}
+.alpha-cell{background:rgba(255,255,255,.03) !important;border:1px solid rgba(0,229,255,.12) !important;border-radius:10px !important;
+  transition:border-color .2s,box-shadow .2s,transform .2s}
+.alpha-cell .latin{font-family:var(--hs-mono) !important;color:var(--hs-gold) !important;letter-spacing:1px}
+.alpha-cell .glyph{color:var(--hs-cyan) !important;text-shadow:0 0 10px rgba(0,229,255,.5)}
+@media (hover:hover){.alpha-cell:hover{border-color:rgba(0,229,255,.5) !important;box-shadow:0 0 16px rgba(0,229,255,.25);transform:translateY(-2px)}}
+.tip{font-family:var(--hs-body) !important;font-size:14px !important;color:rgba(0,229,255,.75) !important}
+
+/* ---------- footer ---------- */
+footer{font-family:var(--hs-mono) !important;color:var(--hs-dim) !important;border-top:1px solid rgba(0,229,255,.12) !important}
+footer a{font-family:var(--hs-disp) !important;font-size:12px !important;letter-spacing:1.5px;text-decoration:none}
+
+/* ---------- line icons replacing emoji ---------- */
+.hs-ico{display:inline-block;width:1.15em;height:1.15em;vertical-align:-.2em}
+.hs-ico svg{width:100%;height:100%;display:block;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+
+@media (max-width:520px){
+  .page{padding:20px 14px 32px !important}
+  .mode-btn{font-size:10.5px !important;letter-spacing:1.2px !important}
+}
+@media (prefers-reduced-motion:reduce){.hs-grid,.hs-badge i{animation:none}}

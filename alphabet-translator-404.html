@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>No Match — NMS Alphabet Translator</title>
+<style>
+:root{
+  --cyan:#00e5ff; --gold:#f0a500; --bg:#070b11; --panel:rgba(255,255,255,0.035);
+  --border:rgba(0,229,255,0.18); --text:#cfe0f0; --text-dim:rgba(207,224,240,0.6);
+  --text-faint:rgba(207,224,240,0.4);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--bg);color:var(--text);
+  font-family:system-ui,-apple-system,'Segoe UI',sans-serif;-webkit-font-smoothing:antialiased}
+
+.wrap{min-height:100vh;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;padding:24px;text-align:center;gap:20px}
+
+.tag{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--text-faint)}
+
+/* Glyph tiles echoing the real translator's own tap-tile UI -- the tiles
+   spell nothing recognisable, mirroring "you tried to decode something
+   that isn't a real address" rather than showing a plain error icon. */
+.tiles{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;max-width:340px}
+.tile{width:38px;height:38px;border-radius:8px;border:1px solid var(--border);
+  background:var(--panel);display:flex;align-items:center;justify-content:center;
+  font-family:ui-monospace,monospace;font-size:13px;color:var(--cyan)}
+.tile.x{color:#ff8a7a;border-color:rgba(255,90,74,.35)}
+
+h1{font-size:clamp(19px,5vw,26px);font-weight:700;color:#fff}
+.sub{max-width:400px;font-size:14px;line-height:1.6;color:var(--text-dim)}
+.sub b{color:var(--text)}
+.path{font-size:11px;color:var(--text-faint);font-family:ui-monospace,monospace}
+
+.actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:2px}
+.btn{font-size:12px;font-weight:600;text-decoration:none;color:var(--text);
+  background:var(--panel);border:1px solid var(--border);border-radius:8px;
+  padding:10px 18px;transition:border-color .2s,background .2s}
+.btn:hover{border-color:var(--cyan);background:rgba(0,229,255,.06)}
+.btn.primary{border-color:var(--gold);color:var(--gold)}
+.btn.primary:hover{background:rgba(240,165,0,.08)}
+
+.foot{position:fixed;bottom:12px;left:0;right:0;text-align:center;font-size:9px;
+  letter-spacing:.12em;color:var(--text-faint)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="tag">No translation found</div>
+
+  <div class="tiles" id="tiles"></div>
+
+  <h1>This page doesn't decode to anything</h1>
+  <p class="sub">The translator couldn't match this link to a real page —
+    <b>whatever you followed here is broken or out of date</b>.</p>
+  <p class="path" id="path"></p>
+
+  <div class="actions">
+    <a class="btn primary" href="/">Back to the translator</a>
+    <a class="btn" href="https://nms-command-network.netlify.app">Command Network</a>
+  </div>
+</div>
+
+<div class="foot">NMS ALPHABET TRANSLATOR — BUILT BY ELEGRA1965</div>
+
+<script>
+document.getElementById('path').textContent = location.pathname || '/';
+(function(){
+  var chars = "?ERR0R?".split("");
+  var box = document.getElementById('tiles');
+  for(var i=0;i<7;i++){
+    var t = document.createElement('div');
+    var isX = chars[i] === '?' || chars[i] === '0';
+    t.className = 'tile' + (isX ? ' x' : '');
+    t.textContent = chars[i];
+    box.appendChild(t);
+  }
+})();
+</script>
+</body>
+</html>

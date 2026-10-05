@@ -1,0 +1,703 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NMS Alphabet Translator — Start Typing to Expand the Alphabet Reference</title>
+<meta name="theme-color" content="#070b11">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="favicon.ico">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="NMS Alphabet">
+<meta name="mobile-web-app-capable" content="yes">
+
+<style>
+  @font-face{font-family:'NMSAlphabet';src:url(data:font/ttf;base64,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AAEAAAAABKoEqgAEAAABAQEBAQAAAAACqgIAAAAAAAIAAqoAAPtWAAACAAACqgSqB1UAAwAHAAABAQEBAQEBAQAAAAAEqgAA+1YAAAIAAAACqgIAAAD+AAKrAgAAAP4AAAIAAAAABKoHVQADAAcAAAEBAQEBAQEBAAAAAAIAAAAAqgAAAgAAAAAABKoAAPtWBVUCAAAA/gAAAgAAAAAEqgdVAAMACAAAAQEBAQEBAQEBAAAAAAIAAAD+AAAABKoAAP1WAAACAAAA/gACqgSrAAD+AP1VAAAAAAIAqgAAAqoEqgADAAcAAAEBAQEBAQEBAKoAAAIAAAD+AAAAAgAAAAAAAgAAAP4AAqoCAAAA/gAAAgAAAAAEqgSqAAMABwAAAQEBAQEBAQECqgAAAgAAAPtWAAAEqgAAAAACAAAA/gACqgIAAAD+AAACAAAAAASqB1UAAwAHAAABAQEBAQEBAQKqAAACAAAA+1YAAAIAAAAAAASqAAD7VgVVAgAAAP4AAAEAAAAABKoEqgAFAAABAQEBAQEAAAAAA1UBVQAA/KsAAAFVA1UAAP6r/KsAAgAAAAAEqgSqAAMABwAAAQEBAQEBAQEAAAAAAgAAAACqAAACAAAAAAAEqgAA+1YAAASqAAD7VgACAKoAAAKqB1UAAwAHAAABAQEBAQEBAQCqAAACAAAA/gAAAAIAAAAAAASqAAD7VgVVAgAAAP4AAAEAAAAABKoEqgAFAAABAQEBAQEAAAAABKoAAP1WAAAAAASqAAD+AAAA/VYAAQAAAAAEqgSqAAcAAAEBAQEBAQEBAAAAAAKqAgAAAP4AAAD+qwAAAgACqgAA+1YAAAFV/qsAAAACAAAAAASqBKoAAwAHAAABAQEBAQEBAQKqAAACAAAA+1YAAAIAAAAAAAIAAAD+AAAABKoAAPtWAAMAAAAABKoEqgADAAcACwAAAQEBAQEBAQEBAQEBAqoAAAIAAAD7VgAAAgAAAACqAAACAAAAAAACAAAA/gAAAASqAAD7VgKqAgAAAP4AAAAAAQAAAAAEqgSqAAcAAAEBAQEBAQEBAAAAAAFV/qsAAASqAAD9VgAAAVUBVQAAAgAAAP4A/VYAAAABAAACqgSqBKoAAwAAAQEBAQAAAAAEqgAAAqoCAAAA/gAAAAACAAAAAASqB1UAAwAHAAABAQEBAQEBAQKqAAACAAAA+1YAAAIAAAAAAAIAAAD+AAKqBKsAAPtVAAIAAAAABKoEqgADAAcAAAEBAQEBAQEBAqoAAAIAAAD7VgAAAgAAAAAAAgAAAP4AAqoCAAAA/gAAAwAAAAAEqgdVAAMABwALAAABAQEBAQEBAQEBAQECqgAAAgAAAPtWAAACAAAAAKoAAAIAAAAAAAIAAAD+AAKqAgAAAP4AAqsCAAAA/gAAAAACAAAAAASqB1UAAwAJAAABAQEBAQEBAQEBAqoAAAIAAAD7VgAAAgAAAAKqAAAAAAIAAAD+AAKqBKsAAP1VAAD+AAAAAAEAAAKqBKoHVQAFAAABAQEBAQECqgAA/VYAAASqAAACqgKrAAACAAAA+1UAAwAAAAAEqgSqAAMABwALAAABAQEBAQEBAQEBAQEAAAAAAgAAAACqAAACAAAA+1YAAASqAAAAAAIAAAD+AAAAAgAAAP4AAqoCAAAA/gAAAAABAAAAAASqBKoABwAAAQEBAQEBAQEAAAAAAgACqgAA/qv+qwAAAAAEqgAA/Vb+AAAAAVX+qwAAAAEAAAAABKoEqgAEAAABAQEBAQAAAAAEqgAA/VYAAASqAAD+AP1WAAACAAAAAASqBKoAAwAHAAABAQEBAQEBAQAAAAAEqgAA+1YAAASqAAAAAAIAAAD+AAKqAgAAAP4AAAIAAAAABKoEqgADAAcAAAEBAQEBAQEBAAAAAAIAAAAAqgAAAgAAAAAABKoAAPtWAqoCAAAA/gAAAQAAAAAEqgSqAAQAAAEBAQEBAAAAAAKqAgAAAAAAAgACqgAA+1YAAAIAAAKqBKoHVQADAAcAAAEBAQEBAQEBAAAAAASqAAD7VgAAAgAAAAKqAgAAAP4AAqsCAAAA/gAAAgAAAAAEqgdVAAMABwAAAQEBAQEBAQEAAAAAAgAAAACqAAACAAAAAAAEqgAA+1YFVQIAAAD+AAACAAAAAASqB1UAAwAIAAABAQEBAQEBAQEAAAAAAgAAAP4AAAAEqgAA/VYAAAIAAAD+AAKqBKsAAP4A/VUAAAAAAgCqAAACqgSqAAMABwAAAQEBAQEBAQEAqgAAAgAAAP4AAAACAAAAAAACAAAA/gACqgIAAAD+AAACAAAAAASqBKoAAwAHAAABAQEBAQEBAQKqAAACAAAA+1YAAASqAAAAAAIAAAD+AAKqAgAAAP4AAAIAAAAABKoHVQADAAcAAAEBAQEBAQEBAqoAAAIAAAD7VgAAAgAAAAAABKoAAPtWBVUCAAAA/gAAAQAAAAAEqgSqAAUAAAEBAQEBAQAAAAADVQFVAAD8qwAAAVUDVQAA/qv8qwACAAAAAASqBKoAAwAHAAABAQEBAQEBAQAAAAACAAAAAKoAAAIAAAAAAASqAAD7VgAABKoAAPtWAAIAqgAAAqoHVQADAAcAAAEBAQEBAQEBAKoAAAIAAAD+AAAAAgAAAAAABKoAAPtWBVUCAAAA/gAAAQAAAAAEqgSqAAUAAAEBAQEBAQAAAAAEqgAA/VYAAAAABKoAAP4AAAD9VgABAAAAAASqBKoABwAAAQEBAQEBAQEAAAAAAqoCAAAA/gAAAP6rAAACAAKqAAD7VgAAAVX+qwAAAAIAAAAABKoEqgADAAcAAAEBAQEBAQEBAqoAAAIAAAD7VgAAAgAAAAAAAgAAAP4AAAAEqgAA+1YAAwAAAAAEqgSqAAMABwALAAABAQEBAQEBAQEBAQECqgAAAgAAAPtWAAACAAAAAKoAAAIAAAAAAAIAAAD+AAAABKoAAPtWAqoCAAAA/gAAAAABAAAAAASqBKoABwAAAQEBAQEBAQEAAAAAAVX+qwAABKoAAP1WAAABVQFVAAACAAAA/gD9VgAAAAEAAAKqBKoEqgADAAABAQEBAAAAAASqAAACqgIAAAD+AAAAAAIAAAAABKoHVQADAAcAAAEBAQEBAQEBAqoAAAIAAAD7VgAAAgAAAAAAAgAAAP4AAqoEqwAA+1UAAgAAAAAEqgSqAAMABwAAAQEBAQEBAQECqgAAAgAAAPtWAAACAAAAAAACAAAA/gACqgIAAAD+AAADAAAAAASqB1UAAwAHAAsAAAEBAQEBAQEBAQEBAQKqAAACAAAA+1YAAAIAAAAAqgAAAgAAAAAAAgAAAP4AAqoCAAAA/gACqwIAAAD+AAAAAAIAAAAABKoHVQADAAkAAAEBAQEBAQEBAQECqgAAAgAAAPtWAAACAAAAAqoAAAAAAgAAAP4AAqoEqwAA/VUAAP4AAAAAAQAAAqoEqgdVAAUAAAEBAQEBAQKqAAD9VgAABKoAAAKqAqsAAAIAAAD7VQADAAAAAASqBKoAAwAHAAsAAAEBAQEBAQEBAQEBAQAAAAACAAAAAKoAAAIAAAD7VgAABKoAAAAAAgAAAP4AAAACAAAA/gACqgIAAAD+AAAAAAAAAQAAABoAAQACAAwAAQAAABAAJgAAADAALgAAAAAAAAAgAYYAAQAAAAAAAAAZAAAAAQAAAAAAAQAMABkAAQAAAAAAAgAHACUAAQAAAAAAAwAMACwAAQAAAAAABAAUADgAAQAAAAAABQADAEwAAQAAAAAABgAMAE8AAQAAAAAABwArAFsAAQAAAAAACAAWAIYAAQAAAAAACQAKAJwAAQAAAAAACgAoAKYAAQAAAAAACwBBAM4AAQAAAAAADAA8AQ8AAQAAAAAADQASAUsAAQAAAAAAEwApAV0AAQAAAAABAAAMAYYAAwABBAkAAAAyAZIAAwABBAkAAQAYAcQAAwABBAkAAgAOAdwAAwABBAkAAwAYAeoAAwABBAkABAAoAgIAAwABBAkABQAGAioAAwABBAkABgAYAjAAAwABBAkABwBWAkgAAwABBAkACAAsAp4AAwABBAkACQAUAsoAAwABBAkACgBSAt4AAwABBAkACwCCAzAAAwABBAkADAB4A7IAAwABBAkADQAkBCoAAwABBAkAEwBSBE4AAwABBAkBAAAYBKBDb3B5cmlnaHQgc2VvbnRvbnBwYSAyMDIyTk1TIEFscGhhYmV0UmVndWxhck5NUyBBbHBoYWJldE5NUyBBbHBoYWJldCBSZWd1bGFyMS4wTk1TLUFscGhhYmV0Rm9udFN0cnVjdCBpcyBhIHRyYWRlbWFyayBvZiBGb250U3RydWN0LmNvbWh0dHBzOi8vZm9udHN0cnVjdC5jb21zZW9udG9ucHBh0k5NUyBBbHBoYWJldNMgd2FzIGJ1aWx0IHdpdGggRm9udFN0cnVjdGh0dHBzOi8vZm9udHN0cnVjdC5jb20vZm9udHN0cnVjdGlvbnMvc2hvdy8yMTQ3NjYxL25tcy1hbHBoYWJldC0xaHR0cHM6Ly9mb250c3RydWN0LmNvbS9mb250c3RydWN0b3JzL3Nob3cvMjE0NjU3OS9zZW9udG9ucHBhRm9udFN0cnVjdCBMaWNlbnNlRml2ZSBiaWcgcXVhY2tpbmcgemVwaHlycyBqb2x0IG15IHdheCBiZWRBQWdNY2w5aVh3PT0AQwBvAHAAeQByAGkAZwBoAHQAIABzAGUAbwBuAHQAbwBuAHAAcABhACAAMgAwADIAMgBOAE0AUwAgAEEAbABwAGgAYQBiAGUAdABSAGUAZwB1AGwAYQByAE4ATQBTACAAQQBsAHAAaABhAGIAZQB0AE4ATQBTACAAQQBsAHAAaABhAGIAZQB0ACAAUgBlAGcAdQBsAGEAcgAxAC4AMABOAE0AUwAtAEEAbABwAGgAYQBiAGUAdABGAG8AbgB0AFMAdAByAHUAYwB0ACAAaQBzACAAYQAgAHQAcgBhAGQAZQBtAGEAcgBrACAAbwBmACAARgBvAG4AdABTAHQAcgB1AGMAdAAuAGMAbwBtAGgAdAB0AHAAcwA6AC8ALwBmAG8AbgB0AHMAdAByAHUAYwB0AC4AYwBvAG0AcwBlAG8AbgB0AG8AbgBwAHAAYSAcAE4ATQBTACAAQQBsAHAAaABhAGIAZQB0IB0AIAB3AGEAcwAgAGIAdQBpAGwAdAAgAHcAaQB0AGgAIABGAG8AbgB0AFMAdAByAHUAYwB0AAoAaAB0AHQAcABzADoALwAvAGYAbwBuAHQAcwB0AHIAdQBjAHQALgBjAG8AbQAvAGYAbwBuAHQAcwB0AHIAdQBjAHQAaQBvAG4AcwAvAHMAaABvAHcALwAyADEANAA3ADYANgAxAC8AbgBtAHMALQBhAGwAcABoAGEAYgBlAHQALQAxAGgAdAB0AHAAcwA6AC8ALwBmAG8AbgB0AHMAdAByAHUAYwB0AC4AYwBvAG0ALwBmAG8AbgB0AHMAdAByAHUAYwB0AG8AcgBzAC8AcwBoAG8AdwAvADIAMQA0ADYANQA3ADkALwBzAGUAbwBuAHQAbwBuAHAAcABhAEYAbwBuAHQAUwB0AHIAdQBjAHQAIABMAGkAYwBlAG4AcwBlAEYAaQB2AGUAIABiAGkAZwAgAHEAdQBhAGMAawBpAG4AZwAgAHoAZQBwAGgAeQByAHMAIABqAG8AbAB0ACAAbQB5ACAAdwBhAHgAIABiAGUAZABBAEEAZwBNAGMAbAA5AGkAWAB3AD0APQAAAAMAAAAAAAAAzABmAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAoAHgAsAAFsYXRuAAgABAAAAAD//wABAAAAAWtlcm4ACAAAAAEAAAABAAQAAgAAAAEACAABABoABAAAAAIADgAUAAEAJgAAAAEALgAAAAEAAgAQADAAAAAAAAEAAAAA
+) format('truetype');font-display:swap}
+  :root{--gold:#f0a500;--cyan:#00e5ff;--cyan-dim:#0096a8;--bg:#070b11;--bg3:#0f1620;
+    --border:rgba(0,229,255,0.22);--border-soft:rgba(0,229,255,0.14);--white:#eaf6ff;--text:#cfe0f0;--text-dim:rgba(207,224,240,.6);
+    --panel:rgba(255,255,255,0.035);--r-sm:8px}
+  *{box-sizing:border-box}
+  body{margin:0;padding:22px 14px 80px;color:var(--text);
+    background:radial-gradient(1200px 600px at 50% -10%,rgba(0,229,255,0.07),transparent 60%),var(--bg);
+    background-attachment:fixed;font-family:'Segoe UI',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+  body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.5;
+    background-image:linear-gradient(rgba(0,229,255,0.035) 1px,transparent 1px),linear-gradient(90deg,rgba(0,229,255,0.035) 1px,transparent 1px);background-size:42px 42px}
+  .page{max-width:720px;margin:0 auto;position:relative;z-index:1}
+  h1{font-family:'Orbitron','Segoe UI',sans-serif;color:var(--white);text-align:center;font-size:clamp(18px,4.5vw,25px);letter-spacing:1px;margin:0 0 4px}
+  .sub{text-align:center;color:var(--cyan);letter-spacing:3px;text-transform:uppercase;font-size:11px;margin-bottom:18px}
+  .lang-row{display:flex;justify-content:center;align-items:center;gap:8px;margin-bottom:14px}
+  .lang-sel{background:var(--bg3);color:var(--text);border:1px solid var(--border-soft);border-radius:7px;
+    font-family:'Segoe UI',sans-serif;font-size:12px;padding:6px 10px;cursor:pointer;outline:none;max-width:200px}
+  .lang-sel:focus{border-color:var(--cyan);box-shadow:0 0 10px rgba(0,229,255,.3)}
+  .lang-ic{font-size:14px;opacity:.85}
+
+  .mode-toggle{display:flex;gap:2px;background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:3px;margin-bottom:16px}
+  .mode-btn{flex:1;background:transparent;border:none;color:var(--text);font-family:'Segoe UI',sans-serif;font-weight:600;
+    font-size:12.5px;letter-spacing:.5px;text-transform:uppercase;padding:11px 6px;border-radius:7px;cursor:pointer;transition:.15s}
+  .mode-btn:hover{color:var(--white)}
+  .mode-btn.active{background:rgba(0,229,255,0.1);color:var(--cyan);box-shadow:inset 0 -3px 0 var(--cyan)}
+
+  .trans-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+  .trans-head .trans-label{margin-bottom:0}
+  .install-btn{font-family:'Orbitron',sans-serif;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--gold);
+    display:inline-flex;align-items:center;gap:5px;background:rgba(240,165,0,.08);border:1px solid var(--gold);border-radius:6px;
+    padding:6px 10px;cursor:pointer;box-shadow:0 0 10px rgba(240,165,0,.35);transition:box-shadow .15s,background .15s;flex:none}
+  .install-btn:hover{background:rgba(240,165,0,.18);box-shadow:0 0 18px rgba(240,165,0,.6)}
+  .install-hint{margin:-2px 0 12px;font-size:11px;color:var(--text-dim)}
+
+  .trans-box{position:relative;background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:14px}
+  .trans-label{font-family:'Orbitron',monospace;font-size:.62rem;letter-spacing:3px;text-transform:uppercase;color:var(--cyan-dim);margin-bottom:10px}
+  .trans-input{width:100%;background:var(--bg3);border:1px solid var(--border-soft);border-radius:var(--r-sm);color:var(--white);
+    font-family:'Segoe UI',sans-serif;font-size:1.05rem;letter-spacing:1px;padding:12px 14px;outline:none;transition:border-color .2s,box-shadow .2s}
+  .trans-input:focus{border-color:var(--cyan);box-shadow:0 0 14px rgba(0,229,255,.25)}
+  .trans-output{margin-top:18px;min-height:46px;font-family:'NMSAlphabet',monospace;font-size:1.9rem;line-height:1.5;color:var(--cyan);text-shadow:0 0 22px rgba(0,229,255,.45);word-break:break-word}
+  .trans-output.decoded{font-family:'Segoe UI',sans-serif;font-weight:600;font-size:1.4rem;letter-spacing:.5px;color:var(--white);text-shadow:none}
+  .seq-output{margin-top:14px;min-height:40px;font-family:'NMSAlphabet',monospace;font-size:1.6rem;line-height:1.4;color:var(--gold);text-shadow:0 0 16px rgba(240,165,0,.4);word-break:break-word}
+
+  .trans-bottom{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-top:10px}
+  .trans-bottom.three{gap:8px}
+  .btn-group{display:flex;gap:6px;flex:none}
+  .copy-btn.small{padding:9px 11px;font-size:14px;line-height:1}
+  .copy-btn.small.gold{color:var(--gold);border-color:var(--gold);background:rgba(240,165,0,.08);box-shadow:0 0 10px rgba(240,165,0,.35)}
+  .copy-btn.small.gold:hover{background:rgba(240,165,0,.18);box-shadow:0 0 18px rgba(240,165,0,.6)}
+  .trans-hint{font-size:.78rem;color:var(--text-dim)}
+  .copy-btn{flex:none;font-family:'Orbitron',sans-serif;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--cyan);
+    display:inline-flex;align-items:center;gap:6px;background:rgba(0,229,255,.08);border:1px solid var(--cyan);border-radius:7px;
+    padding:9px 14px;cursor:pointer;box-shadow:0 0 14px rgba(0,229,255,.45);transition:box-shadow .15s,background .15s,color .15s,border-color .15s}
+  .copy-btn:hover{background:rgba(0,229,255,.18);box-shadow:0 0 24px rgba(0,229,255,.8)}
+  .copy-btn:active{transform:translateY(1px)}
+  .copy-btn.copied{color:var(--gold);border-color:var(--gold);box-shadow:0 0 22px rgba(240,165,0,.7)}
+  .copy-btn.gold{flex:1;justify-content:center;color:var(--gold);border-color:var(--gold);background:rgba(240,165,0,.08);box-shadow:0 0 14px rgba(240,165,0,.4)}
+  .copy-btn.gold:hover{background:rgba(240,165,0,.18);box-shadow:0 0 24px rgba(240,165,0,.7)}
+  .trans-bottom.three .copy-btn{flex:1;justify-content:center}
+
+  .chart{border:1px solid var(--border);border-radius:10px;overflow:hidden;
+    background:linear-gradient(180deg,rgba(0,229,255,0.07),rgba(0,0,0,0));
+    box-shadow:0 0 16px rgba(0,229,255,.18);transition:box-shadow .1s ease,border-color .1s ease}
+  .chart-head{display:flex;align-items:center;gap:12px;padding:14px;cursor:pointer}
+  .chart-head.static-head{cursor:default}
+  .chart-head .pip{width:7px;height:7px;border-radius:50%;background:var(--gold);box-shadow:0 0 7px var(--gold);flex:none}
+  .chart-head .kick{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--cyan);opacity:.9}
+  .chart-head .ttl{font-family:'Orbitron',sans-serif;color:var(--white);font-size:14px;flex:1}
+  .chart-head .arr{color:var(--cyan);transition:transform .35s}
+  .chart.open .chart-head .arr{transform:rotate(180deg)}
+  .chart.open{animation:edgeGlow 1.6s ease-in-out infinite;border-color:var(--cyan)}
+  @keyframes edgeGlow{0%,100%{box-shadow:0 0 24px rgba(0,229,255,.45)}50%{box-shadow:0 0 60px rgba(0,229,255,.9)}}
+
+  .chart-body{position:relative;max-height:0;opacity:0;clip-path:inset(0 0 100% 0);overflow:hidden;
+    transition:max-height .55s cubic-bezier(.6,0,.3,1),opacity .2s ease,clip-path .55s cubic-bezier(.6,0,.3,1)}
+  .chart.open .chart-body{max-height:1400px;opacity:1;clip-path:inset(0 0 0 0)}
+  .pbeam{position:absolute;left:0;right:0;height:3px;top:0;z-index:6;pointer-events:none;opacity:0;
+    background:linear-gradient(90deg,transparent,rgba(180,245,255,.95),var(--cyan),rgba(180,245,255,.95),transparent);
+    box-shadow:0 0 16px var(--cyan),0 0 34px rgba(0,229,255,.6)}
+  .chart.open .pbeam{animation:portal 1s cubic-bezier(.6,0,.3,1) 1}
+  @keyframes portal{0%{opacity:1;top:-2px}90%{opacity:1}100%{opacity:0;top:100%}}
+
+  .chart-body{padding:6px 14px 14px}
+  .group-label{font-family:'Orbitron',sans-serif;font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold);opacity:.85;margin:12px 0 8px}
+  .group-label:first-child{margin-top:8px}
+  .alpha-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(58px,1fr));gap:8px}
+  .alpha-cell{background:var(--panel);border:1px solid var(--border-soft);border-radius:var(--r-sm);padding:10px 4px 7px;text-align:center;transition:box-shadow .12s,border-color .12s}
+  .alpha-cell.clickable{cursor:pointer}
+  .alpha-cell.clickable:hover{border-color:var(--cyan);box-shadow:0 0 14px rgba(0,229,255,.4)}
+  .alpha-cell.clickable:active{background:rgba(0,229,255,.15);border-color:var(--cyan)}
+  .alpha-cell .latin{font-family:'Orbitron',monospace;font-size:.62rem;letter-spacing:1px;color:var(--cyan-dim);margin-bottom:5px}
+  .alpha-cell .glyph{font-family:'NMSAlphabet',monospace;font-size:1.7rem;color:var(--white);line-height:1}
+  .alpha-cell.num .glyph{color:var(--gold)}
+  .tip{text-align:center;font-size:11.5px;color:var(--cyan-dim);margin-top:14px}
+</style><link rel="stylesheet" href="hub-skin.css">
+</head>
+<body>
+<div class="page">
+  <h1>NMS Alphabet Translator</h1>
+  <div class="sub" id="modeSub">Start typing to expand the NMS alphabet reference below</div>
+
+  <div class="lang-row">
+    <span class="lang-ic" aria-hidden="true">&#127760;</span>
+    <select class="lang-sel" id="langSel" aria-label="Language"></select>
+  </div>
+
+  <div class="mode-toggle">
+    <button class="mode-btn active" id="modeEnBtn" type="button">Text &rarr; NMS Font</button>
+    <button class="mode-btn" id="modeGlyphBtn" type="button">NMS Font &rarr; Text</button>
+  </div>
+
+  <div id="enMode">
+    <div class="trans-box">
+      <div class="trans-head">
+        <div class="trans-label" id="liveTranslatorLbl">Live Translator</div>
+        <button class="install-btn" id="installBtn" type="button" style="display:none">
+          <span aria-hidden="true">&#128241;</span><span id="installLbl">Install app</span>
+        </button>
+      </div>
+      <div class="install-hint" id="installHint" style="display:none"></div>
+      <input class="trans-input" id="inp" type="text" maxlength="60" placeholder="Type here e.g. EXPLORE THE ATLAS" autocomplete="off" spellcheck="false">
+      <div class="trans-output" id="out"></div>
+      <div class="trans-bottom">
+        <span class="trans-hint" id="transHint">Type in English or many other languages &mdash; auto-converted to A&ndash;Z. Letters, digits, period and colon are supported.</span>
+        <div class="btn-group">
+          <button class="copy-btn small gold" id="enBackspaceBtn" type="button" aria-label="Backspace" title="Backspace">&#9003;</button>
+          <button class="copy-btn small gold" id="enClearBtn" type="button" aria-label="Clear" title="Clear">&#8635;</button>
+          <button class="copy-btn" id="copyBtn" type="button" aria-label="Copy text"><span>&#10697;</span><span id="copyLbl">Copy</span></button>
+        </div>
+      </div>
+    </div>
+
+    <div class="chart" id="chart">
+      <div class="chart-head" id="head">
+        <span class="pip"></span><span class="kick" id="kickRef">Reference</span>
+        <span class="ttl" id="ttlChart">NMS alphabet chart</span><span class="arr">&#9662;</span>
+      </div>
+      <div class="chart-body">
+        <div class="pbeam"></div>
+        <div id="refGrids"></div>
+      </div>
+    </div>
+    <div class="tip" id="tipEn">The chart auto-opens on your first keystroke and collapses when you clear the box &mdash; or tap the bar to toggle it.</div>
+  </div>
+
+  <div id="glyphMode" style="display:none">
+    <div class="trans-box">
+      <div class="trans-head">
+        <div class="trans-label" id="tapTilesLbl">Tap tiles to build a word</div>
+        <button class="install-btn" id="installBtn2" type="button" style="display:none">
+          <span aria-hidden="true">&#128241;</span><span id="installLbl2">Install app</span>
+        </button>
+      </div>
+      <div class="install-hint" id="installHint2" style="display:none"></div>
+      <div class="seq-output" id="seqOut">&nbsp;</div>
+      <div class="trans-label" id="decodedLbl" style="margin-top:16px">Decoded Text</div>
+      <div class="trans-output decoded" id="decodedOut">&nbsp;</div>
+      <div class="trans-bottom three">
+        <button class="copy-btn gold" id="backspaceBtn" type="button">&#9003; <span id="backspaceLbl2">Backspace</span></button>
+        <button class="copy-btn gold" id="clearBtn" type="button">&#8635; <span id="clearLbl2">Clear</span></button>
+        <button class="copy-btn" id="copyBtn2" type="button" aria-label="Copy text"><span>&#10697;</span><span id="copyLbl2">Copy</span></button>
+      </div>
+    </div>
+
+    <div class="chart open">
+      <div class="chart-head static-head">
+        <span class="pip"></span><span class="kick" id="kickInput">Input</span>
+        <span class="ttl" id="ttlInputChart">Tap a tile to add its letter</span>
+      </div>
+      <div class="chart-body">
+        <div id="inputGrids"></div>
+      </div>
+    </div>
+    <div class="tip" id="tipGlyph">Spotted this font in-game? Match each shape to a tile below to decode it.</div>
+  </div>
+
+  <footer style="margin-top:26px;padding-top:14px;border-top:1px solid var(--border-soft);text-align:center">
+    <div style="font-family:'Orbitron',monospace;font-size:10px;letter-spacing:1px;color:var(--text-dim)">Built by elegra1965 &middot; Traveller T672B774 &middot; Friend code MGD8-C6PP-XKFGT</div>
+    <div style="font-size:10.5px;color:var(--text-dim);margin-top:8px;line-height:1.5">A free, fan-made project inspired by the aesthetic of No Man's Sky. Not affiliated with, sponsored by, or endorsed by Hello Games.<br>NMS Alphabet font by seontonppa (built with FontStruct), used with permission.</div>
+    <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:12px">
+      <a href="https://nomansskyhub.app" target="_blank" rel="noopener" style="color:var(--cyan);text-decoration:none;font-size:10.5px;letter-spacing:.5px">&#9670; No Man's Sky Hub</a>
+      <a href="https://nomansskyhub.app/atlas" target="_blank" rel="noopener" style="color:var(--cyan);text-decoration:none;font-size:10.5px;letter-spacing:.5px">&#9670; ATLAS AI</a>
+      <a href="https://nomansskyhub.app/theme" target="_blank" rel="noopener" style="color:var(--cyan);text-decoration:none;font-size:10.5px;letter-spacing:.5px">&#9670; Theme Pack</a>
+      <a href="https://nomansskyhub.app/weather" target="_blank" rel="noopener" style="color:var(--cyan);text-decoration:none;font-size:10.5px;letter-spacing:.5px">&#9670; Weather App</a>
+      <a href="https://nomansskyhub.app/map" target="_blank" rel="noopener" style="color:var(--cyan);text-decoration:none;font-size:10.5px;letter-spacing:.5px">&#9670; Galactic Map</a>
+      <a href="https://github.com/elegra1965-source/obsidian-nms-atlas" target="_blank" rel="noopener" style="color:var(--cyan);text-decoration:none;font-size:10.5px;letter-spacing:.5px">&#9670; Atlas Obsidian Theme</a>
+    </div>
+  </footer>
+</div>
+
+<script>
+  var LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+  var DIGITS = "0123456789".split("");
+  var PUNCT = [{lat:"PERIOD",ch:".",num:true},{lat:"COLON",ch:":",num:true},{lat:"SPACE",ch:"\u00a0",num:true}];
+
+  var LANGS = [
+    {code:"en", name:"English"},
+    {code:"es", name:"Espa\u00f1ol"},
+    {code:"fr", name:"Fran\u00e7ais"},
+    {code:"de", name:"Deutsch"},
+    {code:"pt", name:"Portugu\u00eas"},
+    {code:"zh", name:"\u4e2d\u6587"},
+    {code:"ru", name:"\u0420\u0443\u0441\u0441\u043a\u0438\u0439"}
+  ];
+
+  var I18N = {
+    en: {
+      subDefault: "Start typing to expand the NMS alphabet reference below",
+      subGlyphMode: "Tap tiles to build a word",
+      modeEnBtn: "Text \u2192 NMS Font",
+      modeGlyphBtn: "NMS Font \u2192 Text",
+      liveTranslatorLbl: "Live Translator",
+      transHint: "Type in English or many other languages \u2014 auto-converted to A\u2013Z. Letters, digits, period and colon are supported.",
+      inputPlaceholder: "Type here e.g. EXPLORE THE ATLAS",
+      backspaceLbl: "Backspace",
+      clearLbl: "Clear",
+      copyLbl: "Copy",
+      installLbl: "Install app",
+      kickRef: "Reference",
+      ttlChart: "NMS alphabet chart",
+      tipEn: "The chart auto-opens on your first keystroke and collapses when you clear the box \u2014 or tap the bar to toggle it.",
+      decodedLbl: "Decoded Text",
+      kickInput: "Input",
+      ttlInputChart: "Tap a tile to add its letter",
+      tipGlyph: "Spotted this font in-game? Match each shape to a tile below to decode it.",
+      copiedMsg: "Copied",
+      emptyMsg: "Empty",
+      groupLetters: "Letters",
+      groupNumbers: "Numbers",
+      groupPunctuation: "Punctuation",
+      installHintIOS: "On iPhone or iPad: tap the Share icon in Safari, then \u201cAdd to Home Screen.\u201d",
+      installHintOther: "One-tap install isn\u2019t available in this browser \u2014 use your browser menu\u2019s \u201cInstall app\u201d or \u201cAdd to Home Screen\u201d option instead."
+    },
+    es: {
+      subDefault: "Empieza a escribir para desplegar la referencia del alfabeto NMS",
+      subGlyphMode: "Toca las casillas para formar una palabra",
+      modeEnBtn: "Texto \u2192 Fuente NMS",
+      modeGlyphBtn: "Fuente NMS \u2192 Texto",
+      liveTranslatorLbl: "Traductor en vivo",
+      transHint: "Escribe en espa\u00f1ol o en muchos otros idiomas \u2014 se convierte autom\u00e1ticamente a A\u2013Z. Se admiten letras, n\u00fameros, punto y dos puntos.",
+      inputPlaceholder: "Escribe aqu\u00ed, p. ej. EXPLORE THE ATLAS",
+      backspaceLbl: "Borrar",
+      clearLbl: "Limpiar",
+      copyLbl: "Copiar",
+      installLbl: "Instalar app",
+      kickRef: "Referencia",
+      ttlChart: "Tabla del alfabeto NMS",
+      tipEn: "La tabla se abre sola al escribir y se cierra al borrar el campo \u2014 o toca la barra para alternarla.",
+      decodedLbl: "Texto decodificado",
+      kickInput: "Entrada",
+      ttlInputChart: "Toca una casilla para a\u00f1adir su letra",
+      tipGlyph: "\u00bfViste esta fuente en el juego? Compara cada forma con una casilla abajo para decodificarla.",
+      copiedMsg: "Copiado",
+      emptyMsg: "Vac\u00edo",
+      groupLetters: "Letras",
+      groupNumbers: "N\u00fameros",
+      groupPunctuation: "Puntuaci\u00f3n",
+      installHintIOS: "En iPhone o iPad: toca el icono de Compartir en Safari y luego \u201cA\u00f1adir a pantalla de inicio.\u201d",
+      installHintOther: "La instalaci\u00f3n con un toque no est\u00e1 disponible en este navegador \u2014 usa la opci\u00f3n \u201cInstalar app\u201d o \u201cA\u00f1adir a pantalla de inicio\u201d del men\u00fa de tu navegador."
+    },
+    fr: {
+      subDefault: "Commencez \u00e0 taper pour afficher la r\u00e9f\u00e9rence de l\u2019alphabet NMS ci-dessous",
+      subGlyphMode: "Touchez les cases pour former un mot",
+      modeEnBtn: "Texte \u2192 Police NMS",
+      modeGlyphBtn: "Police NMS \u2192 Texte",
+      liveTranslatorLbl: "Traducteur en direct",
+      transHint: "Tapez en fran\u00e7ais ou dans de nombreuses autres langues \u2014 converti automatiquement en A\u2013Z. Lettres, chiffres, point et deux-points pris en charge.",
+      inputPlaceholder: "Tapez ici, ex. EXPLORE THE ATLAS",
+      backspaceLbl: "Effacer",
+      clearLbl: "Vider",
+      copyLbl: "Copier",
+      installLbl: "Installer l'appli",
+      kickRef: "R\u00e9f\u00e9rence",
+      ttlChart: "Tableau de l'alphabet NMS",
+      tipEn: "Le tableau s'ouvre automatiquement d\u00e8s la premi\u00e8re frappe et se referme quand vous videz le champ \u2014 ou touchez la barre pour basculer.",
+      decodedLbl: "Texte d\u00e9cod\u00e9",
+      kickInput: "Entr\u00e9e",
+      ttlInputChart: "Touchez une case pour ajouter sa lettre",
+      tipGlyph: "Vous avez rep\u00e9r\u00e9 cette police en jeu\u00a0? Comparez chaque forme \u00e0 une case ci-dessous pour la d\u00e9coder.",
+      copiedMsg: "Copi\u00e9",
+      emptyMsg: "Vide",
+      groupLetters: "Lettres",
+      groupNumbers: "Nombres",
+      groupPunctuation: "Ponctuation",
+      installHintIOS: "Sur iPhone ou iPad\u00a0: touchez l'ic\u00f4ne Partager dans Safari, puis \u00ab\u00a0Sur l'\u00e9cran d'accueil\u00a0\u00bb.",
+      installHintOther: "L'installation en un clic n'est pas disponible dans ce navigateur \u2014 utilisez l'option \u00ab\u00a0Installer l'application\u00a0\u00bb ou \u00ab\u00a0Ajouter \u00e0 l'\u00e9cran d'accueil\u00a0\u00bb du menu de votre navigateur."
+    },
+    de: {
+      subDefault: "Tippe los, um die NMS-Alphabet-Referenz unten aufzuklappen",
+      subGlyphMode: "Kacheln antippen, um ein Wort zu bilden",
+      modeEnBtn: "Text \u2192 NMS-Schrift",
+      modeGlyphBtn: "NMS-Schrift \u2192 Text",
+      liveTranslatorLbl: "Live-\u00dcbersetzer",
+      transHint: "Auf Deutsch oder in vielen anderen Sprachen tippen \u2014 wird automatisch in A\u2013Z umgewandelt. Buchstaben, Ziffern, Punkt und Doppelpunkt werden unterst\u00fctzt.",
+      inputPlaceholder: "Hier tippen, z. B. EXPLORE THE ATLAS",
+      backspaceLbl: "L\u00f6schen",
+      clearLbl: "Leeren",
+      copyLbl: "Kopieren",
+      installLbl: "App installieren",
+      kickRef: "Referenz",
+      ttlChart: "NMS-Alphabet-Tabelle",
+      tipEn: "Die Tabelle \u00f6ffnet sich beim ersten Tastendruck automatisch und schlie\u00dft sich, wenn das Feld geleert wird \u2014 oder tippe auf die Leiste, um sie umzuschalten.",
+      decodedLbl: "Entschl\u00fcsselter Text",
+      kickInput: "Eingabe",
+      ttlInputChart: "Kachel antippen, um den Buchstaben hinzuzuf\u00fcgen",
+      tipGlyph: "Diese Schrift im Spiel entdeckt? Vergleiche jede Form mit einer Kachel unten, um sie zu entschl\u00fcsseln.",
+      copiedMsg: "Kopiert",
+      emptyMsg: "Leer",
+      groupLetters: "Buchstaben",
+      groupNumbers: "Zahlen",
+      groupPunctuation: "Satzzeichen",
+      installHintIOS: "Auf iPhone oder iPad: Tippe in Safari auf das Teilen-Symbol und dann auf \u201eZum Home-Bildschirm\u201c.",
+      installHintOther: "Die Ein-Klick-Installation ist in diesem Browser nicht verf\u00fcgbar \u2014 nutze stattdessen die Option \u201eApp installieren\u201c oder \u201eZum Startbildschirm hinzuf\u00fcgen\u201c im Men\u00fc deines Browsers."
+    },
+    pt: {
+      subDefault: "Comece a digitar para expandir a refer\u00eancia do alfabeto NMS abaixo",
+      subGlyphMode: "Toque nos blocos para formar uma palavra",
+      modeEnBtn: "Texto \u2192 Fonte NMS",
+      modeGlyphBtn: "Fonte NMS \u2192 Texto",
+      liveTranslatorLbl: "Tradutor ao vivo",
+      transHint: "Digite em portugu\u00eas ou em muitos outros idiomas \u2014 convertido automaticamente para A\u2013Z. Letras, n\u00fameros, ponto e dois-pontos s\u00e3o suportados.",
+      inputPlaceholder: "Digite aqui, ex. EXPLORE THE ATLAS",
+      backspaceLbl: "Apagar",
+      clearLbl: "Limpar",
+      copyLbl: "Copiar",
+      installLbl: "Instalar app",
+      kickRef: "Refer\u00eancia",
+      ttlChart: "Tabela do alfabeto NMS",
+      tipEn: "A tabela abre automaticamente ao digitar e fecha ao limpar o campo \u2014 ou toque na barra para alternar.",
+      decodedLbl: "Texto decodificado",
+      kickInput: "Entrada",
+      ttlInputChart: "Toque num bloco para adicionar sua letra",
+      tipGlyph: "Viu essa fonte no jogo? Compare cada forma com um bloco abaixo para decodific\u00e1-la.",
+      copiedMsg: "Copiado",
+      emptyMsg: "Vazio",
+      groupLetters: "Letras",
+      groupNumbers: "N\u00fameros",
+      groupPunctuation: "Pontua\u00e7\u00e3o",
+      installHintIOS: "No iPhone ou iPad: toque no \u00edcone Compartilhar no Safari e depois em \u201cAdicionar \u00e0 Tela de In\u00edcio.\u201d",
+      installHintOther: "A instala\u00e7\u00e3o com um toque n\u00e3o est\u00e1 dispon\u00edvel neste navegador \u2014 use a op\u00e7\u00e3o \u201cInstalar app\u201d ou \u201cAdicionar \u00e0 tela inicial\u201d no menu do seu navegador."
+    },
+    zh: {
+      subDefault: "\u5f00\u59cb\u8f93\u5165\u5373\u53ef\u5c55\u5f00\u4e0b\u65b9\u7684 NMS \u5b57\u6bcd\u5bf9\u7167\u8868",
+      subGlyphMode: "\u70b9\u51fb\u65b9\u5757\u62fc\u51fa\u5355\u8bcd",
+      modeEnBtn: "\u6587\u5b57 \u2192 NMS \u5b57\u4f53",
+      modeGlyphBtn: "NMS \u5b57\u4f53 \u2192 \u6587\u5b57",
+      liveTranslatorLbl: "\u5b9e\u65f6\u7ffb\u8bd1",
+      transHint: "\u8f93\u5165\u62fc\u97f3\u6216\u5176\u4ed6\u62c9\u4e01\u5b57\u6bcd\u8bed\u8a00 \u2014 \u4f1a\u81ea\u52a8\u8f6c\u6362\u4e3a A\u2013Z\u3002\u652f\u6301\u5b57\u6bcd\u3001\u6570\u5b57\u3001\u53e5\u70b9\u548c\u5192\u53f7\u3002",
+      inputPlaceholder: "\u5728\u6b64\u8f93\u5165\uff0c\u4f8b\u5982 EXPLORE THE ATLAS",
+      backspaceLbl: "\u9000\u683c",
+      clearLbl: "\u6e05\u9664",
+      copyLbl: "\u590d\u5236",
+      installLbl: "\u5b89\u88c5\u5e94\u7528",
+      kickRef: "\u53c2\u8003",
+      ttlChart: "NMS \u5b57\u6bcd\u8868",
+      tipEn: "\u8f93\u5165\u7b2c\u4e00\u4e2a\u5b57\u7b26\u65f6\u8868\u683c\u4f1a\u81ea\u52a8\u5c55\u5f00\uff0c\u6e05\u7a7a\u8f93\u5165\u6846\u65f6\u4f1a\u6536\u8d77 \u2014 \u4e5f\u53ef\u70b9\u51fb\u6807\u9898\u680f\u624b\u52a8\u5207\u6362\u3002",
+      decodedLbl: "\u89e3\u7801\u6587\u5b57",
+      kickInput: "\u8f93\u5165",
+      ttlInputChart: "\u70b9\u51fb\u65b9\u5757\u4ee5\u6dfb\u52a0\u5bf9\u5e94\u5b57\u6bcd",
+      tipGlyph: "\u5728\u6e38\u620f\u4e2d\u770b\u5230\u8fd9\u79cd\u5b57\u4f53\u4e86\u5417\uff1f\u5c06\u6bcf\u4e2a\u5f62\u72b6\u4e0e\u4e0b\u65b9\u65b9\u5757\u6bd4\u5bf9\u5373\u53ef\u89e3\u7801\u3002",
+      copiedMsg: "\u5df2\u590d\u5236",
+      emptyMsg: "\u7a7a",
+      groupLetters: "\u5b57\u6bcd",
+      groupNumbers: "\u6570\u5b57",
+      groupPunctuation: "\u6807\u70b9",
+      installHintIOS: "\u5728 iPhone \u6216 iPad \u4e0a\uff1a\u70b9\u6309 Safari \u4e2d\u7684\u5206\u4eab\u56fe\u6807\uff0c\u7136\u540e\u9009\u62e9\u201c\u6dfb\u52a0\u5230\u4e3b\u5c4f\u5e55\u201d\u3002",
+      installHintOther: "\u6b64\u6d4f\u89c8\u5668\u4e0d\u652f\u6301\u4e00\u952e\u5b89\u88c5 \u2014 \u8bf7\u4f7f\u7528\u6d4f\u89c8\u5668\u83dc\u5355\u4e2d\u7684\u201c\u5b89\u88c5\u5e94\u7528\u201d\u6216\u201c\u6dfb\u52a0\u5230\u4e3b\u5c4f\u5e55\u201d\u9009\u9879\u3002"
+    },
+    ru: {
+      subDefault: "\u041d\u0430\u0447\u043d\u0438\u0442\u0435 \u0432\u0432\u043e\u0434\u0438\u0442\u044c, \u0447\u0442\u043e\u0431\u044b \u0443\u0432\u0438\u0434\u0435\u0442\u044c \u0442\u0430\u0431\u043b\u0438\u0446\u0443",
+      subGlyphMode: "\u041d\u0430\u0436\u0438\u043c\u0430\u0439\u0442\u0435 \u043d\u0430 \u043f\u043b\u0438\u0442\u043a\u0438, \u0447\u0442\u043e\u0431\u044b \u0441\u043e\u0441\u0442\u0430\u0432\u0438\u0442\u044c \u0441\u043b\u043e\u0432\u043e",
+      modeEnBtn: "\u0422\u0435\u043a\u0441\u0442 \u2192 \u0428\u0440\u0438\u0444\u0442 NMS",
+      modeGlyphBtn: "\u0428\u0440\u0438\u0444\u0442 NMS \u2192 \u0422\u0435\u043a\u0441\u0442",
+      liveTranslatorLbl: "\u0416\u0438\u0432\u043e\u0439 \u043f\u0435\u0440\u0435\u0432\u043e\u0434\u0447\u0438\u043a",
+      transHint: "\u0412\u0432\u0435\u0434\u0438\u0442\u0435 \u0442\u0435\u043a\u0441\u0442 \u043d\u0430 \u0440\u0443\u0441\u0441\u043a\u043e\u043c \u0438\u043b\u0438 \u043c\u043d\u043e\u0433\u0438\u0445 \u0434\u0440\u0443\u0433\u0438\u0445 \u044f\u0437\u044b\u043a\u0430\u0445 \u2014 \u0430\u0432\u0442\u043e\u043c\u0430\u0442\u0438\u0447\u0435\u0441\u043a\u0438 \u043f\u0440\u0435\u043e\u0431\u0440\u0430\u0437\u0443\u0435\u0442\u0441\u044f \u0432 A\u2013Z. \u041f\u043e\u0434\u0434\u0435\u0440\u0436\u0438\u0432\u0430\u044e\u0442\u0441\u044f \u0431\u0443\u043a\u0432\u044b, \u0446\u0438\u0444\u0440\u044b, \u0442\u043e\u0447\u043a\u0430 \u0438 \u0434\u0432\u043e\u0435\u0442\u043e\u0447\u0438\u0435.",
+      inputPlaceholder: "\u0412\u0432\u0435\u0434\u0438\u0442\u0435 \u0437\u0434\u0435\u0441\u044c, \u043d\u0430\u043f\u0440. EXPLORE THE ATLAS",
+      backspaceLbl: "\u0421\u0442\u0435\u0440\u0435\u0442\u044c",
+      clearLbl: "\u041e\u0447\u0438\u0441\u0442\u0438\u0442\u044c",
+      copyLbl: "\u041a\u043e\u043f\u0438\u0440\u043e\u0432\u0430\u0442\u044c",
+      installLbl: "\u0423\u0441\u0442\u0430\u043d\u043e\u0432\u0438\u0442\u044c \u043f\u0440\u0438\u043b\u043e\u0436\u0435\u043d\u0438\u0435",
+      kickRef: "\u0421\u043f\u0440\u0430\u0432\u043a\u0430",
+      ttlChart: "\u0422\u0430\u0431\u043b\u0438\u0446\u0430 \u0430\u043b\u0444\u0430\u0432\u0438\u0442\u0430 NMS",
+      tipEn: "\u0422\u0430\u0431\u043b\u0438\u0446\u0430 \u043e\u0442\u043a\u0440\u044b\u0432\u0430\u0435\u0442\u0441\u044f \u0430\u0432\u0442\u043e\u043c\u0430\u0442\u0438\u0447\u0435\u0441\u043a\u0438 \u043f\u0440\u0438 \u043f\u0435\u0440\u0432\u043e\u043c \u043d\u0430\u0436\u0430\u0442\u0438\u0438 \u043a\u043b\u0430\u0432\u0438\u0448\u0438 \u0438 \u0437\u0430\u043a\u0440\u044b\u0432\u0430\u0435\u0442\u0441\u044f \u043f\u0440\u0438 \u043e\u0447\u0438\u0441\u0442\u043a\u0435 \u043f\u043e\u043b\u044f \u2014 \u043b\u0438\u0431\u043e \u043d\u0430\u0436\u043c\u0438\u0442\u0435 \u043d\u0430 \u043f\u043e\u043b\u043e\u0441\u0443, \u0447\u0442\u043e\u0431\u044b \u043f\u0435\u0440\u0435\u043a\u043b\u044e\u0447\u0438\u0442\u044c.",
+      decodedLbl: "\u0420\u0430\u0441\u0448\u0438\u0444\u0440\u043e\u0432\u0430\u043d\u043d\u044b\u0439 \u0442\u0435\u043a\u0441\u0442",
+      kickInput: "\u0412\u0432\u043e\u0434",
+      ttlInputChart: "\u041d\u0430\u0436\u043c\u0438\u0442\u0435 \u043d\u0430 \u043f\u043b\u0438\u0442\u043a\u0443, \u0447\u0442\u043e\u0431\u044b \u0434\u043e\u0431\u0430\u0432\u0438\u0442\u044c \u0431\u0443\u043a\u0432\u0443",
+      tipGlyph: "\u0417\u0430\u043c\u0435\u0442\u0438\u043b\u0438 \u044d\u0442\u043e\u0442 \u0448\u0440\u0438\u0444\u0442 \u0432 \u0438\u0433\u0440\u0435? \u0421\u0440\u0430\u0432\u043d\u0438\u0442\u0435 \u043a\u0430\u0436\u0434\u0443\u044e \u0444\u043e\u0440\u043c\u0443 \u0441 \u043f\u043b\u0438\u0442\u043a\u043e\u0439 \u043d\u0438\u0436\u0435, \u0447\u0442\u043e\u0431\u044b \u0440\u0430\u0441\u0448\u0438\u0444\u0440\u043e\u0432\u0430\u0442\u044c.",
+      copiedMsg: "\u0421\u043a\u043e\u043f\u0438\u0440\u043e\u0432\u0430\u043d\u043e",
+      emptyMsg: "\u041f\u0443\u0441\u0442\u043e",
+      groupLetters: "\u0411\u0443\u043a\u0432\u044b",
+      groupNumbers: "\u0427\u0438\u0441\u043b\u0430",
+      groupPunctuation: "\u041f\u0443\u043d\u043a\u0442\u0443\u0430\u0446\u0438\u044f",
+      installHintIOS: "\u041d\u0430 iPhone \u0438\u043b\u0438 iPad: \u043d\u0430\u0436\u043c\u0438\u0442\u0435 \u0437\u043d\u0430\u0447\u043e\u043a \u00ab\u041f\u043e\u0434\u0435\u043b\u0438\u0442\u044c\u0441\u044f\u00bb \u0432 Safari, \u0437\u0430\u0442\u0435\u043c \u00ab\u041d\u0430 \u044d\u043a\u0440\u0430\u043d \u00ab\u0414\u043e\u043c\u043e\u0439\u00bb\u00bb.",
+      installHintOther: "\u0423\u0441\u0442\u0430\u043d\u043e\u0432\u043a\u0430 \u0432 \u043e\u0434\u0438\u043d \u043a\u043b\u0438\u043a \u043d\u0435\u0434\u043e\u0441\u0442\u0443\u043f\u043d\u0430 \u0432 \u044d\u0442\u043e\u043c \u0431\u0440\u0430\u0443\u0437\u0435\u0440\u0435 \u2014 \u0438\u0441\u043f\u043e\u043b\u044c\u0437\u0443\u0439\u0442\u0435 \u043f\u0443\u043d\u043a\u0442 \u00ab\u0423\u0441\u0442\u0430\u043d\u043e\u0432\u0438\u0442\u044c \u043f\u0440\u0438\u043b\u043e\u0436\u0435\u043d\u0438\u0435\u00bb \u0438\u043b\u0438 \u00ab\u0414\u043e\u0431\u0430\u0432\u0438\u0442\u044c \u043d\u0430 \u0433\u043b\u0430\u0432\u043d\u044b\u0439 \u044d\u043a\u0440\u0430\u043d\u00bb \u0432 \u043c\u0435\u043d\u044e \u0431\u0440\u0430\u0443\u0437\u0435\u0440\u0430."
+    }
+  };
+
+  // Transliteration: Cyrillic -> Latin (Russian + Ukrainian letters)
+  var CYRILLIC_MAP = {
+    "\u0430":"A","\u0431":"B","\u0432":"V","\u0433":"G","\u0434":"D","\u0435":"E","\u0451":"YO","\u0436":"ZH","\u0437":"Z","\u0438":"I","\u0439":"Y",
+    "\u043a":"K","\u043b":"L","\u043c":"M","\u043d":"N","\u043e":"O","\u043f":"P","\u0440":"R","\u0441":"S","\u0442":"T","\u0443":"U","\u0444":"F",
+    "\u0445":"KH","\u0446":"TS","\u0447":"CH","\u0448":"SH","\u0449":"SHCH","\u044a":"","\u044b":"Y","\u044c":"","\u044d":"E","\u044e":"YU","\u044f":"YA",
+    "\u0456":"I","\u0457":"YI","\u0454":"YE","\u0491":"G"
+  };
+  // Transliteration: Greek -> Latin
+  var GREEK_MAP = {
+    "\u03b1":"A","\u03b2":"B","\u03b3":"G","\u03b4":"D","\u03b5":"E","\u03b6":"Z","\u03b7":"I","\u03b8":"TH","\u03b9":"I","\u03ba":"K","\u03bb":"L",
+    "\u03bc":"M","\u03bd":"N","\u03be":"X","\u03bf":"O","\u03c0":"P","\u03c1":"R","\u03c3":"S","\u03c2":"S","\u03c4":"T","\u03c5":"Y","\u03c6":"F",
+    "\u03c7":"CH","\u03c8":"PS","\u03c9":"O",
+    "\u03ac":"A","\u03ad":"E","\u03ae":"I","\u03af":"I","\u03cc":"O","\u03cd":"Y","\u03ce":"O","\u03ca":"I","\u03cb":"Y","\u0390":"I","\u03b0":"Y"
+  };
+  // Latin letters that don't decompose via NFD (need a manual base-letter mapping)
+  var SPECIAL_LATIN_MAP = {
+    "\u00f8":"O","\u00d8":"O","\u0153":"OE","\u0152":"OE","\u00e6":"AE","\u00c6":"AE","\u00df":"SS",
+    "\u00f0":"D","\u00d0":"D","\u00fe":"TH","\u00de":"TH","\u0111":"D","\u0110":"D","\u0142":"L","\u0141":"L","\u0131":"I","\u0133":"IJ"
+  };
+
+  function normalizeToLatin(str){
+    var result = "";
+    for(var i=0;i<str.length;i++){
+      var ch = str[i];
+      var lower = ch.toLowerCase();
+      if(Object.prototype.hasOwnProperty.call(CYRILLIC_MAP, lower)){
+        result += CYRILLIC_MAP[lower];
+        continue;
+      }
+      if(Object.prototype.hasOwnProperty.call(GREEK_MAP, lower)){
+        result += GREEK_MAP[lower];
+        continue;
+      }
+      if(Object.prototype.hasOwnProperty.call(SPECIAL_LATIN_MAP, ch)){
+        result += SPECIAL_LATIN_MAP[ch];
+        continue;
+      }
+      result += ch;
+    }
+    if(result.normalize) result = result.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    return result.toUpperCase();
+  }
+
+  var currentLang = "en";
+
+  function relabelGroups(container){
+    if(!container) return;
+    var keys = ["groupLetters","groupNumbers","groupPunctuation"];
+    var labels = container.querySelectorAll(".group-label");
+    for(var i=0;i<labels.length;i++){
+      if(keys[i]) labels[i].textContent = I18N[currentLang][keys[i]];
+    }
+  }
+
+  function applyLang(code){
+    if(!I18N[code]) code = "en";
+    currentLang = code;
+    document.documentElement.lang = code;
+    var t = I18N[code];
+
+    var setText = function(id, val){ var el = document.getElementById(id); if(el) el.textContent = val; };
+    var setAttrs = function(id, val){
+      var el = document.getElementById(id);
+      if(el){ el.setAttribute("aria-label", val); el.setAttribute("title", val); }
+    };
+
+    setText("modeEnBtn", t.modeEnBtn);
+    setText("modeGlyphBtn", t.modeGlyphBtn);
+    setText("liveTranslatorLbl", t.liveTranslatorLbl);
+    setText("transHint", t.transHint);
+    var elInp = document.getElementById("inp");
+    if(elInp) elInp.setAttribute("placeholder", t.inputPlaceholder);
+    setAttrs("enBackspaceBtn", t.backspaceLbl);
+    setAttrs("enClearBtn", t.clearLbl);
+    setText("copyLbl", t.copyLbl);
+    setText("copyLbl2", t.copyLbl);
+    setText("backspaceLbl2", t.backspaceLbl);
+    setText("clearLbl2", t.clearLbl);
+    setText("installLbl", t.installLbl);
+    setText("installLbl2", t.installLbl);
+    setText("kickRef", t.kickRef);
+    setText("ttlChart", t.ttlChart);
+    setText("tipEn", t.tipEn);
+    setText("tapTilesLbl", t.subGlyphMode);
+    setText("decodedLbl", t.decodedLbl);
+    setText("kickInput", t.kickInput);
+    setText("ttlInputChart", t.ttlInputChart);
+    setText("tipGlyph", t.tipGlyph);
+
+    var glyphModeBox = document.getElementById("glyphMode");
+    var elModeSub = document.getElementById("modeSub");
+    if(elModeSub){
+      var inGlyphMode = glyphModeBox && glyphModeBox.style.display !== "none";
+      elModeSub.textContent = inGlyphMode ? t.subGlyphMode : t.subDefault;
+    }
+
+    relabelGroups(document.getElementById("refGrids"));
+    relabelGroups(document.getElementById("inputGrids"));
+
+    var sel = document.getElementById("langSel");
+    if(sel && sel.value !== code) sel.value = code;
+
+    try{ localStorage.setItem("nms_translator_lang", code); }catch(e){}
+  }
+
+
+  function cellData(){
+    return [
+      {label:"Letters", items: LETTERS.map(function(c){ return {lat:c, ch:c, num:false}; })},
+      {label:"Numbers", items: DIGITS.map(function(c){ return {lat:c, ch:c, num:true}; })},
+      {label:"Punctuation", items: PUNCT}
+    ];
+  }
+
+  function buildGrids(container, clickable, onPick){
+    cellData().forEach(function(group){
+      var lbl = document.createElement("div");
+      lbl.className = "group-label";
+      lbl.textContent = group.label;
+      container.appendChild(lbl);
+
+      var grid = document.createElement("div");
+      grid.className = "alpha-grid";
+      group.items.forEach(function(item){
+        var cell = document.createElement("div");
+        cell.className = "alpha-cell" + (item.num ? " num" : "") + (clickable ? " clickable" : "");
+        var lat = document.createElement("div");
+        lat.className = "latin";
+        lat.textContent = item.lat;
+        var gly = document.createElement("div");
+        gly.className = "glyph";
+        gly.textContent = item.ch;
+        cell.appendChild(lat);
+        cell.appendChild(gly);
+        if(clickable){
+          cell.addEventListener("click", function(){ onPick(item.ch === "\u00a0" ? " " : item.ch); });
+        }
+        grid.appendChild(cell);
+      });
+      container.appendChild(grid);
+    });
+  }
+
+  var inp=document.getElementById("inp"), out=document.getElementById("out"),
+      chart=document.getElementById("chart"), head=document.getElementById("head"),
+      copyBtn=document.getElementById("copyBtn"), copyLbl=document.getElementById("copyLbl");
+
+  buildGrids(document.getElementById("refGrids"), false, null);
+
+  function openChart(){ if(chart.classList.contains("open"))return;
+    chart.classList.remove("open"); void chart.offsetWidth; chart.classList.add("open"); }
+  function refreshEnOutput(){
+    out.textContent = normalizeToLatin(inp.value);
+    if(inp.value.length>=1) openChart();
+    else chart.classList.remove("open");
+  }
+  inp.addEventListener("input", refreshEnOutput);
+  head.addEventListener("click", function(){ chart.classList.toggle("open"); });
+  copyBtn.addEventListener("click", function(){
+    var text = normalizeToLatin(inp.value);
+    if(!text){ flash(copyBtn, copyLbl, I18N[currentLang].emptyMsg); return; }
+    copyText(text, function(){ flash(copyBtn, copyLbl, I18N[currentLang].copiedMsg); });
+  });
+  var enBackspaceBtn=document.getElementById("enBackspaceBtn"), enClearBtn=document.getElementById("enClearBtn");
+  enBackspaceBtn.addEventListener("click", function(){
+    inp.value = inp.value.slice(0,-1);
+    refreshEnOutput();
+    inp.focus();
+  });
+  enClearBtn.addEventListener("click", function(){
+    inp.value = "";
+    refreshEnOutput();
+    inp.focus();
+  });
+
+  var seqOut=document.getElementById("seqOut"), decodedOut=document.getElementById("decodedOut"),
+      backspaceBtn=document.getElementById("backspaceBtn"), clearBtn=document.getElementById("clearBtn"),
+      copyBtn2=document.getElementById("copyBtn2"), copyLbl2=document.getElementById("copyLbl2");
+  var built = "";
+
+  buildGrids(document.getElementById("inputGrids"), true, function(ch){
+    built += ch;
+    renderGlyphMode();
+  });
+
+  function renderGlyphMode(){
+    seqOut.textContent = built.length ? built : "\u00a0";
+    decodedOut.textContent = built.length ? built : "\u00a0";
+  }
+  backspaceBtn.addEventListener("click", function(){ built = built.slice(0,-1); renderGlyphMode(); });
+  clearBtn.addEventListener("click", function(){ built = ""; renderGlyphMode(); });
+  copyBtn2.addEventListener("click", function(){
+    if(!built.trim()){ flash(copyBtn2, copyLbl2, I18N[currentLang].emptyMsg); return; }
+    copyText(built, function(){ flash(copyBtn2, copyLbl2, I18N[currentLang].copiedMsg); });
+  });
+
+  function copyText(text, done){
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(done).catch(function(){ fallbackCopy(text, done); });
+    } else { fallbackCopy(text, done); }
+  }
+  function fallbackCopy(text, done){
+    var ta=document.createElement("textarea"); ta.value=text; ta.style.position="fixed"; ta.style.opacity="0";
+    document.body.appendChild(ta); ta.select();
+    try{ document.execCommand("copy"); }catch(e){}
+    document.body.removeChild(ta);
+    done();
+  }
+  function flash(btn, lbl, msg){
+    var old = lbl.textContent;
+    lbl.textContent = msg; btn.classList.add("copied");
+    setTimeout(function(){ lbl.textContent = old; btn.classList.remove("copied"); }, 1300);
+  }
+
+  var deferredInstallPrompt = null;
+  var installPairs = [
+    {btn: document.getElementById("installBtn"), hint: document.getElementById("installHint")},
+    {btn: document.getElementById("installBtn2"), hint: document.getElementById("installHint2")}
+  ];
+
+  function isStandalone(){
+    return window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true;
+  }
+  function showInstallButtons(show){
+    installPairs.forEach(function(p){ p.btn.style.display = show ? "" : "none"; });
+  }
+  if(!isStandalone()){ showInstallButtons(true); }
+
+  window.addEventListener("beforeinstallprompt", function(e){
+    e.preventDefault();
+    deferredInstallPrompt = e;
+    showInstallButtons(true);
+  });
+  window.addEventListener("appinstalled", function(){
+    showInstallButtons(false);
+    installPairs.forEach(function(p){ p.hint.style.display = "none"; });
+    deferredInstallPrompt = null;
+  });
+  function handleInstallClick(hint){
+    if(deferredInstallPrompt){
+      deferredInstallPrompt.prompt();
+      deferredInstallPrompt.userChoice.then(function(){ deferredInstallPrompt = null; });
+      return;
+    }
+    var isiOS = /iphone|ipad|ipod/i.test(navigator.userAgent) && !window.MSStream;
+    hint.textContent = isiOS ? I18N[currentLang].installHintIOS : I18N[currentLang].installHintOther;
+    hint.style.display = "";
+  }
+  installPairs.forEach(function(p){
+    p.btn.addEventListener("click", function(){ handleInstallClick(p.hint); });
+  });
+
+  var modeEnBtn=document.getElementById("modeEnBtn"), modeGlyphBtn=document.getElementById("modeGlyphBtn"),
+      enMode=document.getElementById("enMode"), glyphMode=document.getElementById("glyphMode"),
+      modeSub=document.getElementById("modeSub");
+  modeEnBtn.addEventListener("click", function(){
+    modeEnBtn.classList.add("active"); modeGlyphBtn.classList.remove("active");
+    enMode.style.display=""; glyphMode.style.display="none";
+    modeSub.textContent=I18N[currentLang].subDefault;
+  });
+  modeGlyphBtn.addEventListener("click", function(){
+    modeGlyphBtn.classList.add("active"); modeEnBtn.classList.remove("active");
+    glyphMode.style.display=""; enMode.style.display="none";
+    modeSub.textContent=I18N[currentLang].subGlyphMode;
+  });
+
+  // Language selector: populate options, wire change handler, apply saved/browser language
+  var langSel = document.getElementById("langSel");
+  LANGS.forEach(function(l){
+    var opt = document.createElement("option");
+    opt.value = l.code; opt.textContent = l.name;
+    langSel.appendChild(opt);
+  });
+  langSel.addEventListener("change", function(){ applyLang(langSel.value); });
+
+  var savedLang = null;
+  try{ savedLang = localStorage.getItem("nms_translator_lang"); }catch(e){}
+  var browserLang = (navigator.language || "en").slice(0,2).toLowerCase();
+  var initialLang = savedLang || (I18N[browserLang] ? browserLang : "en");
+  applyLang(initialLang);
+</script>
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function () {
+      navigator.serviceWorker.register('sw.js').catch(function (err) {
+        console.warn('SW registration failed', err);
+      });
+    });
+  }
+</script>
+<script src="hub-skin.js"></script>
+</body></html>
