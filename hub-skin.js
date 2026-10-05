@@ -31,6 +31,22 @@
       page.insertBefore(hero, h1);
     }
 
+    // NMS-font text decodes to English and back (same rhythm as the Weather app:
+    // ~6s alien glyphs, ~3s English "· DECODED", glitch on each switch)
+    var heroG = page.querySelector('.hs-glyphs'), out = document.getElementById('out');
+    var lastEn = null;
+    function flip() {
+      var en = Math.floor(Date.now() / 1000) % 9 >= 6;
+      if (en === lastEn) return; lastEn = en;
+      if (heroG) {
+        heroG.classList.toggle('hs-en', en);
+        heroG.innerHTML = en ? 'TRANSLATOR <small>· DECODED</small>' : 'TRANSLATOR';
+        heroG.classList.remove('hs-glitch'); void heroG.offsetWidth; heroG.classList.add('hs-glitch');
+      }
+      if (out) out.classList.toggle('hs-en', en); // only visible while the box is empty (example text)
+    }
+    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) { flip(); setInterval(flip, 500); }
+
     // HUD corner brackets
     document.querySelectorAll('.trans-box, .chart').forEach(function (p) {
       ['tl', 'br'].forEach(function (k) { var s = document.createElement('span'); s.className = 'hs-c ' + k; p.appendChild(s); });

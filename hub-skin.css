@@ -34,6 +34,11 @@ body{min-height:100vh;overflow-x:hidden}
 .hs-glyphs{font-family:NMSAlphabet,monospace;font-size:clamp(34px,8vw,64px);line-height:1.15;letter-spacing:.08em;color:var(--hs-cyan);margin:18px 0 6px;
   text-shadow:0 0 14px rgba(0,229,255,.65),0 0 42px rgba(0,229,255,.28);word-break:break-word}
 
+.hs-glyphs.hs-en{font-family:var(--hs-disp);font-weight:800;font-size:clamp(22px,5vw,40px);letter-spacing:.3em;line-height:1.6}
+.hs-glyphs small{font-family:var(--hs-mono);font-size:.4em;letter-spacing:.15em;color:var(--hs-dim);text-shadow:none}
+.hs-glitch{animation:hsGlitchA .45s ease}
+@keyframes hsGlitchA{0%{opacity:0;transform:translateX(-4px);filter:blur(2px)}30%{opacity:1;transform:translateX(3px)}60%{transform:translateX(-1px)}100%{opacity:1;transform:none;filter:none}}
+@keyframes hsGlitchB{0%{opacity:0;transform:translateX(-4px);filter:blur(2px)}30%{opacity:1;transform:translateX(3px)}60%{transform:translateX(-1px)}100%{transform:none;filter:none}}
 .page > h1{font-family:var(--hs-disp) !important;font-weight:800 !important;letter-spacing:.06em;text-transform:uppercase;color:var(--hs-white) !important;
   font-size:clamp(22px,4.6vw,34px) !important;margin:6px 0 4px !important;text-shadow:0 0 28px rgba(0,229,255,.22)}
 #modeSub{font-family:var(--hs-disp) !important;font-size:11px !important;font-weight:600;letter-spacing:4px !important;color:var(--hs-gold) !important;text-transform:uppercase}
@@ -64,7 +69,8 @@ body{min-height:100vh;overflow-x:hidden}
 
 /* glyph output — never an empty hole: a dim ghost line shows until you type */
 .trans-output{min-height:72px;color:var(--hs-cyan) !important;text-shadow:0 0 12px rgba(0,229,255,.6),0 0 34px rgba(0,229,255,.25)}
-.trans-output:empty::before{content:"EXPLORE THE ATLAS";font-family:NMSAlphabet,monospace;opacity:.16;text-shadow:none;letter-spacing:.06em}
+.trans-output:empty::before{content:"EXPLORE THE ATLAS";font-family:NMSAlphabet,monospace;opacity:.22;text-shadow:none;letter-spacing:.06em;animation:hsGlitchA .45s ease}
+.trans-output.hs-en:empty::before{content:"EXPLORE THE ATLAS \00B7  DECODED";font-family:var(--hs-disp);font-size:.55em;letter-spacing:.2em;opacity:.35;animation-name:hsGlitchB}
 .trans-hint{font-family:var(--hs-body) !important;font-size:14px !important;color:var(--hs-dim) !important}
 
 .copy-btn{font-family:var(--hs-disp) !important;font-size:11px !important;font-weight:700;letter-spacing:2px !important;border-radius:10px !important;transition:box-shadow .2s,transform .2s}
