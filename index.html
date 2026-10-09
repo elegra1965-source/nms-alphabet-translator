@@ -72,6 +72,8 @@
   .copy-btn.small.gold{color:var(--gold);border-color:var(--gold);background:rgba(240,165,0,.08);box-shadow:0 0 10px rgba(240,165,0,.35)}
   .copy-btn.small.gold:hover{background:rgba(240,165,0,.18);box-shadow:0 0 18px rgba(240,165,0,.6)}
   .trans-hint{font-size:.78rem;color:var(--text-dim)}
+  /* phones: buttons on one row, the hint full width underneath (it was squeezed into a narrow column) */
+  @media (max-width:520px){.trans-bottom:not(.three){flex-direction:column-reverse;align-items:stretch}.trans-bottom:not(.three) .btn-group{justify-content:flex-end}}
   .copy-btn{flex:none;font-family:'Orbitron',sans-serif;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--cyan);
     display:inline-flex;align-items:center;gap:6px;background:rgba(0,229,255,.08);border:1px solid var(--cyan);border-radius:7px;
     padding:9px 14px;cursor:pointer;box-shadow:0 0 14px rgba(0,229,255,.45);transition:box-shadow .15s,background .15s,color .15s,border-color .15s}
