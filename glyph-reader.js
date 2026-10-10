@@ -156,13 +156,40 @@
     }
     return cl;
   }
+  function featOf(items, lab, w) {
+    var ids = {}, x0 = 1e9, x1 = -1, y0 = 1e9, y1 = -1;
+    items.forEach(function (c) { ids[c.id] = 1; x0 = Math.min(x0, c.x0); x1 = Math.max(x1, c.x1); y0 = Math.min(y0, c.y0); y1 = Math.max(y1, c.y1); });
+    return { f: feature(function (x, y) { return ids[lab[y * w + x]] ? 1 : 0; }, x0, y0, x1, y1), box: [x0, y0, x1, y1] };
+  }
   function scoreSet(set, lab, w) {
-    var feats = set.map(function (g) {
-      var ids = {}; g.items.forEach(function (c) { ids[c.id] = 1; });
-      var x0 = g.x0, x1 = g.x1, y0 = g.y0, y1 = g.y1;
-      return feature(function (x, y) { return ids[lab[y * w + x]] ? 1 : 0; }, x0, y0, x1, y1);
+    // each glyph is matched as found, and again without thin lines stuck to its left/right edge
+    // (a UI bracket or box side that touches the glyph); whichever matches a real glyph better wins
+    var ms = [];
+    set = set.map(function (g) {
+      var full = featOf(g.items, lab, w), best = { m: match(full.f), box: full.box, items: g.items };
+      if (g.items.length > 1) {
+        var H = g.y1 - g.y0 + 1, W2 = g.x1 - g.x0 + 1;
+        var keep = g.items.filter(function (c) {
+          var thin = Math.min(c.w, c.h) <= Math.max(2, 0.12 * Math.max(H, W2));
+          var edge = c.x0 <= g.x0 + 1 || c.x1 >= g.x1 - 1 || c.y0 <= g.y0 + 1 || c.y1 >= g.y1 - 1;
+          return !(thin && edge && Math.max(c.w, c.h) > 0.5 * Math.max(H, W2));
+        });
+        var tries = [];
+        if (keep.length && keep.length < g.items.length) tries.push(keep);
+        // also try leaving out any single piece on the left/right edge (a bracket or part of a box)
+        if (g.items.length <= 8) g.items.forEach(function (c) {
+          if (c.x0 <= g.x0 + 1 || c.x1 >= g.x1 - 1) tries.push(g.items.filter(function (o) { return o !== c; }));
+        });
+        tries.forEach(function (its) {
+          if (!its.length) return;
+          var alt = featOf(its, lab, w), am = match(alt.f);
+          if (am[0].s > best.m[0].s + 0.03) best = { m: am, box: alt.box, items: its };
+        });
+      }
+      ms.push(best.m);
+      return { items: best.items, x0: best.box[0], y0: best.box[1], x1: best.box[2], y1: best.box[3] };
     });
-    var ms = feats.map(match), mean = 0;
+    var mean = 0;
     ms.forEach(function (m) { mean += m[0].s; }); mean /= ms.length;
     // even spacing is a strong hint that this is a real glyph strip
     var cs = set.map(function (g) { return (g.x0 + g.x1) / 2; }), steps = [];
@@ -173,17 +200,48 @@
     return { ms: ms, mean: mean, total: mean - 0.25 * dev, set: set };
   }
 
+  // hollow rectangles (the boxes some UIs draw round each glyph) are not glyphs
+  function isFrame(c, lab, w) {
+    if (c.w < 8 || c.h < 8 || c.n > 0.45 * c.w * c.h) return false;
+    function side(horizontal, pos) { // fraction of the side that has a pixel within 2px of the edge
+      var hit = 0, len = horizontal ? c.w : c.h;
+      for (var k = 0; k < len; k++) {
+        var on = false;
+        for (var e = 0; e < 3 && !on; e++) {
+          var x = horizontal ? c.x0 + k : (pos ? c.x1 - e : c.x0 + e), y = horizontal ? (pos ? c.y1 - e : c.y0 + e) : c.y0 + k;
+          if (lab[y * w + x] === c.id) on = true;
+        }
+        if (on) hit++;
+      }
+      return hit / len;
+    }
+    return side(true, 0) > 0.6 && side(true, 1) > 0.6 && side(false, 0) > 0.6 && side(false, 1) > 0.6;
+  }
+
   function readFromImageData(img, opts) {
     opts = opts || {};
     var w = img.width, h = img.height, n = w * h, d = img.data;
-    var L = luminance(d, n), best = null;
-    var t = otsu(L);
-    [false, true].forEach(function (inv) {
-      // try the global threshold plus a brighter one (glow halos merge glyphs)
-      [t, inv ? Math.max(10, t - 40) : Math.min(245, t + 40)].forEach(function (th) {
-        var m = binarize(L, w, h, inv, th), cc = components(m, w, h);
+    var best = null;
+    // brightness variants: plain luminance (both polarities), plus "whiteness" (bright and
+    // colourless) so coloured UI such as the game's cyan glyph boxes or orange brackets drops out,
+    // and its mirror for dark glyphs on a light page
+    var L = luminance(d, n), MN = new Uint8Array(n), MX = new Uint8Array(n);
+    for (var i = 0, j = 0; i < n; i++, j += 4) {
+      var a = d[j + 3] / 255;
+      var lo = Math.min(d[j], d[j + 1], d[j + 2]), hi = Math.max(d[j], d[j + 1], d[j + 2]);
+      MN[i] = Math.max(0, lo - (hi - lo)) * a | 0;            // bright AND colourless
+      MX[i] = Math.min(255, hi + (hi - lo)) * a | 0;          // dark AND colourless (inverted use)
+    }
+    var variants = [[L, false], [L, true], [MN, false], [MX, true]];
+    if (opts.only != null) variants = [variants[opts.only]];
+    variants.forEach(function (vr) {
+      var C = vr[0], inv = vr[1], t = otsu(C);
+      var ths = [t, inv ? Math.max(10, t - 40) : Math.min(245, t + 40)];
+      if (C === MN) ths.push(100, 150); if (C === MX) ths.push(155, 105);
+      ths.forEach(function (th) {
+        var m = binarize(C, w, h, inv, th), cc = components(m, w, h);
         var minH = Math.max(5, h * 0.012), list = cc.list.filter(function (c) {
-          return c.n >= 3 && c.h <= h * 0.6 && c.w <= w * 0.25 && !(c.x0 === 0 && c.x1 === w - 1);
+          return c.n >= 3 && c.h <= h * 0.6 && c.w <= w * 0.25 && !(c.x0 === 0 && c.x1 === w - 1) && !isFrame(c, cc.lab, w);
         });
         var anchors = list.filter(function (c) { return c.h >= minH && c.w >= 3; });
         if (opts.crop) anchors = anchors.slice().sort(function (a, b) { return b.h - a.h; }).slice(0, 8);
@@ -203,7 +261,7 @@
           runs.forEach(function (r) {
             var big = r.filter(function (c) { return (c.y1 - c.y0 + 1) >= H * 0.45; });
             if (big.length < 12) return;
-            var key = inv + ":" + th + ":" + r[0].x0 + ":" + r[r.length - 1].x1 + ":" + Math.round(a.cy / 4);
+            var key = (C === L ? 'L' : C === MN ? 'N' : 'X') + inv + ":" + th + ":" + r[0].x0 + ":" + r[r.length - 1].x1 + ":" + Math.round(a.cy / 4);
             if (tried[key]) return; tried[key] = 1;
             var cands = [];
             if (r.length === 12) cands.push(r);
@@ -266,8 +324,11 @@
       '<div class="gr-panel">' +
       '<div class="gr-head"><span class="gr-kick">// Portal glyph reader //</span><h2>Read a portal address from a screenshot</h2>' +
       '<p>Drop, paste or pick a screenshot showing the 12 glyphs in a row &mdash; from the game&rsquo;s photo mode, a base or discovery page, or a Reddit post. It&rsquo;s read on your device; nothing is uploaded.</p></div>' +
-      '<label class="gr-drop" id="grDrop" tabindex="0"><input type="file" accept="image/*" id="grFile" hidden>' +
+      '<div class="gr-pick-row"><label class="gr-drop" id="grDrop" tabindex="0"><input type="file" accept="image/*" id="grFile" hidden>' +
       '<span class="gr-drop-ic">&#9635;</span><span class="gr-drop-t">Choose a screenshot</span><span class="gr-drop-s">or drag it here &middot; or paste (Ctrl+V)</span></label>' +
+      '<label class="gr-drop gr-cam" id="grCam" tabindex="0"><input type="file" accept="image/*" capture="environment" id="grCamFile" hidden>' +
+      '<span class="gr-drop-ic">&#9673;</span><span class="gr-drop-t">Take a photo</span><span class="gr-drop-s">point your phone at the screen</span></label></div>' +
+      '<p class="gr-tip">Best results: a screenshot, or a photo taken straight-on and close so the 12 glyphs fill the width. Glyphs in boxes, like the game&rsquo;s own address bar, are fine.</p>' +
       '<div class="gr-stage" id="grStage" hidden><canvas id="grCanvas"></canvas><div class="gr-stage-note" id="grNote"></div></div>' +
       '<div class="gr-result">' +
       '<div class="gr-lbl">Glyph address <span class="gr-help">tap a glyph to change it</span></div>' +
@@ -378,15 +439,18 @@
       loadTemplates(BASE).then(function () {
         var src = imageToData(im, 1400);
         cur = { im: im, src: src };
-        var data = src.data, off = [0, 0];
+        var data = src.data, off = [0, 0], cropK = 1;
         if (crop) {
           var x0 = Math.max(0, Math.round(Math.min(crop[0], crop[2]))), y0 = Math.max(0, Math.round(Math.min(crop[1], crop[3])));
           var x1 = Math.min(data.width, Math.round(Math.max(crop[0], crop[2]))), y1 = Math.min(data.height, Math.round(Math.max(crop[1], crop[3])));
-          data = src.canvas.getContext("2d").getImageData(x0, y0, Math.max(4, x1 - x0), Math.max(4, y1 - y0)); off = [x0, y0];
+          var cw = Math.max(4, x1 - x0), ch = Math.max(4, y1 - y0), k = Math.max(1, Math.min(4, 110 / ch));
+          var up = document.createElement("canvas"); up.width = Math.round(cw * k); up.height = Math.round(ch * k);
+          var ux = up.getContext("2d"); ux.imageSmoothingQuality = "high"; ux.drawImage(src.canvas, x0, y0, cw, ch, 0, 0, up.width, up.height);
+          data = ux.getImageData(0, 0, up.width, up.height); off = [x0, y0]; cropK = k;
         }
         var r = readFromImageData(data, { crop: !!crop });
         if (r && r.score < 0.68) r = null;
-        draw(r, off);
+        draw(r, off, cropK);
         if (!r || r.score < 0.75) {
           note(r ? "Not sure about this one — drag a box around just the 12 glyphs to read them again, or fix glyphs by tapping them." : "Couldn’t find 12 glyphs in a row. Drag a box around them on the picture, or tap them in below.");
         } else {
@@ -396,14 +460,15 @@
         if (r) { addr = r.glyphs.map(function (g) { return g.k; }); conf = r.glyphs.map(function (g) { return g.conf; }); render(); }
       }).catch(function () { note("Couldn’t load the glyph shapes. Check your connection and try again."); });
     }
-    function draw(r, off) {
+    function draw(r, off, k) {
+      k = k || 1;
       var c = cur.src.canvas; cv.width = c.width; cv.height = c.height;
       var x = cv.getContext("2d"); x.drawImage(c, 0, 0);
       if (!r) return;
       x.lineWidth = Math.max(2, c.width / 400);
       r.boxes.forEach(function (b, i) {
         x.strokeStyle = r.glyphs[i].conf < 0.5 ? "#f0a500" : "#00e5ff";
-        x.strokeRect(b[0] + off[0] - 3, b[1] + off[1] - 3, b[2] - b[0] + 6, b[3] - b[1] + 6);
+        x.strokeRect(b[0] / k + off[0] - 3, b[1] / k + off[1] - 3, (b[2] - b[0]) / k + 6, (b[3] - b[1]) / k + 6);
       });
     }
     function cvPos(e) { var r = cv.getBoundingClientRect(); return [(e.clientX - r.left) / r.width * cv.width, (e.clientY - r.top) / r.height * cv.height]; }
@@ -418,8 +483,10 @@
       if (Math.abs(d[2] - d[0]) > 20 && Math.abs(d[3] - d[1]) > 8) runRead(cur.im, d);
     });
 
-    var file = box.querySelector("#grFile"), drop = box.querySelector("#grDrop");
+    var file = box.querySelector("#grFile"), drop = box.querySelector("#grDrop"), cam = box.querySelector("#grCamFile");
     file.addEventListener("change", function () { handleFile(file.files[0]); file.value = ""; });
+    cam.addEventListener("change", function () { handleFile(cam.files[0]); cam.value = ""; });
+    box.querySelector("#grCam").addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); cam.click(); } });
     drop.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); file.click(); } });
     ["dragenter", "dragover"].forEach(function (ev) { drop.addEventListener(ev, function (e) { e.preventDefault(); drop.classList.add("over"); }); });
     ["dragleave", "drop"].forEach(function (ev) { drop.addEventListener(ev, function (e) { e.preventDefault(); drop.classList.remove("over"); }); });

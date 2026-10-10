@@ -59,3 +59,9 @@
   .gr-actions .gr-btn{flex:1 1 45%}
   .gr-actions .gr-btn.primary{flex:1 1 100%}
 }
+
+.gr-pick-row{display:grid;grid-template-columns:2fr 1fr;gap:10px}
+.gr-cam{border-color:rgba(240,165,0,.5);background:rgba(240,165,0,.05)}
+.gr-cam .gr-drop-ic{color:#f0a500}
+.gr-tip{margin:10px 0 0;font-size:13.5px;color:rgba(207,224,240,.6);line-height:1.4}
+@media(max-width:560px){.gr-pick-row{grid-template-columns:1fr 1fr}.gr-drop{padding:16px 8px}.gr-drop-t{font-size:12px}}
