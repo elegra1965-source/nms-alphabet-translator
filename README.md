@@ -2,7 +2,7 @@
 
 **Live:** [translator.nomansskyhub.app](https://translator.nomansskyhub.app)
 
-Write in the alien alphabet of *No Man's Sky*, or decode it back to English. Free, no account, and it installs as an app on phones and desktops.
+Write in the alien alphabet of *No Man's Sky*, decode it back to English, or read a portal address straight from a screenshot. Free, no account, and it installs as an app on phones and desktops.
 
 Part of the [No Man's Sky Hub](https://nomansskyhub.app) family of fan tools.
 
@@ -13,6 +13,7 @@ Part of the [No Man's Sky Hub](https://nomansskyhub.app) family of fan tools.
 - **Text to NMS font.** Type and see your words rendered live in the alien alphabet, then copy them.
 - **NMS font to text.** Tap glyph tiles to build a word and read it back in English.
 - **Seven languages.** English, Español, Français, Deutsch, Português, 中文 and Русский. Accented and non-Latin text is converted to A–Z automatically.
+- **Portal glyph reader.** Drop, paste or pick a screenshot showing the 12 portal glyphs in a row (photo mode, a discovery page, a Reddit post). It finds the row, matches each glyph against the 16 portal glyph shapes, and marks any it isn't sure of in amber so you can tap to fix them. Then open the address on the [Galactic Map](https://map.nomansskyhub.app) or dial it on the Hub. Everything runs in your browser; the image is never uploaded. If it can't find the row, drag a box around the glyphs. You can also just tap the glyphs in on the keypad.
 - **Reference chart.** Every letter, digit, period and colon side by side with its glyph. It opens on your first keystroke and folds away when you clear the box.
 - **Installable app** that also works offline.
 
@@ -26,6 +27,8 @@ A plain HTML/CSS/JavaScript site with no build step. Deployed on Netlify straigh
 |---|---|
 | `index.html` | The translator: layout, logic and the embedded alphabet font |
 | `hub-skin.css`, `hub-skin.js` | The No Man's Sky Hub look: fonts, atmosphere, glyph header, panels |
+| `glyph-reader.js`, `glyph-reader.css` | Portal glyph reader: finds the 12-glyph row, matches shapes, keypad and links to the Map/Hub |
+| `glyphs/`, `galaxies.json` | The 16 portal glyph images (also the matching templates) and the 256 galaxy names |
 | `sw.js` | Service worker for offline use |
 | `manifest.json`, `pwa/` | App install details and icons |
 | `alphabet-translator-404.html` | Not-found page |
