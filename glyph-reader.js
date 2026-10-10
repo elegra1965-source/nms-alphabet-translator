@@ -310,12 +310,15 @@
         var minH = Math.max(5, h * 0.012), list = cc.list.filter(function (c) {
           return c.n >= 3 && c.h <= h * 0.6 && c.w <= w * 0.25 && !(c.x0 === 0 && c.x1 === w - 1) && !isFrame(c, cc.lab, w);
         });
+        var cut = 0;
         if (opts.cells) { // camera guide: the traveller lined the glyphs up in 12 boxes
           var G = opts.cells, gp = (G[1] - G[0]) / 12, gh = G[3] - G[2];
+          // a glyph-sized shape running off the side of the picture: the row isn't fully in view yet
+          if (list.some(function (c) { return (c.x0 <= 1 || c.x1 >= w - 2) && c.h >= gh * 0.4 && c.h <= gh * 1.5 && c.w < gp * 2 && c.cy >= G[2] - gh * 0.3 && c.cy <= G[3] + gh * 0.3; })) cut = 0.5;
           var gl = list.filter(function (c) { return c.n >= 6 && c.h >= gh * 0.15; });
           var fs = gridSet(gl, G[0] + gp / 2, gp, G[2] - gh * 0.3, G[3] + gh * 0.3), fsc = scoreSet(fs, cc.lab, w);
           var fc = {}, fm = 0; fsc.ms.forEach(function (q) { fc[q[0].k] = (fc[q[0].k] || 0) + 1; fm = Math.max(fm, fc[q[0].k]); });
-          fsc.total = fsc.mean - (fm >= 8 ? 0.1 : 0);
+          fsc.total = fsc.mean - cut - (fm >= 8 ? 0.1 : 0) - (fsc.set.some(function (g) { return g.items.length && (g.x0 <= 1 || g.x1 >= w - 2); }) ? 0.5 : 0);
           if (opts.debug) opts.debug.push({ hex: fsc.ms.map(function (q) { return HEX[q[0].k]; }).join(''), total: +fsc.total.toFixed(3), fixed: true, v: (C === L ? 'L' : C === MN ? 'N' : 'X') + (inv ? 'i' : '') + th });
           if (!best || fsc.total > best.total) { best = fsc; best.inv = inv; }
         }
@@ -363,6 +366,13 @@
               var cnt = {}, most = 0; sc.ms.forEach(function (m) { cnt[m[0].k] = (cnt[m[0].k] || 0) + 1; most = Math.max(most, cnt[m[0].k]); });
               if (most >= 8) sc.total -= 0.1;
               if (set.grid ? set.ext : r.length >= 15) sc.total -= 0.15;
+              // camera guide: a glyph cut off at the edge of the picture means the row isn't lined up yet
+              // camera guide: one glyph in each box, none cut off at the edge of the picture
+              if (opts.cells && sc.set.some(function (g, i) {
+                var p = (opts.cells[1] - opts.cells[0]) / 12, c = (g.x0 + g.x1) / 2, want = opts.cells[0] + (i + 0.5) * p;
+                return Math.abs(c - want) > 0.5 * p || (g.items.length && (g.x0 <= 1 || g.x1 >= w - 2));
+              })) sc.total -= 0.5;
+              sc.total -= cut;
               if (opts.debug) opts.debug.push({ hex: sc.ms.map(function (m) { return HEX[m[0].k]; }).join(''), total: +sc.total.toFixed(3), mean: +sc.mean.toFixed(3), len: r.length, win: !!set.window, grid: !!set.grid, v: (C === L ? 'L' : C === MN ? 'N' : 'X') + (inv ? 'i' : '') + th });
               if (!best || sc.total > best.total) { best = sc; best.inv = inv; }
             });
@@ -641,7 +651,7 @@
     file.addEventListener("change", function () { handleFile(file.files[0]); file.value = ""; });
     cam.addEventListener("change", function () { handleFile(cam.files[0]); cam.value = ""; });
     /* ---- live camera scan (like a bank card scanner): reads frames until the same 12 glyphs
-       come back twice in a row, then fills them in. Runs on the device; no frames leave it. ---- */
+       come back three times in a row, then fills them in. Runs on the device; no frames leave it. ---- */
     var live = box.querySelector("#grLive"), video = box.querySelector("#grVideo"), guide = box.querySelector("#grGuide"), lst = box.querySelector("#grLiveStatus");
     var stream = null, scanning = false, lastHex = "", hits = 0, grab = document.createElement("canvas");
     // the whole frame, kept for reading the galaxy name (it sits outside the glyph boxes)
@@ -663,11 +673,11 @@
       var gx = grab.getContext("2d"); gx.imageSmoothingQuality = "high"; gx.drawImage(video, g[0], g[1], g[2], g[3], 0, 0, grab.width, grab.height);
       var cells = [(G[0] - g[0]) * k, (G[2] - g[0]) * k, (G[1] - g[1]) * k, (G[3] - g[1]) * k];
       var r = null; try { r = readFromImageData(gx.getImageData(0, 0, grab.width, grab.height), { cells: cells }); } catch (e) {}
-      if (r && r.score >= 0.8) {
+      if (r && r.score >= 0.8 && r.glyphs.every(function (q) { return q.s >= 0.6; })) {
         hits = r.hex === lastHex ? hits + 1 : 1; lastHex = r.hex;
-        lst.textContent = hits >= 2 ? "Got it!" : "Reading\u2026 hold steady";
+        lst.textContent = hits >= 3 ? "Got it!" : "Reading\u2026 hold steady";
         guide.classList.add("lock");
-        if (hits >= 2) {
+        if (hits >= 3) {
           var shot = document.createElement("canvas"); shot.width = grab.width; shot.height = grab.height; shot.getContext("2d").drawImage(grab, 0, 0);
           var frame = lastFrame(); stopScan(); try { navigator.vibrate && navigator.vibrate(60); } catch (e) {}
           addr = r.glyphs.map(function (q) { return q.k; }); conf = r.glyphs.map(function (q) { return q.conf; }); render();
