@@ -108,11 +108,15 @@
         var cv = document.createElement("canvas"); cv.width = im.naturalWidth; cv.height = im.naturalHeight;
         var cx = cv.getContext("2d"); cx.drawImage(im, 0, 0);
         var d = cx.getImageData(0, 0, cv.width, cv.height).data, w = cv.width, h = cv.height;
-        var x0 = w, y0 = h, x1 = 0, y1 = 0;
-        for (var y = 0; y < h; y++) for (var x = 0; x < w; x++) if (d[(y * w + x) * 4 + 3] > 150) {
-          if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y;
-        }
-        return feature(function (x, y) { return d[(y * w + x) * 4 + 3] > 150 ? 1 : 0; }, x0, y0, x1, y1);
+        // two versions of each glyph: the crisp core, and a bolder one (glow included) for
+        // camera photos where bright strokes bloom and thicken
+        return [150, 60].map(function (cut) {
+          var x0 = w, y0 = h, x1 = 0, y1 = 0;
+          for (var y = 0; y < h; y++) for (var x = 0; x < w; x++) if (d[(y * w + x) * 4 + 3] > cut) {
+            if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y;
+          }
+          return feature(function (x, y) { return d[(y * w + x) * 4 + 3] > cut ? 1 : 0; }, x0, y0, x1, y1);
+        });
       });
       return TPL;
     });
@@ -120,10 +124,14 @@
   function match(f) {
     var res = [];
     for (var k = 0; k < 16; k++) {
-      var t = TPL[k], dot = 0;
-      for (var i = 0; i < t.v.length; i++) dot += t.v[i] * f.v[i];
-      var ar = Math.abs(Math.log(f.aspect / t.aspect));
-      res.push({ k: k, s: dot - 0.12 * ar });
+      var bestS = -1;
+      for (var q = 0; q < TPL[k].length; q++) {
+        var t = TPL[k][q], dot = 0;
+        for (var i = 0; i < t.v.length; i++) dot += t.v[i] * f.v[i];
+        var sc = dot - 0.12 * Math.abs(Math.log(f.aspect / t.aspect)) - (q ? 0.05 : 0);
+        if (sc > bestS) bestS = sc;
+      }
+      res.push({ k: k, s: bestS });
     }
     res.sort(function (a, b) { return b.s - a.s; });
     return res;
@@ -267,10 +275,18 @@
             if (r.length === 12) cands.push(r);
             else if (r.length > 12) {
               cands.push(mergeTo(r, 12));
-              if (r.length <= 40) for (var i = 0; i + 12 <= r.length; i++) cands.push(r.slice(i, i + 12));
+              // a stray mark or two beside the address: try each run of 12. A row of 15 or more
+              // evenly spaced glyphs is a 16-glyph keypad (like the Map's), never an address.
+              if (r.length <= 14) for (var i = 0; i + 12 <= r.length; i++) { var win = r.slice(i, i + 12); win.window = true; cands.push(win); }
             }
             cands.forEach(function (set) {
               var sc = scoreSet(set, cc.lab, w);
+              if (set.window) sc.total -= 0.005;
+              // a run counting up glyph by glyph (0,1,2,3...) is a keypad, not an address
+              var up = 0; for (var u = 1; u < sc.ms.length; u++) if (sc.ms[u][0].k === sc.ms[u - 1][0].k + 1) up++;
+              if (up >= 7) sc.total -= 0.3;
+              if (r.length >= 15) sc.total -= 0.15;
+              if (opts.debug) opts.debug.push({ hex: sc.ms.map(function (m) { return HEX[m[0].k]; }).join(''), total: +sc.total.toFixed(3), mean: +sc.mean.toFixed(3), len: r.length, win: !!set.window, v: (C === L ? 'L' : C === MN ? 'N' : 'X') + (inv ? 'i' : '') + th });
               if (!best || sc.total > best.total) { best = sc; best.inv = inv; }
             });
           });
