@@ -326,8 +326,8 @@
       '<p>Drop, paste or pick a screenshot showing the 12 glyphs in a row &mdash; from the game&rsquo;s photo mode, a base or discovery page, or a Reddit post. It&rsquo;s read on your device; nothing is uploaded.</p></div>' +
       '<div class="gr-pick-row"><label class="gr-drop" id="grDrop" tabindex="0"><input type="file" accept="image/*" id="grFile" hidden>' +
       '<span class="gr-drop-ic">&#9635;</span><span class="gr-drop-t">Choose a screenshot</span><span class="gr-drop-s">or drag it here &middot; or paste (Ctrl+V)</span></label>' +
-      '<label class="gr-drop gr-cam" id="grCam" tabindex="0"><input type="file" accept="image/*" capture="environment" id="grCamFile" hidden>' +
-      '<span class="gr-drop-ic">&#9673;</span><span class="gr-drop-t">Take a photo</span><span class="gr-drop-s">point your phone at the screen</span></label></div>' +
+      '<button type="button" class="gr-drop gr-cam" id="grScan"><span class="gr-drop-ic">&#9673;</span><span class="gr-drop-t">Scan with camera</span><span class="gr-drop-s">point at the screen, it reads by itself</span></button></div>' +
+      '<label class="gr-photo-link"><input type="file" accept="image/*" capture="environment" id="grCamFile" hidden>or take a single photo instead</label>' +
       '<p class="gr-tip">Best results: a screenshot, or a photo taken straight-on and close so the 12 glyphs fill the width. Glyphs in boxes, like the game&rsquo;s own address bar, are fine.</p>' +
       '<div class="gr-stage" id="grStage" hidden><canvas id="grCanvas"></canvas><div class="gr-stage-note" id="grNote"></div></div>' +
       '<div class="gr-result">' +
@@ -343,6 +343,11 @@
       '</div>' +
       '<div class="gr-lbl gr-pad-lbl">Or tap the glyphs yourself</div><div class="gr-pad" id="grPad"></div>' +
       '</div>' +
+      '<div class="gr-live" id="grLive" hidden><div class="gr-live-box"><video id="grVideo" playsinline muted autoplay></video>' +
+      '<div class="gr-live-guide" id="grGuide"><i></i><i></i><i></i><i></i></div>' +
+      '<div class="gr-live-top">Line up the 12 glyphs inside the box</div>' +
+      '<div class="gr-live-status" id="grLiveStatus">Starting camera…</div>' +
+      '<button type="button" class="gr-btn" id="grLiveX">Cancel</button></div></div>' +
       '<div class="gr-pick" id="grPick" hidden><div class="gr-pick-box"><div class="gr-lbl">Pick the right glyph</div><div class="gr-pick-grid" id="grPickGrid"></div><button class="gr-btn" type="button" id="grPickX">Cancel</button></div></div>';
     (glyphMode || enMode).parentNode.insertBefore(box, (glyphMode || enMode).nextSibling);
 
@@ -486,7 +491,49 @@
     var file = box.querySelector("#grFile"), drop = box.querySelector("#grDrop"), cam = box.querySelector("#grCamFile");
     file.addEventListener("change", function () { handleFile(file.files[0]); file.value = ""; });
     cam.addEventListener("change", function () { handleFile(cam.files[0]); cam.value = ""; });
-    box.querySelector("#grCam").addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); cam.click(); } });
+    /* ---- live camera scan (like a bank card scanner): reads frames until the same 12 glyphs
+       come back twice in a row, then fills them in. Runs on the device; no frames leave it. ---- */
+    var live = box.querySelector("#grLive"), video = box.querySelector("#grVideo"), guide = box.querySelector("#grGuide"), lst = box.querySelector("#grLiveStatus");
+    var stream = null, scanning = false, lastHex = "", hits = 0, grab = document.createElement("canvas");
+    function stopScan() { scanning = false; if (stream) stream.getTracks().forEach(function (t) { t.stop(); }); stream = null; live.hidden = true; }
+    function scanTick() {
+      if (!scanning) return;
+      if (!video.videoWidth) { setTimeout(scanTick, 200); return; }
+      // read the whole camera frame (the box is only a guide): the reader finds the row itself
+      var g = [0, 0, video.videoWidth, video.videoHeight], k = Math.min(1, 1100 / g[2]);
+      grab.width = Math.round(g[2] * k); grab.height = Math.round(g[3] * k);
+      var gx = grab.getContext("2d"); gx.drawImage(video, g[0], g[1], g[2], g[3], 0, 0, grab.width, grab.height);
+      var r = null; try { r = readFromImageData(gx.getImageData(0, 0, grab.width, grab.height)); } catch (e) {}
+      if (r && r.score >= 0.8) {
+        hits = r.hex === lastHex ? hits + 1 : 1; lastHex = r.hex;
+        lst.textContent = hits >= 2 ? "Got it!" : "Reading\u2026 hold steady";
+        guide.classList.add("lock");
+        if (hits >= 2) {
+          var shot = document.createElement("canvas"); shot.width = grab.width; shot.height = grab.height; shot.getContext("2d").drawImage(grab, 0, 0);
+          stopScan(); try { navigator.vibrate && navigator.vibrate(60); } catch (e) {}
+          addr = r.glyphs.map(function (q) { return q.k; }); conf = r.glyphs.map(function (q) { return q.conf; }); render();
+          cur = { im: shot, src: { canvas: shot } }; cv.width = shot.width; cv.height = shot.height; cv.getContext("2d").drawImage(shot, 0, 0);
+          stage.hidden = false;
+          var uns = r.glyphs.filter(function (q) { return q.conf < 0.5; }).length;
+          note(uns ? "Scanned \u2014 check the " + uns + " amber glyph" + (uns > 1 ? "s" : "") + " against the screen." : "Scanned! Check the glyphs match, then open it on the map.");
+          box.querySelector("#grSlots").scrollIntoView({ block: "center", behavior: "smooth" });
+          return;
+        }
+      } else { guide.classList.remove("lock"); lst.textContent = "Looking for 12 glyphs\u2026 fill the box, keep it straight"; hits = 0; }
+      setTimeout(scanTick, 120);
+    }
+    box.querySelector("#grScan").addEventListener("click", function () {
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { cam.click(); return; }
+      live.hidden = false; lst.textContent = "Starting camera\u2026"; lastHex = ""; hits = 0;
+      loadTemplates(BASE).then(function () {
+        return navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: "environment" }, width: { ideal: 1920 }, height: { ideal: 1080 } }, audio: false });
+      }).then(function (st) {
+        stream = st; video.srcObject = st; scanning = true; return video.play();
+      }).then(function () { lst.textContent = "Looking for 12 glyphs\u2026"; setTimeout(scanTick, 300); })
+        .catch(function () { stopScan(); note("Couldn\u2019t open the camera \u2014 allow camera access, or take a single photo instead."); stage.hidden = false; cam.click(); });
+    });
+    box.querySelector("#grLiveX").addEventListener("click", stopScan);
+    document.addEventListener("visibilitychange", function () { if (document.hidden && scanning) stopScan(); });
     drop.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); file.click(); } });
     ["dragenter", "dragover"].forEach(function (ev) { drop.addEventListener(ev, function (e) { e.preventDefault(); drop.classList.add("over"); }); });
     ["dragleave", "drop"].forEach(function (ev) { drop.addEventListener(ev, function (e) { e.preventDefault(); drop.classList.remove("over"); }); });
