@@ -262,7 +262,12 @@
     });
     if (!best) return null;
     // a 13th glyph-sized mark at the same spacing either side means a longer row (a keypad)
-    best.ext = cs.some(function (c) { return Math.abs(c - (best.s - best.p)) <= 0.22 * best.p || Math.abs(c - (best.s + 12 * best.p)) <= 0.22 * best.p; });
+    var hs = big.map(function (c) { return c.y1 - c.y0 + 1; }).sort(function (a, b) { return a - b; }), hMed = hs[hs.length >> 1];
+    best.ext = big.some(function (c) {
+      var x = (c.x0 + c.x1) / 2, cw = c.x1 - c.x0 + 1, ch = c.y1 - c.y0 + 1;
+      return (Math.abs(x - (best.s - best.p)) <= 0.22 * best.p || Math.abs(x - (best.s + 12 * best.p)) <= 0.22 * best.p) &&
+        cw > wMed * 0.6 && cw < wMed * 1.6 && ch > hMed * 0.6 && ch < hMed * 1.6;
+    });
     return best;
   }
   function gridSet(comps, s, p, y0, y1) {
@@ -299,8 +304,7 @@
       MN[i] = Math.max(0, lo - (hi - lo)) * a | 0;            // bright AND colourless
       MX[i] = Math.min(255, hi + (hi - lo)) * a | 0;          // dark AND colourless (inverted use)
     }
-    var variants = [[L, false], [L, true], [MN, false], [MX, true]], acc = [];
-    for (var ai = 0; ai < 12; ai++) acc.push(new Float64Array(16));
+    var variants = [[L, false], [L, true], [MN, false], [MX, true]], pool = [];
     if (opts.only != null) variants = [variants[opts.only]];
     variants.forEach(function (vr) {
       var C = vr[0], inv = vr[1], t = otsu(C);
@@ -321,10 +325,9 @@
           var fc = {}, fm = 0; fsc.ms.forEach(function (q) { fc[q[0].k] = (fc[q[0].k] || 0) + 1; fm = Math.max(fm, fc[q[0].k]); });
           // every brightness cut-off gets a say in each box: a glow that blurs one cut-off into a
           // blob still shows the true shape at another
-          var wgt = Math.max(0, fsc.mean - 0.6);
-          if (wgt && !cut) fsc.ms.forEach(function (lst, i) { lst.forEach(function (q) { acc[i][q.k] += q.s * wgt; }); });
           fsc.total = fsc.mean - cut - (fm >= 8 ? 0.1 : 0) - (fsc.set.some(function (g) { return g.items.length && (g.x0 <= 1 || g.x1 >= w - 2); }) ? 0.5 : 0);
           if (opts.debug) opts.debug.push({ hex: fsc.ms.map(function (q) { return HEX[q[0].k]; }).join(''), total: +fsc.total.toFixed(3), fixed: true, v: (C === L ? 'L' : C === MN ? 'N' : 'X') + (inv ? 'i' : '') + th });
+          if (fsc.mean > 0.75 && !cut) pool.push(fsc);
           if (!best || fsc.total > best.total) { best = fsc; best.inv = inv; }
         }
         var anchors = list.filter(function (c) { return c.h >= minH && c.w >= 3; });
@@ -362,8 +365,8 @@
               var sc = scoreSet(set, cc.lab, w);
               if (set.window) sc.total -= 0.005;
               // a run counting up glyph by glyph (0,1,2,3...) is a keypad, not an address
-              var up = 0; for (var u = 1; u < sc.ms.length; u++) if (sc.ms[u][0].k === sc.ms[u - 1][0].k + 1) up++;
-              if (up >= 7) sc.total -= 0.3;
+              var up = 0, inc = 0; for (var u = 1; u < sc.ms.length; u++) { if (sc.ms[u][0].k === sc.ms[u - 1][0].k + 1) up++; if (sc.ms[u][0].k > sc.ms[u - 1][0].k) inc++; }
+              if (up >= 7 || inc >= 9) sc.total -= 0.3;
               // eight or more of the same glyph is almost always a row of identical UI boxes or keys
               var cnt = {}, most = 0; sc.ms.forEach(function (m) { cnt[m[0].k] = (cnt[m[0].k] || 0) + 1; most = Math.max(most, cnt[m[0].k]); });
               if (most >= 8) sc.total -= 0.1;
@@ -379,6 +382,7 @@
               })) sc.total -= 0.5;
               sc.total -= cut;
               if (opts.debug) opts.debug.push({ hex: sc.ms.map(function (m) { return HEX[m[0].k]; }).join(''), total: +sc.total.toFixed(3), mean: +sc.mean.toFixed(3), len: r.length, win: !!set.window, grid: !!set.grid, v: (C === L ? 'L' : C === MN ? 'N' : 'X') + (inv ? 'i' : '') + th });
+              if (sc.mean > 0.75) pool.push(sc);
               if (!best || sc.total > best.total) { best = sc; best.inv = inv; }
             });
           });
@@ -386,12 +390,19 @@
       });
     });
     if (!best) return null;
+    // every reading of the same 12 boxes (at other brightness cut-offs) gets a say in each box:
+    // a glow that blurs one cut-off into a blob still shows the true shape at another
+    var bc = best.set.map(function (g) { return (g.x0 + g.x1) / 2; }), bp = (bc[11] - bc[0]) / 11 || 1;
+    var acc = []; for (var ai = 0; ai < 12; ai++) acc.push(new Float64Array(16));
+    pool.forEach(function (c) {
+      if (c.set.length !== 12 || c.set.some(function (g, i) { return !g.items.length || Math.abs((g.x0 + g.x1) / 2 - bc[i]) > 0.35 * bp; })) return;
+      var wgt = c.mean - 0.7;
+      c.ms.forEach(function (lst, i) { lst.forEach(function (q) { acc[i][q.k] += q.s * wgt; }); });
+    });
     if (opts.cells && acc[0].some(function (v) { return v > 0; })) {
       best.ms = best.ms.map(function (m, i) {
-        var tot = 0, a = acc[i]; for (var k = 0; k < 16; k++) tot += a[k];
-        var ord = []; for (k = 0; k < 16; k++) ord.push(k); ord.sort(function (x, y) { return a[y] - a[x]; });
+        var a = acc[i], ord = []; for (var k = 0; k < 16; k++) ord.push(k); ord.sort(function (x, y) { return a[y] - a[x]; });
         var own = {}; m.forEach(function (q) { own[q.k] = q.s; });
-        // keep this frame's own match scores for the voted glyph and the runner-up
         return ord.map(function (k) { return { k: k, s: own[k] }; });
       });
     }
