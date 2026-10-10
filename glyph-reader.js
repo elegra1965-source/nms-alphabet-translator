@@ -299,7 +299,8 @@
       MN[i] = Math.max(0, lo - (hi - lo)) * a | 0;            // bright AND colourless
       MX[i] = Math.min(255, hi + (hi - lo)) * a | 0;          // dark AND colourless (inverted use)
     }
-    var variants = [[L, false], [L, true], [MN, false], [MX, true]];
+    var variants = [[L, false], [L, true], [MN, false], [MX, true]], acc = [];
+    for (var ai = 0; ai < 12; ai++) acc.push(new Float64Array(16));
     if (opts.only != null) variants = [variants[opts.only]];
     variants.forEach(function (vr) {
       var C = vr[0], inv = vr[1], t = otsu(C);
@@ -318,6 +319,10 @@
           var gl = list.filter(function (c) { return c.n >= 6 && c.h >= gh * 0.15; });
           var fs = gridSet(gl, G[0] + gp / 2, gp, G[2] - gh * 0.3, G[3] + gh * 0.3), fsc = scoreSet(fs, cc.lab, w);
           var fc = {}, fm = 0; fsc.ms.forEach(function (q) { fc[q[0].k] = (fc[q[0].k] || 0) + 1; fm = Math.max(fm, fc[q[0].k]); });
+          // every brightness cut-off gets a say in each box: a glow that blurs one cut-off into a
+          // blob still shows the true shape at another
+          var wgt = Math.max(0, fsc.mean - 0.6);
+          if (wgt && !cut) fsc.ms.forEach(function (lst, i) { lst.forEach(function (q) { acc[i][q.k] += q.s * wgt; }); });
           fsc.total = fsc.mean - cut - (fm >= 8 ? 0.1 : 0) - (fsc.set.some(function (g) { return g.items.length && (g.x0 <= 1 || g.x1 >= w - 2); }) ? 0.5 : 0);
           if (opts.debug) opts.debug.push({ hex: fsc.ms.map(function (q) { return HEX[q[0].k]; }).join(''), total: +fsc.total.toFixed(3), fixed: true, v: (C === L ? 'L' : C === MN ? 'N' : 'X') + (inv ? 'i' : '') + th });
           if (!best || fsc.total > best.total) { best = fsc; best.inv = inv; }
@@ -381,6 +386,15 @@
       });
     });
     if (!best) return null;
+    if (opts.cells && acc[0].some(function (v) { return v > 0; })) {
+      best.ms = best.ms.map(function (m, i) {
+        var tot = 0, a = acc[i]; for (var k = 0; k < 16; k++) tot += a[k];
+        var ord = []; for (k = 0; k < 16; k++) ord.push(k); ord.sort(function (x, y) { return a[y] - a[x]; });
+        var own = {}; m.forEach(function (q) { own[q.k] = q.s; });
+        // keep this frame's own match scores for the voted glyph and the runner-up
+        return ord.map(function (k) { return { k: k, s: own[k] }; });
+      });
+    }
     return {
       hex: best.ms.map(function (m) { return HEX[m[0].k]; }).join(""),
       glyphs: best.ms.map(function (m) {
@@ -651,9 +665,22 @@
     file.addEventListener("change", function () { handleFile(file.files[0]); file.value = ""; });
     cam.addEventListener("change", function () { handleFile(cam.files[0]); cam.value = ""; });
     /* ---- live camera scan (like a bank card scanner): reads frames until the same 12 glyphs
-       come back three times in a row, then fills them in. Runs on the device; no frames leave it. ---- */
+       agree over several frames, then fills them in. Runs on the device; no frames leave it. ---- */
     var live = box.querySelector("#grLive"), video = box.querySelector("#grVideo"), guide = box.querySelector("#grGuide"), lst = box.querySelector("#grLiveStatus");
-    var stream = null, scanning = false, lastHex = "", hits = 0, grab = document.createElement("canvas");
+    var stream = null, scanning = false, votes = [], misses = 0, grab = document.createElement("canvas");
+    // needs 4+ good frames, and in every box at least 3 in 4 of them agreeing on the glyph
+    function tally(vs) {
+      if (vs.length < 4) return null;
+      var out = { glyphs: [], boxes: vs[vs.length - 1].boxes, score: 0 };
+      for (var i = 0; i < 12; i++) {
+        var cnt = {}, sum = {}, best = -1;
+        vs.forEach(function (v) { var q = v.glyphs[i]; cnt[q.k] = (cnt[q.k] || 0) + 1; sum[q.k] = (sum[q.k] || 0) + q.conf; });
+        Object.keys(cnt).forEach(function (k) { if (best < 0 || cnt[k] > cnt[best] || (cnt[k] === cnt[best] && sum[k] > sum[best])) best = +k; });
+        if (cnt[best] < Math.ceil(vs.length * 0.75)) return null;
+        out.glyphs.push({ k: best, conf: (sum[best] / cnt[best]) * (cnt[best] / vs.length) });
+      }
+      return out;
+    }
     // the whole frame, kept for reading the galaxy name (it sits outside the glyph boxes)
     function lastFrame() { var c = document.createElement("canvas"); c.width = video.videoWidth; c.height = video.videoHeight; try { c.getContext("2d").drawImage(video, 0, 0); } catch (e) {} return c; }
     function stopScan() { scanning = false; if (stream) stream.getTracks().forEach(function (t) { t.stop(); }); stream = null; live.hidden = true; }
@@ -674,10 +701,13 @@
       var cells = [(G[0] - g[0]) * k, (G[2] - g[0]) * k, (G[1] - g[1]) * k, (G[3] - g[1]) * k];
       var r = null; try { r = readFromImageData(gx.getImageData(0, 0, grab.width, grab.height), { cells: cells }); } catch (e) {}
       if (r && r.score >= 0.8 && r.glyphs.every(function (q) { return q.s >= 0.6; })) {
-        hits = r.hex === lastHex ? hits + 1 : 1; lastHex = r.hex;
-        lst.textContent = hits >= 3 ? "Got it!" : "Reading\u2026 hold steady";
+        // each box votes over the last few camera frames, so one blurry frame can't swap a glyph
+        misses = 0; votes.push(r); if (votes.length > 6) votes.shift();
+        var vote = tally(votes);
+        lst.textContent = vote ? "Got it!" : "Reading\u2026 hold steady";
         guide.classList.add("lock");
-        if (hits >= 3) {
+        if (vote) {
+          r = vote;
           var shot = document.createElement("canvas"); shot.width = grab.width; shot.height = grab.height; shot.getContext("2d").drawImage(grab, 0, 0);
           var frame = lastFrame(); stopScan(); try { navigator.vibrate && navigator.vibrate(60); } catch (e) {}
           addr = r.glyphs.map(function (q) { return q.k; }); conf = r.glyphs.map(function (q) { return q.conf; }); render();
@@ -688,12 +718,15 @@
           galaxyFrom(frame, [G[0], G[1], G[2], G[3]]);
           return;
         }
-      } else { guide.classList.remove("lock"); lst.textContent = "Looking for 12 glyphs\u2026 one in each box, keep it straight"; hits = 0; }
+      } else {
+        if (++misses >= 4) votes = [];
+        if (!votes.length) { guide.classList.remove("lock"); lst.textContent = "Looking for 12 glyphs\u2026 one in each box, keep it straight"; }
+      }
       setTimeout(scanTick, 120);
     }
     box.querySelector("#grScan").addEventListener("click", function () {
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { cam.click(); return; }
-      live.hidden = false; lst.textContent = "Starting camera\u2026"; lastHex = ""; hits = 0;
+      live.hidden = false; lst.textContent = "Starting camera\u2026"; votes = []; misses = 0;
       loadTemplates(BASE).then(function () {
         return navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: "environment" }, width: { ideal: 1920 }, height: { ideal: 1080 } }, audio: false });
       }).then(function (st) {
