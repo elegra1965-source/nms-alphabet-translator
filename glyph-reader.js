@@ -164,9 +164,10 @@
     }
     return cl;
   }
-  function featOf(items, lab, w) {
+  function featOf(items, lab, w, clip) {
     var ids = {}, x0 = 1e9, x1 = -1, y0 = 1e9, y1 = -1;
     items.forEach(function (c) { ids[c.id] = 1; x0 = Math.min(x0, c.x0); x1 = Math.max(x1, c.x1); y0 = Math.min(y0, c.y0); y1 = Math.max(y1, c.y1); });
+    if (clip) { x0 = Math.max(x0, clip[0]); x1 = Math.min(x1, clip[1]); if (x1 <= x0) x1 = x0 + 1; }
     return { f: feature(function (x, y) { return ids[lab[y * w + x]] ? 1 : 0; }, x0, y0, x1, y1), box: [x0, y0, x1, y1] };
   }
   function scoreSet(set, lab, w) {
@@ -174,7 +175,11 @@
     // (a UI bracket or box side that touches the glyph); whichever matches a real glyph better wins
     var ms = [];
     set = set.map(function (g) {
-      var full = featOf(g.items, lab, w), best = { m: match(full.f), box: full.box, items: g.items };
+      if (!g.items.length) { // an empty box in a 12-box grid: counts as a miss
+        ms.push([{ k: 0, s: 0 }, { k: 0, s: 0 }]);
+        return { items: [], x0: g.x0, y0: g.y0, x1: g.x1, y1: g.y1 };
+      }
+      var full = featOf(g.items, lab, w, g.clip), best = { m: match(full.f), box: full.box, items: g.items };
       if (g.items.length > 1) {
         var H = g.y1 - g.y0 + 1, W2 = g.x1 - g.x0 + 1;
         var keep = g.items.filter(function (c) {
@@ -190,7 +195,7 @@
         });
         tries.forEach(function (its) {
           if (!its.length) return;
-          var alt = featOf(its, lab, w), am = match(alt.f);
+          var alt = featOf(its, lab, w, g.clip), am = match(alt.f);
           if (am[0].s > best.m[0].s + 0.03) best = { m: am, box: alt.box, items: its };
         });
       }
@@ -226,6 +231,60 @@
     return side(true, 0) > 0.6 && side(true, 1) > 0.6 && side(false, 0) > 0.6 && side(false, 1) > 0.6;
   }
 
+  /* -------- 12 equal boxes: portal glyphs sit at an even spacing, so once the spacing is known
+     each glyph is read inside its own box. Glyphs that touch (two glowing Sunsets side by side)
+     are cut apart at the box edge instead of being read as one wide glyph. -------- */
+  function fitGrid(big) {
+    var cs = big.map(function (c) { return (c.x0 + c.x1) / 2; }).sort(function (a, b) { return a - b; });
+    var ws = big.map(function (c) { return c.x1 - c.x0 + 1; }).sort(function (a, b) { return a - b; });
+    var wMed = ws[ws.length >> 1], pitches = [], best = null;
+    for (var i = 0; i + 1 < cs.length; i++) { pitches.push(cs[i + 1] - cs[i]); if (i + 2 < cs.length) pitches.push((cs[i + 2] - cs[i]) / 2); }
+    var seen = {};
+    pitches.forEach(function (p) {
+      if (p < wMed * 1.02 || p > wMed * 4) return;
+      var pk = Math.round(p * 2); if (seen[pk]) return; seen[pk] = 1;
+      cs.forEach(function (s0) {
+        var hits = [], tol = 0.22 * p;
+        for (var k = 0; k < 12; k++) {
+          var want = s0 + k * p, near = null;
+          cs.forEach(function (c) { if (Math.abs(c - want) <= tol && (near == null || Math.abs(c - want) < Math.abs(near - want))) near = c; });
+          if (near != null) hits.push([k, near]);
+        }
+        if (hits.length < 10) return;
+        // least-squares refit of start and spacing from the boxes that matched
+        var n = hits.length, sk = 0, sc = 0, skk = 0, skc = 0;
+        hits.forEach(function (h) { sk += h[0]; sc += h[1]; skk += h[0] * h[0]; skc += h[0] * h[1]; });
+        var pp = (n * skc - sk * sc) / (n * skk - sk * sk || 1), ss = (sc - pp * sk) / n, res = 0;
+        hits.forEach(function (h) { res += Math.abs(ss + h[0] * pp - h[1]); });
+        var cand = { s: ss, p: pp, hits: n, res: res / n / pp };
+        if (!best || cand.hits > best.hits || (cand.hits === best.hits && cand.res < best.res)) best = cand;
+      });
+    });
+    if (!best) return null;
+    // a 13th glyph-sized mark at the same spacing either side means a longer row (a keypad)
+    best.ext = cs.some(function (c) { return Math.abs(c - (best.s - best.p)) <= 0.22 * best.p || Math.abs(c - (best.s + 12 * best.p)) <= 0.22 * best.p; });
+    return best;
+  }
+  function gridSet(comps, s, p, y0, y1) {
+    var set = [];
+    for (var k = 0; k < 12; k++) {
+      var L = s + (k - 0.5) * p, R = s + (k + 0.5) * p, items = [];
+      comps.forEach(function (c) {
+        if (c.cy < y0 || c.cy > y1) return;
+        var ov = Math.min(c.x1, R) - Math.max(c.x0, L);
+        if (ov > 0 && (ov >= 0.5 * c.w || ov >= 0.35 * p)) items.push(c);
+      });
+      var g = { items: items, x0: Math.round(L), x1: Math.round(R), y0: Math.round(y0), y1: Math.round(y1), clip: [Math.ceil(L), Math.floor(R)] };
+      if (items.length) {
+        g.y0 = 1e9; g.y1 = -1;
+        items.forEach(function (c) { g.y0 = Math.min(g.y0, c.y0); g.y1 = Math.max(g.y1, c.y1); });
+      }
+      set.push(g);
+    }
+    set.grid = true;
+    return set;
+  }
+
   function readFromImageData(img, opts) {
     opts = opts || {};
     var w = img.width, h = img.height, n = w * h, d = img.data;
@@ -251,6 +310,15 @@
         var minH = Math.max(5, h * 0.012), list = cc.list.filter(function (c) {
           return c.n >= 3 && c.h <= h * 0.6 && c.w <= w * 0.25 && !(c.x0 === 0 && c.x1 === w - 1) && !isFrame(c, cc.lab, w);
         });
+        if (opts.cells) { // camera guide: the traveller lined the glyphs up in 12 boxes
+          var G = opts.cells, gp = (G[1] - G[0]) / 12, gh = G[3] - G[2];
+          var gl = list.filter(function (c) { return c.n >= 6 && c.h >= gh * 0.15; });
+          var fs = gridSet(gl, G[0] + gp / 2, gp, G[2] - gh * 0.3, G[3] + gh * 0.3), fsc = scoreSet(fs, cc.lab, w);
+          var fc = {}, fm = 0; fsc.ms.forEach(function (q) { fc[q[0].k] = (fc[q[0].k] || 0) + 1; fm = Math.max(fm, fc[q[0].k]); });
+          fsc.total = fsc.mean - (fm >= 8 ? 0.1 : 0);
+          if (opts.debug) opts.debug.push({ hex: fsc.ms.map(function (q) { return HEX[q[0].k]; }).join(''), total: +fsc.total.toFixed(3), fixed: true, v: (C === L ? 'L' : C === MN ? 'N' : 'X') + (inv ? 'i' : '') + th });
+          if (!best || fsc.total > best.total) { best = fsc; best.inv = inv; }
+        }
         var anchors = list.filter(function (c) { return c.h >= minH && c.w >= 3; });
         if (opts.crop) anchors = anchors.slice().sort(function (a, b) { return b.h - a.h; }).slice(0, 8);
         else anchors = anchors.slice().sort(function (a, b) { return b.n - a.n; }).slice(0, 160);
@@ -268,11 +336,14 @@
           });
           runs.forEach(function (r) {
             var big = r.filter(function (c) { return (c.y1 - c.y0 + 1) >= H * 0.45; });
-            if (big.length < 12) return;
+            if (big.length < 10) return;
             var key = (C === L ? 'L' : C === MN ? 'N' : 'X') + inv + ":" + th + ":" + r[0].x0 + ":" + r[r.length - 1].x1 + ":" + Math.round(a.cy / 4);
             if (tried[key]) return; tried[key] = 1;
             var cands = [];
-            if (r.length === 12) cands.push(r);
+            var gf = opts.crop ? null : fitGrid(big);
+            if (gf) { var gs = gridSet(row, gf.s, gf.p, a.cy - H * 0.95, a.cy + H * 0.95); gs.ext = gf.ext; cands.push(gs); }
+            if (big.length < 12) cands = cands.filter(function (c) { return c.grid; });
+            else if (r.length === 12) cands.push(r);
             else if (r.length > 12) {
               cands.push(mergeTo(r, 12));
               // a stray mark or two beside the address: try each run of 12. A row of 15 or more
@@ -285,8 +356,14 @@
               // a run counting up glyph by glyph (0,1,2,3...) is a keypad, not an address
               var up = 0; for (var u = 1; u < sc.ms.length; u++) if (sc.ms[u][0].k === sc.ms[u - 1][0].k + 1) up++;
               if (up >= 7) sc.total -= 0.3;
-              if (r.length >= 15) sc.total -= 0.15;
-              if (opts.debug) opts.debug.push({ hex: sc.ms.map(function (m) { return HEX[m[0].k]; }).join(''), total: +sc.total.toFixed(3), mean: +sc.mean.toFixed(3), len: r.length, win: !!set.window, v: (C === L ? 'L' : C === MN ? 'N' : 'X') + (inv ? 'i' : '') + th });
+              // eight or more of the same glyph is almost always a row of identical UI boxes or keys
+              var cnt = {}, most = 0; sc.ms.forEach(function (m) { cnt[m[0].k] = (cnt[m[0].k] || 0) + 1; most = Math.max(most, cnt[m[0].k]); });
+              if (most >= 8) sc.total -= 0.1;
+              // eight or more of the same glyph is almost always a row of identical UI boxes or keys
+              var cnt = {}, most = 0; sc.ms.forEach(function (m) { cnt[m[0].k] = (cnt[m[0].k] || 0) + 1; most = Math.max(most, cnt[m[0].k]); });
+              if (most >= 8) sc.total -= 0.1;
+              if (set.grid ? set.ext : r.length >= 15) sc.total -= 0.15;
+              if (opts.debug) opts.debug.push({ hex: sc.ms.map(function (m) { return HEX[m[0].k]; }).join(''), total: +sc.total.toFixed(3), mean: +sc.mean.toFixed(3), len: r.length, win: !!set.window, grid: !!set.grid, v: (C === L ? 'L' : C === MN ? 'N' : 'X') + (inv ? 'i' : '') + th });
               if (!best || sc.total > best.total) { best = sc; best.inv = inv; }
             });
           });
@@ -317,6 +394,48 @@
     read: function (imageData, opts) { return readFromImageData(imageData, opts); },
     imageToData: imageToData
   };
+
+  /* -------- galaxy name: if the picture also shows the galaxy (the Map's keypad says
+     "GALAXY  1. Euclid"), read it with an OCR engine that is only downloaded when needed -------- */
+  var TESS = window.NMS_TESS || { js: "https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js", opts: {} };
+  var tessP = null;
+  function ocrWorker() {
+    if (tessP) return tessP;
+    tessP = new Promise(function (res, rej) {
+      if (window.Tesseract) return res();
+      var sc = document.createElement("script"); sc.src = TESS.js; sc.onload = res; sc.onerror = rej; document.head.appendChild(sc);
+    }).then(function () { return window.Tesseract.createWorker("eng", 1, TESS.opts || {}); });
+    tessP.catch(function () { tessP = null; });
+    return tessP;
+  }
+  function lev(a, b) {
+    var d = []; for (var i = 0; i <= a.length; i++) { d[i] = [i]; for (var j = 1; j <= b.length; j++) d[i][j] = i ? Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1)) : j; }
+    return d[a.length][b.length];
+  }
+  function galaxyInText(text, names) {
+    var T = " " + text.toUpperCase().replace(/[^A-Z0-9]+/g, " ") + " ", hit = -1, len = 0;
+    names.forEach(function (n, i) { var N = n.toUpperCase().replace(/[^A-Z0-9]+/g, " "); if (N.length > len && T.indexOf(" " + N + " ") >= 0) { hit = i; len = N.length; } });
+    if (hit >= 0) return hit;
+    // "12. Name" with a slightly misread name: the number decides, the name must be close
+    var re = /\b(\d{1,3})\s*[.\-:·]?\s+([A-Za-z][A-Za-z']{3,})/g, m;
+    while ((m = re.exec(text))) {
+      var n = +m[1] - 1; if (n < 0 || n > 255) continue;
+      var want = names[n].toUpperCase().split(" ")[0], got = m[2].toUpperCase();
+      if (lev(want, got) <= Math.max(1, Math.floor(want.length / 4))) return n;
+    }
+    return -1;
+  }
+  // canvas: the picture; box: [x0,y0,x1,y1] of the glyph row in canvas pixels
+  function readGalaxy(canvas, box, names) {
+    var H = Math.max(8, box[3] - box[1]), y0 = Math.max(0, box[1] - H * 7), y1 = Math.min(canvas.height, box[3] + H * 4);
+    var x0 = Math.max(0, box[0] - (box[2] - box[0]) * 0.25), x1 = Math.min(canvas.width, box[2] + (box[2] - box[0]) * 0.25);
+    var k = Math.max(1, Math.min(4, 2400 / (x1 - x0), 70 / H));
+    var c = document.createElement("canvas"); c.width = Math.round((x1 - x0) * k); c.height = Math.round((y1 - y0) * k);
+    var cx = c.getContext("2d"); cx.imageSmoothingQuality = "high"; cx.drawImage(canvas, x0, y0, x1 - x0, y1 - y0, 0, 0, c.width, c.height);
+    return ocrWorker().then(function (wk) { return wk.recognize(c); }).then(function (o) { return galaxyInText(o.data.text || "", names); });
+  }
+  window.NMSGlyphReader.galaxyInText = galaxyInText;
+  window.NMSGlyphReader.readGalaxy = readGalaxy;
 
   /* ================= UI ================= */
   var BASE = "glyphs/";
@@ -361,7 +480,7 @@
       '</div>' +
       '<div class="gr-live" id="grLive" hidden><div class="gr-live-box"><video id="grVideo" playsinline muted autoplay></video>' +
       '<div class="gr-live-guide" id="grGuide"><i></i><i></i><i></i><i></i></div>' +
-      '<div class="gr-live-top">Line up the 12 glyphs inside the box</div>' +
+      '<div class="gr-live-top">Line up one glyph in each box<small>Turn your phone sideways for a bigger view</small></div>' +
       '<div class="gr-live-status" id="grLiveStatus">Starting camera…</div>' +
       '<button type="button" class="gr-btn" id="grLiveX">Cancel</button></div></div>' +
       '<div class="gr-pick" id="grPick" hidden><div class="gr-pick-box"><div class="gr-lbl">Pick the right glyph</div><div class="gr-pick-grid" id="grPickGrid"></div><button class="gr-btn" type="button" id="grPickX">Cancel</button></div></div>';
@@ -434,7 +553,7 @@
       var hex = hexEl.textContent; if (!/^[0-9A-F]{12}$/.test(hex)) return note("Fill all 12 glyphs first.");
       (navigator.clipboard ? navigator.clipboard.writeText(hex) : Promise.reject()).then(function () { note("Copied " + hex); }, function () { note(hex); });
     });
-    box.querySelector("#grClear").addEventListener("click", function () { addr = []; conf = []; stage.hidden = true; render(); });
+    box.querySelector("#grClear").addEventListener("click", function () { addr = []; conf = []; galGen++; stage.hidden = true; render(); });
     [mapA, hubA].forEach(function (a) { a.addEventListener("click", function (e) { if (a.classList.contains("off")) { e.preventDefault(); note("Fill all 12 glyphs first."); } }); });
 
     // galaxies
@@ -478,8 +597,22 @@
           var unsure = r.glyphs.filter(function (g) { return g.conf < 0.5; }).length;
           note(unsure ? "Read it — " + unsure + " glyph" + (unsure > 1 ? "s" : "") + " marked amber: please check " + (unsure > 1 ? "them" : "it") + " against your screenshot." : "Read it! Check the glyphs match, then open it on the map.");
         }
-        if (r) { addr = r.glyphs.map(function (g) { return g.k; }); conf = r.glyphs.map(function (g) { return g.conf; }); render(); }
+        if (r) {
+          addr = r.glyphs.map(function (g) { return g.k; }); conf = r.glyphs.map(function (g) { return g.conf; }); render();
+          var bx = rowBox(r.boxes); galaxyFrom(src.canvas, [bx[0] / cropK + off[0], bx[1] / cropK + off[1], bx[2] / cropK + off[0], bx[3] / cropK + off[1]]);
+        }
       }).catch(function () { note("Couldn’t load the glyph shapes. Check your connection and try again."); });
+    }
+    function rowBox(bs) { var b = [1e9, 1e9, -1, -1]; bs.forEach(function (q) { b[0] = Math.min(b[0], q[0]); b[1] = Math.min(b[1], q[1]); b[2] = Math.max(b[2], q[2]); b[3] = Math.max(b[3], q[3]); }); return b; }
+    var galGen = 0;
+    function galaxyFrom(canvas, box) {
+      if (!GALAXIES) return;
+      var my = ++galGen, before = noteEl.textContent;
+      readGalaxy(canvas, box, GALAXIES).then(function (gx) {
+        if (my !== galGen || gx < 0) return;
+        gal.value = gx; try { localStorage.setItem("nms_translator_gal", gx); } catch (e) {} render();
+        note(before + " Galaxy read from the picture: " + (gx + 1) + " \u00b7 " + GALAXIES[gx] + ".");
+      }).catch(function () {});
     }
     function draw(r, off, k) {
       k = k || 1;
@@ -511,31 +644,41 @@
        come back twice in a row, then fills them in. Runs on the device; no frames leave it. ---- */
     var live = box.querySelector("#grLive"), video = box.querySelector("#grVideo"), guide = box.querySelector("#grGuide"), lst = box.querySelector("#grLiveStatus");
     var stream = null, scanning = false, lastHex = "", hits = 0, grab = document.createElement("canvas");
+    // the whole frame, kept for reading the galaxy name (it sits outside the glyph boxes)
+    function lastFrame() { var c = document.createElement("canvas"); c.width = video.videoWidth; c.height = video.videoHeight; try { c.getContext("2d").drawImage(video, 0, 0); } catch (e) {} return c; }
     function stopScan() { scanning = false; if (stream) stream.getTracks().forEach(function (t) { t.stop(); }); stream = null; live.hidden = true; }
     function scanTick() {
       if (!scanning) return;
       if (!video.videoWidth) { setTimeout(scanTick, 200); return; }
-      // read the whole camera frame (the box is only a guide): the reader finds the row itself
-      var g = [0, 0, video.videoWidth, video.videoHeight], k = Math.min(1, 1100 / g[2]);
+      // read the 12 boxes of the guide (plus a margin, in case the line-up is a little off)
+      var vw = video.videoWidth, vh = video.videoHeight, vr = video.getBoundingClientRect(), gr = guide.getBoundingClientRect();
+      var sc = Math.max(vr.width / vw, vr.height / vh), ox = vr.left + (vr.width - vw * sc) / 2, oy = vr.top + (vr.height - vh * sc) / 2;
+      var G = [(gr.left - ox) / sc, (gr.top - oy) / sc, (gr.right - ox) / sc, (gr.bottom - oy) / sc];
+      var gw = G[2] - G[0], gh = G[3] - G[1];
+      var g = [Math.max(0, G[0] - gw * 0.04), Math.max(0, G[1] - gh * 1.2), 0, 0];
+      g[2] = Math.min(vw, G[2] + gw * 0.04) - g[0]; g[3] = Math.min(vh, G[3] + gh * 1.2) - g[1];
+      if (!(g[2] > 20 && g[3] > 8)) g = [0, 0, vw, vh];
+      var k = Math.min(1400 / g[2], Math.max(1, 90 / gh));
       grab.width = Math.round(g[2] * k); grab.height = Math.round(g[3] * k);
-      var gx = grab.getContext("2d"); gx.drawImage(video, g[0], g[1], g[2], g[3], 0, 0, grab.width, grab.height);
-      var r = null; try { r = readFromImageData(gx.getImageData(0, 0, grab.width, grab.height)); } catch (e) {}
+      var gx = grab.getContext("2d"); gx.imageSmoothingQuality = "high"; gx.drawImage(video, g[0], g[1], g[2], g[3], 0, 0, grab.width, grab.height);
+      var cells = [(G[0] - g[0]) * k, (G[2] - g[0]) * k, (G[1] - g[1]) * k, (G[3] - g[1]) * k];
+      var r = null; try { r = readFromImageData(gx.getImageData(0, 0, grab.width, grab.height), { cells: cells }); } catch (e) {}
       if (r && r.score >= 0.8) {
         hits = r.hex === lastHex ? hits + 1 : 1; lastHex = r.hex;
         lst.textContent = hits >= 2 ? "Got it!" : "Reading\u2026 hold steady";
         guide.classList.add("lock");
         if (hits >= 2) {
           var shot = document.createElement("canvas"); shot.width = grab.width; shot.height = grab.height; shot.getContext("2d").drawImage(grab, 0, 0);
-          stopScan(); try { navigator.vibrate && navigator.vibrate(60); } catch (e) {}
+          var frame = lastFrame(); stopScan(); try { navigator.vibrate && navigator.vibrate(60); } catch (e) {}
           addr = r.glyphs.map(function (q) { return q.k; }); conf = r.glyphs.map(function (q) { return q.conf; }); render();
-          cur = { im: shot, src: { canvas: shot } }; cv.width = shot.width; cv.height = shot.height; cv.getContext("2d").drawImage(shot, 0, 0);
-          stage.hidden = false;
+          cur = { im: shot, src: { canvas: shot } }; stage.hidden = false; draw(r, [0, 0], 1);
           var uns = r.glyphs.filter(function (q) { return q.conf < 0.5; }).length;
           note(uns ? "Scanned \u2014 check the " + uns + " amber glyph" + (uns > 1 ? "s" : "") + " against the screen." : "Scanned! Check the glyphs match, then open it on the map.");
           box.querySelector("#grSlots").scrollIntoView({ block: "center", behavior: "smooth" });
+          galaxyFrom(frame, [G[0], G[1], G[2], G[3]]);
           return;
         }
-      } else { guide.classList.remove("lock"); lst.textContent = "Looking for 12 glyphs\u2026 fill the box, keep it straight"; hits = 0; }
+      } else { guide.classList.remove("lock"); lst.textContent = "Looking for 12 glyphs\u2026 one in each box, keep it straight"; hits = 0; }
       setTimeout(scanTick, 120);
     }
     box.querySelector("#grScan").addEventListener("click", function () {
