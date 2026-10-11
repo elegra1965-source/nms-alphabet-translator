@@ -85,3 +85,16 @@
 .gr-live-status{position:absolute;left:0;right:0;bottom:96px;text-align:center;color:#cfe0f0;font-size:16px;padding:0 16px}
 .gr-live-box .gr-btn{position:absolute;left:50%;bottom:max(28px,env(safe-area-inset-bottom));transform:translateX(-50%);min-width:140px}
 @media(orientation:landscape){.gr-live-guide{left:8%;right:8%}.gr-live-top small{display:none}}
+
+/* "galaxy unavailable" popup under the Galaxy dropdown */
+.gr-galpop{position:relative;display:flex;flex-direction:column;gap:3px;margin:4px 0 10px;padding:10px 38px 10px 14px;border:1px solid #f0a500;border-radius:8px;
+  background:rgba(240,165,0,.1);box-shadow:0 0 16px rgba(240,165,0,.35);color:#ffe2a8;font-size:14px;animation:grPopIn .25s ease-out}
+.gr-galpop[hidden]{display:none}
+.gr-galpop::before{content:"";position:absolute;top:-7px;left:28px;width:12px;height:12px;background:#1a1608;border-left:1px solid #f0a500;border-top:1px solid #f0a500;transform:rotate(45deg)}
+.gr-galpop b{font-family:'Orbitron',sans-serif;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:#f0a500}
+.gr-galpop small{color:rgba(255,226,168,.7);font-size:12px}
+.gr-galpop-x{position:absolute;top:6px;right:8px;background:none;border:0;color:#f0a500;font-size:22px;line-height:1;cursor:pointer;padding:2px 6px}
+.gr-galrow select.gr-need{border-color:#f0a500;animation:grNeed 1.4s ease-in-out 3}
+@keyframes grNeed{0%,100%{box-shadow:0 0 0 rgba(240,165,0,0)}50%{box-shadow:0 0 16px rgba(240,165,0,.8)}}
+@keyframes grPopIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.gr-galpop,.gr-galrow select.gr-need{animation:none}}
