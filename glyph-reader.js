@@ -467,7 +467,20 @@
     var k = Math.max(1, Math.min(4, 2400 / (x1 - x0), 70 / H));
     var c = document.createElement("canvas"); c.width = Math.round((x1 - x0) * k); c.height = Math.round((y1 - y0) * k);
     var cx = c.getContext("2d"); cx.imageSmoothingQuality = "high"; cx.drawImage(canvas, x0, y0, x1 - x0, y1 - y0, 0, 0, c.width, c.height);
-    return ocrWorker().then(function (wk) { return wk.recognize(c); }).then(function (o) { return galaxyInText(o.data.text || "", names); });
+    // second try: grey, contrast-stretched and inverted (white text on a busy blue screenshot reads badly as-is)
+    function boosted() {
+      var d = cx.getImageData(0, 0, c.width, c.height), a = d.data, lo = 255, hi = 0, i, v;
+      for (i = 0; i < a.length; i += 4) { v = 0.3 * a[i] + 0.59 * a[i + 1] + 0.11 * a[i + 2]; a[i] = v; if (v < lo) lo = v; if (v > hi) hi = v; }
+      var r = Math.max(1, hi - lo);
+      for (i = 0; i < a.length; i += 4) { v = (a[i] - lo) / r; v = v > 0.62 ? 0 : 255; a[i] = a[i + 1] = a[i + 2] = v; }
+      var b = document.createElement("canvas"); b.width = c.width; b.height = c.height; b.getContext("2d").putImageData(d, 0, 0); return b;
+    }
+    return ocrWorker().then(function (wk) {
+      return wk.recognize(c).then(function (o) {
+        var g = galaxyInText(o.data.text || "", names);
+        return g >= 0 ? g : wk.recognize(boosted()).then(function (o2) { return galaxyInText(o2.data.text || "", names); });
+      });
+    });
   }
   window.NMSGlyphReader.galaxyInText = galaxyInText;
   window.NMSGlyphReader.readGalaxy = readGalaxy;
@@ -532,8 +545,9 @@
 
     var addr = [], conf = [], slots = box.querySelector("#grSlots"), hexEl = box.querySelector("#grHex"), gal = box.querySelector("#grGal");
     var mapA = box.querySelector("#grMap"), hubA = box.querySelector("#grHub");
-    var t = traveller(), gi = typeof t.g === "number" ? t.g : 0;
-    try { var sg = parseInt(localStorage.getItem("nms_translator_gal"), 10); if (!isNaN(sg)) gi = sg; } catch (e) {}
+    // home galaxy from the Hub traveller ID; the last-used galaxy only fills in when there is no ID
+    var t = traveller(), home = parseInt(t.g, 10), hasHome = !isNaN(home) && home >= 0, gi = hasHome ? home : 0;
+    if (!hasHome) { try { var sg = parseInt(localStorage.getItem("nms_translator_gal"), 10); if (!isNaN(sg)) gi = sg; } catch (e) {} }
 
     function glyphImg(k) { return '<img src="' + BASE + 'g-' + HEX[k] + '.png" alt="' + NAMES[k] + ' (' + HEX[k] + ')">'; }
     function render() {
@@ -642,12 +656,16 @@
     var galGen = 0;
     function galaxyFrom(canvas, box) {
       if (!GALAXIES) return;
-      var my = ++galGen, before = noteEl.textContent;
+      var my = ++galGen, before = noteEl.textContent, hg = hasHome ? home : 0;
+      // never carry the previous picture's galaxy over to a new one
+      gal.value = hg; render();
+      function fallback() { if (my === galGen) note(before + " No galaxy name found in the picture \u2014 set to " + (hasHome ? "your home galaxy" : "Euclid") + " (" + (hg + 1) + " \u00b7 " + GALAXIES[hg] + "). Change it below if that\u2019s wrong."); }
       readGalaxy(canvas, box, GALAXIES).then(function (gx) {
-        if (my !== galGen || gx < 0) return;
-        gal.value = gx; try { localStorage.setItem("nms_translator_gal", gx); } catch (e) {} render();
+        if (my !== galGen) return;
+        if (gx < 0) return fallback();
+        gal.value = gx; render();
         note(before + " Galaxy read from the picture: " + (gx + 1) + " \u00b7 " + GALAXIES[gx] + ".");
-      }).catch(function () {});
+      }).catch(fallback);
     }
     function draw(r, off, k) {
       k = k || 1;

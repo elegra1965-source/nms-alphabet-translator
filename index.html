@@ -85,6 +85,9 @@
   .copy-btn.gold{flex:1;justify-content:center;color:var(--gold);border-color:var(--gold);background:rgba(240,165,0,.08);box-shadow:0 0 14px rgba(240,165,0,.4)}
   .copy-btn.gold:hover{background:rgba(240,165,0,.18);box-shadow:0 0 24px rgba(240,165,0,.7)}
   .trans-bottom.three .copy-btn{flex:1;justify-content:center}
+  /* phones: three equal columns that can shrink, so Backspace/Clear/Copy never spill past the card */
+  @media (max-width:520px){.trans-bottom.three{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+    .trans-bottom.three .copy-btn{min-width:0;padding:9px 4px;gap:4px;font-size:9.5px !important;letter-spacing:1px !important;white-space:nowrap;overflow:hidden}}
 
   .chart{border:1px solid var(--border);border-radius:10px;overflow:hidden;
     background:linear-gradient(180deg,rgba(0,229,255,0.07),rgba(0,0,0,0));
