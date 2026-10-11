@@ -518,6 +518,7 @@
       '<div class="gr-slots" id="grSlots"></div>' +
       '<div class="gr-hexrow"><span class="gr-lbl">Hex</span><span class="gr-hex" id="grHex">&mdash;</span></div>' +
       '<div class="gr-galrow"><label class="gr-lbl" for="grGal">Galaxy</label><select id="grGal"></select></div>' +
+      '<div class="gr-galpop" id="grGalPop" role="alert" hidden><b>&#9888; Galaxy unavailable</b><span>Please choose from the dropdown list.</span><small id="grGalPopNow"></small><button type="button" class="gr-galpop-x" id="grGalPopX" aria-label="Dismiss">&times;</button></div>' +
       '<div class="gr-actions">' +
       '<a class="gr-btn primary" id="grMap" target="_blank" rel="noopener">Open on Galactic Map &rarr;</a>' +
       '<a class="gr-btn" id="grHub" target="_blank" rel="noopener">Dial on the Hub</a>' +
@@ -611,7 +612,15 @@
       gal.innerHTML = list.map(function (n, i) { return '<option value="' + i + '">' + (i + 1) + ' · ' + n + '</option>'; }).join("");
       gal.value = gi; render();
     }).catch(function () { gal.innerHTML = '<option value="0">1 · Euclid</option>'; });
-    gal.addEventListener("change", function () { try { localStorage.setItem("nms_translator_gal", gal.value); } catch (e) {} render(); });
+    // "galaxy unavailable" popup: shown when a picture/camera read finds no galaxy name
+    var galPop = box.querySelector("#grGalPop"), galPopNow = box.querySelector("#grGalPopNow");
+    function galPopHide() { galPop.hidden = true; gal.classList.remove("gr-need"); }
+    function galPopShow(txt) {
+      galPopNow.textContent = txt; galPop.hidden = false; gal.classList.add("gr-need");
+      try { gal.closest(".gr-galrow").scrollIntoView({ behavior: "smooth", block: "center" }); } catch (e) {}
+    }
+    box.querySelector("#grGalPopX").addEventListener("click", galPopHide);
+    gal.addEventListener("change", function () { galPopHide(); try { localStorage.setItem("nms_translator_gal", gal.value); } catch (e) {} render(); });
 
     // reading
     var stage = box.querySelector("#grStage"), cv = box.querySelector("#grCanvas"), noteEl = box.querySelector("#grNote");
@@ -658,8 +667,13 @@
       if (!GALAXIES) return;
       var my = ++galGen, before = noteEl.textContent, hg = hasHome ? home : 0;
       // never carry the previous picture's galaxy over to a new one
-      gal.value = hg; render();
-      function fallback() { if (my === galGen) note(before + " No galaxy name found in the picture \u2014 set to " + (hasHome ? "your home galaxy" : "Euclid") + " (" + (hg + 1) + " \u00b7 " + GALAXIES[hg] + "). Change it below if that\u2019s wrong."); }
+      gal.value = hg; galPopHide(); render();
+      function fallback() {
+        if (my !== galGen) return;
+        var now = "Using " + (hasHome ? "your home galaxy" : "Euclid") + " for now: " + (hg + 1) + " \u00b7 " + GALAXIES[hg] + ".";
+        note(before + " No galaxy name found in the picture.");
+        galPopShow(now);
+      }
       readGalaxy(canvas, box, GALAXIES).then(function (gx) {
         if (my !== galGen) return;
         if (gx < 0) return fallback();
