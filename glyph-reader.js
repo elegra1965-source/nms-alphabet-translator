@@ -599,7 +599,10 @@
         if (planetFor !== k) return;
         var a = res[0], ed = res[1], sysEd = ed && ed.ok && ed.found && ed.system ? ed.system.data : null;
         var body = null; ((a && a.bodies) || []).forEach(function (b) { if (b.p === P) body = b; });
-        var eb = sysEd && sysEd.bodies ? sysEd.bodies[P - 1] : null;
+        // a traveller's edit: match by their typed name first (their saved order can differ from the game's)
+        var eds = sysEd && sysEd.bodies ? sysEd.bodies : [], low = function (x) { return String(x || "").trim().toLowerCase(); }, eb = null;
+        eds.forEach(function (x) { if (!eb && x && low(x.name) && low(x.name) === low(body.name)) eb = x; });
+        if (!eb && eds[P - 1]) { var cand = eds[P - 1]; var clash = low(cand.name) && ((a.bodies || []).some(function (x) { return x !== body && low(x.name) === low(cand.name); })); if (!clash) eb = cand; }
         planetEl.textContent = "";
         if (!a || !a.ok) { planetEl.appendChild(pEl("div", a && a.busy ? "NMS Almanac is busy right now — please try again later." : "Couldn't reach NMS Almanac right now. Try again later.", "gr-planet-wait")); return; }
         if (!a.found || !body) { planetEl.appendChild(pEl("div", "NMS Almanac has no planet at this address.", "gr-planet-wait")); return; }
