@@ -516,7 +516,7 @@
       '<div class="gr-result">' +
       '<div class="gr-lbl">Glyph address <span class="gr-help">tap a glyph to change it</span></div>' +
       '<div class="gr-slots" id="grSlots"></div>' +
-      '<div class="gr-hexrow"><span class="gr-lbl">Hex</span><span class="gr-hex" id="grHex">&mdash;</span></div>' +
+      '<div class="gr-hexrow"><span class="gr-lbl">Hex</span><input class="gr-hex" id="grHex" type="text" inputmode="text" autocapitalize="characters" autocomplete="off" autocorrect="off" spellcheck="false" maxlength="14" placeholder="Type or paste the hex" aria-label="Hex address" translate="no"></div>' +
       '<div class="gr-galrow"><label class="gr-lbl" for="grGal">Galaxy</label><select id="grGal" translate="no"></select></div>' +
       '<div class="gr-planet" id="grPlanet" hidden></div>' +
       '<div class="gr-galpop" id="grGalPop" role="alert" hidden><b>&#9888; Galaxy unavailable</b><span>Please choose from the dropdown list.</span><small id="grGalPopNow"></small><button type="button" class="gr-galpop-x" id="grGalPopX" aria-label="Dismiss">&times;</button></div>' +
@@ -572,7 +572,7 @@
       }
       wasFull = full;
       var hex = addr.map(function (k) { return k == null ? "·" : HEX[k]; }).join("");
-      hexEl.textContent = addr.length ? hex : "—";
+      if (document.activeElement !== hexEl) hexEl.value = addr.length ? hex.replace(/·/g, "?") : "";
       var g = gal.value || gi;
       mapA.classList.toggle("off", !full); hubA.classList.toggle("off", !full);
       planetTile(full ? hex : null, g);
@@ -630,6 +630,17 @@
         planetEl.appendChild(gl);
       });
     }
+    // 2026-10-23 (Tony): the hex can be typed or pasted too, e.g. to fix a glyph the camera misread.
+    // Each hex digit sets its glyph box; "?" (or a gap) leaves a box empty.
+    hexEl.addEventListener("input", function () {
+      var v = hexEl.value.toUpperCase().replace(/[^0-9A-F?·]/g, "").slice(0, 12);
+      if (hexEl.value !== v) hexEl.value = v;
+      addr = []; conf = [];
+      for (var i = 0; i < v.length; i++) { var k = HEX.indexOf(v.charAt(i)); addr.push(k < 0 ? null : k); conf.push(k < 0 ? null : 1); }
+      trim(); render();
+    });
+    hexEl.addEventListener("blur", function () { render(); });
+    hexEl.addEventListener("keydown", function (e) { if (e.key === "Enter") hexEl.blur(); });
     slots.addEventListener("click", function (e) {
       var b = e.target.closest(".gr-slot"); if (!b) return;
       var si = +b.dataset.i;
@@ -668,7 +679,7 @@
     pick.addEventListener("click", function (e) { if (e.target === pick) pick.hidden = true; });
 
     box.querySelector("#grCopy").addEventListener("click", function () {
-      var hex = hexEl.textContent; if (!/^[0-9A-F]{12}$/.test(hex)) return note("Fill all 12 glyphs first.");
+      var hex = hexEl.value; if (!/^[0-9A-F]{12}$/.test(hex)) return note("Fill all 12 glyphs first.");
       (navigator.clipboard ? navigator.clipboard.writeText(hex) : Promise.reject()).then(function () { note("Copied " + hex); }, function () { note(hex); });
     });
     box.querySelector("#grClear").addEventListener("click", function () { addr = []; conf = []; galGen++; stage.hidden = true; render(); });
@@ -863,7 +874,7 @@
     if (/^[0-9A-F]{12}$/.test(qa)) { addr = qa.split("").map(function (c) { return HEX.indexOf(c); }); conf = addr.map(function () { return null; }); }
     render();
     if (location.hash === "#portal" || /^[0-9A-F]{12}$/.test(qa)) show(true);
-    window.NMSGlyphReader.ui = { load: runRead, state: function () { return { addr: addr.slice(), conf: conf.slice(), hex: hexEl.textContent }; } };
+    window.NMSGlyphReader.ui = { load: runRead, state: function () { return { addr: addr.slice(), conf: conf.slice(), hex: hexEl.value }; } };
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", buildUI); else buildUI();
 })();
