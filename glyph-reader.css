@@ -31,7 +31,7 @@
 .gr-slot.unsure img{filter:drop-shadow(0 0 4px rgba(240,165,0,.7))}
 .gr-slot:hover{border-color:#00e5ff}
 .gr-hexrow,.gr-galrow{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:6px 0}
-.gr-hex{font-family:'Share Tech Mono',monospace;font-size:clamp(20px,6vw,28px);letter-spacing:4px;color:#f0a500;text-shadow:0 0 12px rgba(240,165,0,.35);background:transparent;border:0;border-bottom:1px dashed rgba(240,165,0,.45);border-radius:0;padding:2px 0;width:13.5ch;max-width:100%;min-width:0;outline:none;text-transform:uppercase}
+.gr-hex{font-family:'Share Tech Mono',monospace;font-size:clamp(17px,5vw,26px);letter-spacing:.14em;color:#f0a500;text-shadow:0 0 12px rgba(240,165,0,.35);background:transparent;border:0;border-bottom:1px dashed rgba(240,165,0,.45);border-radius:0;padding:2px 0;flex:1 1 0;width:auto;max-width:15em;min-width:0;outline:none;text-transform:uppercase}
 .gr-hex:focus{border-bottom-color:#f0a500;background:rgba(240,165,0,.06)}
 .gr-hex::placeholder{color:rgba(207,224,240,.35);font-size:14px;letter-spacing:1px;text-transform:none}
 .gr-galrow select{flex:1;min-width:180px;max-width:320px;background:#0b141e;color:#eaf6ff;border:1px solid rgba(0,229,255,.3);border-radius:6px;padding:8px 10px;font:inherit;font-size:15px}

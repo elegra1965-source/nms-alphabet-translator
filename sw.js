@@ -1,12 +1,12 @@
 // NMS Alphabet Translator — Service Worker v2
-const CACHE = 'nms-alphabet-v26';
+const CACHE = 'nms-alphabet-v27';
 
 const CORE_FILES = [
   '/',
   '/index.html',
   '/manifest.json',
-  '/glyph-reader.js?v=20261023c',
-  '/glyph-reader.css?v=20261023c',
+  '/glyph-reader.js?v=20261023d',
+  '/glyph-reader.css?v=20261023d',
   '/galaxies.json',
   '/pwa/icon-192.png',
   '/pwa/icon-512.png',
