@@ -517,7 +517,7 @@
       '<div class="gr-lbl">Glyph address <span class="gr-help">tap a glyph to change it</span></div>' +
       '<div class="gr-slots" id="grSlots"></div>' +
       '<div class="gr-hexrow"><span class="gr-lbl">Hex</span><span class="gr-hex" id="grHex">&mdash;</span></div>' +
-      '<div class="gr-galrow"><label class="gr-lbl" for="grGal">Galaxy</label><select id="grGal"></select></div>' +
+      '<div class="gr-galrow"><label class="gr-lbl" for="grGal">Galaxy</label><select id="grGal" translate="no"></select></div>' +
       '<div class="gr-galpop" id="grGalPop" role="alert" hidden><b>&#9888; Galaxy unavailable</b><span>Please choose from the dropdown list.</span><small id="grGalPopNow"></small><button type="button" class="gr-galpop-x" id="grGalPopX" aria-label="Dismiss">&times;</button></div>' +
       '<div class="gr-actions">' +
       '<a class="gr-btn primary" id="grMap" target="_blank" rel="noopener">Open on Galactic Map &rarr;</a>' +

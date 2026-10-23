@@ -12,7 +12,7 @@ Part of the [No Man's Sky Hub](https://nomansskyhub.app) family of fan tools.
 
 - **Text to NMS font.** Type and see your words rendered live in the alien alphabet, then copy them.
 - **NMS font to text.** Tap glyph tiles to build a word and read it back in English.
-- **Seven languages.** English, Español, Français, Deutsch, Português, 中文 and Русский. Accented and non-Latin text is converted to A–Z automatically.
+- **Ten languages.** English, Español, Deutsch, Nederlands, Polski, Français, Português (Brasil) and Italiano, plus 中文 and Русский on this page. Accented and non-Latin text is converted to A–Z automatically. The language list follows the choice shared by the whole No Man's Sky Hub family (pick it on any site and this page follows, and the other way round); 中文 and Русский stay on this page only. Names, glyphs and portal addresses stay as they are. It uses `lang.js`, the same file on every site, with packs in `lang/`.
 - **Portal glyph reader.** Drop, paste or pick a screenshot showing the 12 portal glyphs in a row (photo mode, a discovery page, a Reddit post), or tap **Scan with camera** and point your phone at the screen: like a bank-card scanner it reads the live picture and fills the glyphs in by itself once every box agrees over several camera frames. The camera view shows 12 boxes: line up one glyph in each box and every box is read on its own, so glyphs that touch are kept apart. If the picture also shows the galaxy (for example "GALAXY 1. Euclid" on the Map's keypad), the galaxy is read and set too. The game's own boxed glyph bar works too. It finds the row, matches each glyph against the 16 portal glyph shapes, and marks any it isn't sure of in amber so you can tap to fix them. Then open the address on the [Galactic Map](https://map.nomansskyhub.app) or dial it on the Hub. Everything runs in your browser; the image is never uploaded (reading the galaxy name downloads a small text-reading engine the first time, but the picture stays on your device). If it can't find the row, drag a box around the glyphs. You can also just tap the glyphs in on the keypad.
 - **Reference chart.** Every letter, digit, period and colon side by side with its glyph. It opens on your first keystroke and folds away when you clear the box.
 - **Installable app** that also works offline.
@@ -23,6 +23,8 @@ Part of the [No Man's Sky Hub](https://nomansskyhub.app) family of fan tools.
 ![Portal glyph reader: a phone photo of the Galactic Map keypad read as 101BE646D310, galaxy Calypso](screenshots/03-portal-glyph-reader.jpg)
 
 <img src="screenshots/04-camera-scan.jpg" alt="Scan with camera: line up one glyph in each of the 12 boxes" width="300">
+
+<img src="screenshots/05-languages.jpg" alt="The translator on a phone in English (left) and Français (right)" width="560">
 
 ## How it's built
 
@@ -37,6 +39,7 @@ A plain HTML/CSS/JavaScript site with no build step. Deployed on Netlify straigh
 | `sw.js` | Service worker for offline use |
 | `manifest.json`, `pwa/` | App install details and icons |
 | `alphabet-translator-404.html` | Not-found page |
+| `lang.js`, `lang/`, `fonts/` | Language choice and translations, shared by every Hub site |
 
 ## Credits
 
