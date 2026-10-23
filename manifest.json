@@ -1,7 +1,7 @@
 {
   "name": "NMS Alphabet Translator",
   "short_name": "NMS Alphabet",
-  "description": "Type in English and instantly see it converted into the No Man's Sky alien alphabet, with a full reference chart.",
+  "description": "Type in English and instantly see it converted into the No Man's Sky alphabet, with a full reference chart.",
   "start_url": "/index.html",
   "scope": "/",
   "display": "standalone",
