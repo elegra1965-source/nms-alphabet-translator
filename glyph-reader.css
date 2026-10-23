@@ -33,13 +33,35 @@
 .gr-hexrow,.gr-galrow{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:6px 0}
 .gr-hex{font-family:'Share Tech Mono',monospace;font-size:clamp(20px,6vw,28px);letter-spacing:4px;color:#f0a500;text-shadow:0 0 12px rgba(240,165,0,.35)}
 .gr-galrow select{flex:1;min-width:180px;max-width:320px;background:#0b141e;color:#eaf6ff;border:1px solid rgba(0,229,255,.3);border-radius:6px;padding:8px 10px;font:inherit;font-size:15px}
-.gr-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.gr-actions{display:grid;gap:8px;margin-top:12px}
+.gr-actrow{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.gr-actrow .gr-btn{padding:0 8px;text-align:center}
 .gr-btn{display:inline-flex;align-items:center;justify-content:center;min-height:42px;padding:0 16px;border-radius:6px;border:1px solid rgba(0,229,255,.4);
   background:rgba(0,229,255,.06);color:#eaf6ff;font-family:Orbitron,monospace;font-size:12px;letter-spacing:1.2px;text-transform:uppercase;text-decoration:none;cursor:pointer}
 .gr-btn:hover{background:rgba(0,229,255,.14)}
 .gr-btn.primary{background:linear-gradient(180deg,#00e5ff,#00b8d4);color:#00131a;border-color:transparent;font-weight:700}
 .gr-btn.off{opacity:.4;cursor:not-allowed}
-.gr-pad-lbl{margin-top:22px}
+.gr-padbtn{display:flex;align-items:center;gap:8px;width:100%;margin-top:18px;min-height:42px;padding:0 14px;border-radius:6px;border:1px dashed rgba(0,229,255,.35);background:rgba(0,229,255,.03);color:#cfe0f0;font-family:Orbitron,monospace;font-size:12px;letter-spacing:1.2px;text-transform:uppercase;cursor:pointer}
+.gr-padbtn:hover{border-color:#00e5ff}
+.gr-padbtn .gr-caret{margin-left:auto;transition:transform .2s}
+.gr-padbtn.open .gr-caret{transform:rotate(180deg)}
+.gr-pad[hidden]{display:none}
+.gr-tipd{margin-top:8px}
+.gr-tipd summary{display:inline-block;cursor:pointer;font-size:13px;color:rgba(0,229,255,.8);list-style:none}
+.gr-tipd summary::-webkit-details-marker{display:none}
+.gr-tipd .gr-tip{margin-top:6px}
+.gr-planet[hidden]{display:none}
+.gr-planet{display:grid;grid-template-columns:72px 1fr;gap:12px;align-items:center;margin:10px 0;padding:10px;border:1px solid rgba(0,229,255,.25);border-radius:8px;background:rgba(0,229,255,.04)}
+.gr-planet-disc{width:72px;height:72px}
+.gr-planet-wait{grid-column:1/3;font-size:14px;color:rgba(207,224,240,.7)}
+.gr-planet-n{font-family:Orbitron,monospace;font-size:13px;letter-spacing:.08em;color:#fff}
+.gr-planet-l{font-size:14px;line-height:1.35;color:#cfe0f0}
+.gr-ex{color:#ff5a4a}
+.gr-planet-nodisc{grid-template-columns:1fr}
+.gr-planet-glyphs{grid-column:1/-1;display:flex;justify-content:center;gap:3px;flex-wrap:nowrap}
+.gr-planet-glyphs img{width:22px;height:22px;min-width:0;flex:0 1 22px}
+.gr-planet-c{font-size:12px;color:rgba(207,224,240,.6)}
+.gr-planet-c a{color:#00e5ff}
 .gr-pad{display:grid;grid-template-columns:repeat(9,1fr);gap:6px;margin-top:8px}
 .gr-key{position:relative;aspect-ratio:1;display:grid;place-items:center;padding:4px;border-radius:6px;border:1px solid rgba(0,229,255,.22);background:rgba(255,255,255,.02);cursor:pointer;min-width:0;color:#cfe0f0}
 .gr-key img{width:78%;height:78%;object-fit:contain}
@@ -56,8 +78,7 @@
 @media(max-width:560px){
   .gr-slots{grid-template-columns:repeat(6,1fr)}
   .gr-pad{grid-template-columns:repeat(6,1fr)}
-  .gr-actions .gr-btn{flex:1 1 45%}
-  .gr-actions .gr-btn.primary{flex:1 1 100%}
+  .gr-actrow .gr-btn{font-size:10.5px;letter-spacing:.6px;padding:0 4px}
 }
 
 .gr-pick-row{display:grid;grid-template-columns:2fr 1fr;gap:10px}

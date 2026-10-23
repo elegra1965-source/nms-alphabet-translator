@@ -511,21 +511,22 @@
       '<span class="gr-drop-ic">&#9635;</span><span class="gr-drop-t">Choose a screenshot</span><span class="gr-drop-s">or drag it here &middot; or paste (Ctrl+V)</span></label>' +
       '<button type="button" class="gr-drop gr-cam" id="grScan"><span class="gr-drop-ic">&#9673;</span><span class="gr-drop-t">Scan with camera</span><span class="gr-drop-s">point at the screen, it reads by itself</span></button></div>' +
       '<label class="gr-photo-link"><input type="file" accept="image/*" capture="environment" id="grCamFile" hidden>or take a single photo instead</label>' +
-      '<p class="gr-tip">Best results: a screenshot, or a photo taken straight-on and close so the 12 glyphs fill the width. Glyphs in boxes, like the game&rsquo;s own address bar, are fine.</p>' +
+      '<details class="gr-tipd"><summary><span aria-hidden="true">&#9432;</span> <span>Tips</span></summary><p class="gr-tip">Best results: a screenshot, or a photo taken straight-on and close so the 12 glyphs fill the width. Glyphs in boxes, like the game&rsquo;s own address bar, are fine.</p></details>' +
       '<div class="gr-stage" id="grStage" hidden><canvas id="grCanvas"></canvas><div class="gr-stage-note" id="grNote"></div></div>' +
       '<div class="gr-result">' +
       '<div class="gr-lbl">Glyph address <span class="gr-help">tap a glyph to change it</span></div>' +
       '<div class="gr-slots" id="grSlots"></div>' +
       '<div class="gr-hexrow"><span class="gr-lbl">Hex</span><span class="gr-hex" id="grHex">&mdash;</span></div>' +
       '<div class="gr-galrow"><label class="gr-lbl" for="grGal">Galaxy</label><select id="grGal" translate="no"></select></div>' +
+      '<div class="gr-planet" id="grPlanet" hidden></div>' +
       '<div class="gr-galpop" id="grGalPop" role="alert" hidden><b>&#9888; Galaxy unavailable</b><span>Please choose from the dropdown list.</span><small id="grGalPopNow"></small><button type="button" class="gr-galpop-x" id="grGalPopX" aria-label="Dismiss">&times;</button></div>' +
       '<div class="gr-actions">' +
       '<a class="gr-btn primary" id="grMap" target="_blank" rel="noopener">Open on Galactic Map &rarr;</a>' +
-      '<a class="gr-btn" id="grHub" target="_blank" rel="noopener">Dial on the Hub</a>' +
+      '<div class="gr-actrow"><a class="gr-btn" id="grHub" target="_blank" rel="noopener">Dial on the Hub</a>' +
       '<button class="gr-btn" type="button" id="grCopy">Copy hex</button>' +
-      '<button class="gr-btn" type="button" id="grClear">Clear</button></div>' +
+      '<button class="gr-btn" type="button" id="grClear">Clear</button></div></div>' +
       '</div>' +
-      '<div class="gr-lbl gr-pad-lbl">Or tap the glyphs yourself</div><div class="gr-pad" id="grPad"></div>' +
+      '<button type="button" class="gr-padbtn" id="grPadBtn" aria-expanded="false" aria-controls="grPad"><span aria-hidden="true">&#9000;</span> <span>Tap the glyphs yourself</span> <span class="gr-caret" aria-hidden="true">&#9662;</span></button><div class="gr-pad" id="grPad" hidden></div>' +
       '</div>' +
       '<div class="gr-live" id="grLive" hidden><div class="gr-live-box"><video id="grVideo" playsinline muted autoplay></video>' +
       '<div class="gr-live-guide" id="grGuide"><i></i><i></i><i></i><i></i></div>' +
@@ -544,6 +545,12 @@
     btn.addEventListener("click", function () { show(true); if (history.replaceState) history.replaceState(null, "", "#portal"); });
     [enBtn, glBtn].forEach(function (b) { b && b.addEventListener("click", function () { show(false); if (location.hash === "#portal" && history.replaceState) history.replaceState(null, "", location.pathname + location.search); }); });
 
+    var wasFull = false, padAt = -1;
+    function setPad(on) {
+      var p = box.querySelector("#grPad"), pb = box.querySelector("#grPadBtn"); if (!p || !pb) return;
+      p.hidden = !on; pb.setAttribute("aria-expanded", on ? "true" : "false"); pb.classList.toggle("open", on);
+      if (!on) padAt = -1;
+    }
     var addr = [], conf = [], slots = box.querySelector("#grSlots"), hexEl = box.querySelector("#grHex"), gal = box.querySelector("#grGal");
     var mapA = box.querySelector("#grMap"), hubA = box.querySelector("#grHub");
     // home galaxy from the Hub traveller ID; the last-used galaxy only fills in when there is no ID
@@ -559,28 +566,86 @@
       }
       slots.innerHTML = h;
       var full = addr.length === 12 && addr.every(function (k) { return k != null; });
+      if (full && !wasFull) {
+        setPad(false);
+        try { box.querySelector(".gr-result").scrollIntoView({ behavior: "smooth", block: "start" }); } catch (e) {}
+      }
+      wasFull = full;
       var hex = addr.map(function (k) { return k == null ? "·" : HEX[k]; }).join("");
       hexEl.textContent = addr.length ? hex : "—";
       var g = gal.value || gi;
       mapA.classList.toggle("off", !full); hubA.classList.toggle("off", !full);
+      planetTile(full ? hex : null, g);
       if (full) {
         mapA.href = MAP + "?arrival=1&addr=" + hex + "&galaxy=" + g;
         hubA.href = HUB + "?g=" + g + "&a=" + hex + "#dialer";
       } else { mapA.removeAttribute("href"); hubA.removeAttribute("href"); }
     }
+    // 2026-10-23: planet tile from NMS Almanac (via the Galactic Map's almanac function, key stays
+    // on the map's server). A traveller's own edit on the Galactic Map wins over Almanac data.
+    var planetEl = box.querySelector("#grPlanet"), planetFor = "", ALM_CACHE = {};
+    function pEl(tag, text, cls) { var e = document.createElement(tag); if (text != null) e.textContent = text; if (cls) e.className = cls; return e; }
+    function planetTile(hex, g) {
+      if (!planetEl) return;
+      if (!hex) { planetFor = ""; planetEl.hidden = true; planetEl.textContent = ""; return; }
+      var k = g + ":" + hex; if (planetFor === k) return; planetFor = k;
+      planetEl.hidden = false; planetEl.textContent = ""; planetEl.appendChild(pEl("div", "Scanning planet…", "gr-planet-wait"));
+      var P = parseInt(hex.charAt(0), 16), sysHex = "1" + hex.slice(1);
+      var got = ALM_CACHE[k] ? Promise.resolve(ALM_CACHE[k]) : Promise.all([
+        fetch(MAP + ".netlify/functions/almanac?addr=" + hex + "&galaxy=" + g).then(function (r) { return r.json(); }).catch(function () { return { ok: false }; }),
+        fetch(MAP + ".netlify/functions/system-edit?sys=" + g + ":" + sysHex).then(function (r) { return r.json(); }).catch(function () { return null; })
+      ]).then(function (res) { ALM_CACHE[k] = res; return res; });
+      got.then(function (res) {
+        if (planetFor !== k) return;
+        var a = res[0], ed = res[1], sysEd = ed && ed.ok && ed.found && ed.system ? ed.system.data : null;
+        var body = null; ((a && a.bodies) || []).forEach(function (b) { if (b.p === P) body = b; });
+        var eb = sysEd && sysEd.bodies ? sysEd.bodies[P - 1] : null;
+        planetEl.textContent = "";
+        if (!a || !a.ok) { planetEl.appendChild(pEl("div", a && a.busy ? "NMS Almanac is busy right now — please try again later." : "Couldn't reach NMS Almanac right now. Try again later.", "gr-planet-wait")); return; }
+        if (!a.found || !body) { planetEl.appendChild(pEl("div", "NMS Almanac has no planet at this address.", "gr-planet-wait")); return; }
+        var name = eb && eb.name ? eb.name : body.name;
+        var desc = eb && eb.biome ? eb.biome + (eb.subtype ? " (" + eb.subtype + ")" : "") : body.desc;
+        var weather = eb && eb.descriptor ? eb.descriptor : body.weather;
+        var sent = eb && eb.sentinel && eb.sentinel !== "None" ? eb.sentinel : body.sentinels;
+        var sysName = sysEd && sysEd.name ? sysEd.name : (a.system && a.system.name);
+        planetEl.classList.toggle("gr-planet-nodisc", !body.discSmall);
+        if (body.discSmall) { var img = document.createElement("img"); img.alt = ""; img.className = "gr-planet-disc"; img.src = body.discSmall; planetEl.appendChild(img); }
+        var t = pEl("div", null, "gr-planet-t");
+        t.appendChild(pEl("div", (body.moonOf ? "☾ " : "") + (name || "Unnamed"), "gr-planet-n"));
+        var l = pEl("div", null, "gr-planet-l"); l.appendChild(document.createTextNode(desc || ""));
+        if (weather) { l.appendChild(document.createTextNode(" · ")); l.appendChild(pEl("span", weather, body.extreme && !(eb && eb.descriptor) ? "gr-ex" : "")); }
+        t.appendChild(l);
+        t.appendChild(pEl("div", ["Sentinels: " + (sent || "?"), "Fauna " + (body.fauna != null ? body.fauna : "?"), "Flora " + (body.flora != null ? body.flora : "?")].join(" · "), "gr-planet-l"));
+        var gl = pEl("div", null, "gr-planet-glyphs"); gl.setAttribute("translate", "no");
+        for (var i = 0; i < 12; i++) { var gi2 = document.createElement("img"); var kk = HEX.indexOf(hex.charAt(i)); gi2.src = BASE + "g-" + HEX[kk] + ".png"; gi2.alt = NAMES[kk] + " (" + HEX[kk] + ")"; gl.appendChild(gi2); }
+        var c = pEl("div", null, "gr-planet-c");
+        if (sysName) c.appendChild(document.createTextNode("in " + sysName + " · "));
+        c.appendChild(document.createTextNode("Data: "));
+        var al = pEl("a", "NMS Almanac"); al.href = "https://nmsalmanac.com"; al.target = "_blank"; al.rel = "noopener";
+        c.appendChild(al); t.appendChild(c);
+        planetEl.appendChild(t);
+        planetEl.appendChild(gl);
+      });
+    }
     slots.addEventListener("click", function (e) {
       var b = e.target.closest(".gr-slot"); if (!b) return;
-      openPicker(+b.dataset.i);
+      var si = +b.dataset.i;
+      if (addr[si] == null) { padAt = si; setPad(true); try { pad.scrollIntoView({ behavior: "smooth", block: "nearest" }); } catch (e2) {} }
+      else openPicker(si);
     });
     // keypad
-    var pad = box.querySelector("#grPad"), ph = "";
+    var pad = box.querySelector("#grPad"), padBtn = box.querySelector("#grPadBtn"), ph = "";
     for (var k = 0; k < 16; k++) ph += '<button type="button" class="gr-key" data-k="' + k + '" title="' + NAMES[k] + ' (' + HEX[k] + ')">' + glyphImg(k) + '<i>' + HEX[k] + '</i></button>';
     ph += '<button type="button" class="gr-key gr-back" title="Backspace">&#9003;</button>';
     pad.innerHTML = ph;
+    padBtn.addEventListener("click", function () { setPad(pad.hidden); });
     pad.addEventListener("click", function (e) {
       var b = e.target.closest(".gr-key"); if (!b) return;
       if (b.classList.contains("gr-back")) { var j = lastFilled(); if (j >= 0) { addr[j] = null; conf[j] = null; } }
-      else { var i = addr.indexOf(null); if (i < 0) i = addr.length; if (i < 12) { addr[i] = +b.dataset.k; conf[i] = null; } }
+      else {
+        var i = padAt >= 0 && addr[padAt] == null ? padAt : addr.indexOf(null); if (i < 0) i = addr.length; padAt = -1;
+        if (i < 12) { while (addr.length < i) { addr.push(null); conf.push(null); } addr[i] = +b.dataset.k; conf[i] = null; }
+      }
       trim(); render();
     });
     function lastFilled() { for (var i = 11; i >= 0; i--) if (addr[i] != null) return i; return -1; }
