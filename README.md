@@ -29,6 +29,12 @@ Part of the [No Man's Sky Hub](https://nomansskyhub.app) family of fan tools.
 
 <img src="screenshots/05-languages.jpg" alt="The translator on a phone in English (left) and Français (right)" width="560">
 
+## New here? Take the tour
+
+First-time visitors get a small **New here? ▶ Take the tour / Dive in** box (shown once, never again). The tour dims the page and spotlights the three modes, the text box, your NMS text, portal glyphs, the alphabet chart and the language picker, one step at a time with Back / Next / Skip. Replay it any time from the **▷ TOUR** button. The phone's Back button closes it, and it's translated into every language the site offers. Shared `nms-tour.js`, the same file on every nomansskyhub.app site.
+
+<img src="screenshots/07-tour.jpg" alt="Left: the New here? Take the tour prompt. Right: tour step 2 of 6, Type here" width="560">
+
 ## How it's built
 
 A plain HTML/CSS/JavaScript site with no build step. Deployed on Netlify straight from this repo: every push to `main` goes live.
