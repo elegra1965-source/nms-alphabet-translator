@@ -516,7 +516,7 @@
       '<div class="gr-result">' +
       '<div class="gr-lbl">Glyph address <span class="gr-help">tap a glyph to change it</span></div>' +
       '<div class="gr-slots" id="grSlots"></div>' +
-      '<div class="gr-hexrow"><span class="gr-lbl">Hex</span><input class="gr-hex" id="grHex" type="text" inputmode="text" autocapitalize="characters" autocomplete="off" autocorrect="off" spellcheck="false" maxlength="14" placeholder="Type or paste the hex" aria-label="Hex address" translate="no"></div>' +
+      '<div class="gr-hexrow"><span class="gr-lbl">Hex</span><input class="gr-hex" id="grHex" type="text" inputmode="text" autocapitalize="characters" autocomplete="off" autocorrect="off" spellcheck="false" maxlength="14" placeholder="Type or paste the hex" aria-label="Hex address"></div>' +
       '<div class="gr-galrow"><label class="gr-lbl" for="grGal">Galaxy</label><select id="grGal" translate="no"></select></div>' +
       '<div class="gr-planet" id="grPlanet" hidden></div>' +
       '<div class="gr-galpop" id="grGalPop" role="alert" hidden><b>&#9888; Galaxy unavailable</b><span>Please choose from the dropdown list.</span><small id="grGalPopNow"></small><button type="button" class="gr-galpop-x" id="grGalPopX" aria-label="Dismiss">&times;</button></div>' +
@@ -628,6 +628,18 @@
         c.appendChild(al); t.appendChild(c);
         planetEl.appendChild(t);
         planetEl.appendChild(gl);
+        // 2026-10-24 (Tony): the Almanac's own 1200x630 card picture (disc, name, facts, galaxy, glyphs).
+        // Phones: share sheet with the picture's link (chats show the picture); elsewhere it opens to save.
+        if (body.card) {
+          var cb = pEl("button", null, "gr-btn gr-planet-card"); cb.type = "button";
+          var ci = pEl("span", "🖼 "); ci.setAttribute("aria-hidden", "true");
+          cb.appendChild(ci); cb.appendChild(pEl("span", "Planet card"));
+          cb.addEventListener("click", function () {
+            if (navigator.share) { navigator.share({ title: name || "Planet", text: (name || "Planet") + " · " + hex, url: body.card }).catch(function () {}); }
+            else window.open(body.card, "_blank", "noopener");
+          });
+          planetEl.appendChild(cb);
+        }
       });
     }
     // 2026-10-23 (Tony): the hex can be typed or pasted too, e.g. to fix a glyph the camera misread.
