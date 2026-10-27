@@ -512,7 +512,8 @@
       '<button type="button" class="gr-drop gr-cam" id="grScan"><span class="gr-drop-ic">&#9673;</span><span class="gr-drop-t">Scan with camera</span><span class="gr-drop-s">point at the screen, it reads by itself</span></button></div>' +
       '<label class="gr-photo-link"><input type="file" accept="image/*" capture="environment" id="grCamFile" hidden>or take a single photo instead</label>' +
       '<details class="gr-tipd"><summary><span aria-hidden="true">&#9432;</span> <span>Tips</span></summary><p class="gr-tip">Best results: a screenshot, or a photo taken straight-on and close so the 12 glyphs fill the width. Glyphs in boxes, like the game&rsquo;s own address bar, are fine.</p></details>' +
-      '<div class="gr-stage" id="grStage" hidden><canvas id="grCanvas"></canvas><div class="gr-stage-note" id="grNote"></div></div>' +
+      '<div class="gr-stage" id="grStage" hidden><canvas id="grCanvas"></canvas><div class="gr-stage-note" id="grNote"></div>' +
+      '<button type="button" class="gr-btn gr-rescan" id="grRescan" hidden><span aria-hidden="true">&#8635;</span> <span>Rescan</span></button></div>' +
       '<div class="gr-result">' +
       '<div class="gr-lbl">Glyph address <span class="gr-help">tap a glyph to change it</span></div>' +
       '<div class="gr-slots" id="grSlots"></div>' +
@@ -529,10 +530,17 @@
       '<button type="button" class="gr-padbtn" id="grPadBtn" aria-expanded="false" aria-controls="grPad"><span aria-hidden="true">&#9000;</span> <span>Tap the glyphs yourself</span> <span class="gr-caret" aria-hidden="true">&#9662;</span></button><div class="gr-pad" id="grPad" hidden></div>' +
       '</div>' +
       '<div class="gr-live" id="grLive" hidden><div class="gr-live-box"><video id="grVideo" playsinline muted autoplay></video>' +
-      '<div class="gr-live-guide" id="grGuide"><i></i><i></i><i></i><i></i></div>' +
+      '<div class="gr-live-guide" id="grGuide"><i></i><i></i><i></i><i></i>' +
+      '<div class="gr-count" id="grCount" translate="no" hidden></div>' +
+      '<div class="gr-steady" id="grSteady"><b><s id="grSteadyBar"></s></b><span id="grSteadyT">Hold still</span></div></div>' +
       '<div class="gr-live-top">Line up one glyph in each box<small>Turn your phone sideways for a bigger view</small></div>' +
       '<div class="gr-live-status" id="grLiveStatus">Starting camera…</div>' +
-      '<button type="button" class="gr-btn" id="grLiveX">Cancel</button></div></div>' +
+      '<div class="gr-zoom" id="grZoomRow"><span aria-hidden="true">&minus;</span><input type="range" id="grZoom" min="1" max="3" step="0.1" value="1" aria-label="Zoom"><span aria-hidden="true">+</span><b id="grZoomV" translate="no">1.0&times;</b></div>' +
+      '<div class="gr-live-bar"><div class="gr-live-side">' +
+      '<button type="button" class="gr-lbtn" id="grTorch" aria-pressed="false" hidden><span aria-hidden="true">&#128294;</span><span>Torch</span></button>' +
+      '<button type="button" class="gr-lbtn" id="grTimer" aria-pressed="false"><span aria-hidden="true">&#9201;</span><span>3s timer</span></button></div>' +
+      '<button type="button" class="gr-shutter" id="grShutter" aria-label="Snap" title="Snap"><i></i></button>' +
+      '<div class="gr-live-side gr-right"><button type="button" class="gr-lbtn" id="grLiveX"><span aria-hidden="true">&times;</span><span>Cancel</span></button></div></div></div></div>' +
       '<div class="gr-pick" id="grPick" hidden><div class="gr-pick-box"><div class="gr-lbl">Pick the right glyph</div><div class="gr-pick-grid" id="grPickGrid"></div><button class="gr-btn" type="button" id="grPickX">Cancel</button></div></div>';
     (glyphMode || enMode).parentNode.insertBefore(box, (glyphMode || enMode).nextSibling);
 
@@ -694,7 +702,7 @@
       var hex = hexEl.value; if (!/^[0-9A-F]{12}$/.test(hex)) return note("Fill all 12 glyphs first.");
       (navigator.clipboard ? navigator.clipboard.writeText(hex) : Promise.reject()).then(function () { note("Copied " + hex); }, function () { note(hex); });
     });
-    box.querySelector("#grClear").addEventListener("click", function () { addr = []; conf = []; galGen++; stage.hidden = true; render(); });
+    box.querySelector("#grClear").addEventListener("click", function () { addr = []; conf = []; galGen++; stage.hidden = true; box.querySelector("#grRescan").hidden = true; render(); });
     [mapA, hubA].forEach(function (a) { a.addEventListener("click", function (e) { if (a.classList.contains("off")) { e.preventDefault(); note("Fill all 12 glyphs first."); } }); });
 
     // galaxies
@@ -719,6 +727,7 @@
     var cur = null, drag = null;
     function handleFile(file) {
       if (!file || !/^image\//.test(file.type)) return;
+      rescanB.hidden = true;
       var url = URL.createObjectURL(file), im = new Image();
       im.onload = function () { URL.revokeObjectURL(url); runRead(im); };
       im.src = url;
@@ -798,30 +807,35 @@
     var file = box.querySelector("#grFile"), drop = box.querySelector("#grDrop"), cam = box.querySelector("#grCamFile");
     file.addEventListener("change", function () { handleFile(file.files[0]); file.value = ""; });
     cam.addEventListener("change", function () { handleFile(cam.files[0]); cam.value = ""; });
-    /* ---- live camera scan (like a bank card scanner): reads frames until the same 12 glyphs
-       agree over several frames, then fills them in. Runs on the device; no frames leave it. ---- */
+    /* ---- live camera scan (2026-10-27, Tony: shaky hands couldn't hold it still long enough).
+       Like a bank card scanner: the moment the boxes turn green it snaps a quick burst of frames,
+       keeps the sharpest and reads those, so it only needs a steady blink. Also a shutter button
+       (with an optional 3 s timer so the tap doesn't shake it), torch, zoom and a steadiness meter.
+       Every frame stays in memory on the device: nothing is saved to the gallery or uploaded. ---- */
     var live = box.querySelector("#grLive"), video = box.querySelector("#grVideo"), guide = box.querySelector("#grGuide"), lst = box.querySelector("#grLiveStatus");
-    var stream = null, scanning = false, votes = [], misses = 0, grab = document.createElement("canvas");
-    // needs 4+ good frames, and in every box at least 3 in 4 of them agreeing on the glyph
-    function tally(vs) {
-      if (vs.length < 4) return null;
+    var stBar = box.querySelector("#grSteadyBar"), stT = box.querySelector("#grSteadyT"), stWrap = box.querySelector("#grSteady"), countEl = box.querySelector("#grCount");
+    var zoomEl = box.querySelector("#grZoom"), zoomV = box.querySelector("#grZoomV"), torchB = box.querySelector("#grTorch"), timerB = box.querySelector("#grTimer");
+    var shutB = box.querySelector("#grShutter"), rescanB = box.querySelector("#grRescan");
+    var stream = null, track = null, scanning = false, busy = false, votes = [], misses = 0, grab = document.createElement("canvas");
+    var hwZoom = false, torchOn = false, timerOn = false, countT = null, meterT = null, prevSmall = null, maxSharp = 0;
+    try { timerOn = localStorage.getItem("nms_translator_timer") === "1"; } catch (e) {}
+    function setTimerBtn() { timerB.setAttribute("aria-pressed", timerOn ? "true" : "false"); timerB.classList.toggle("on", timerOn); }
+    setTimerBtn();
+    // each box votes over the camera frames; needs n+ frames and frac of them agreeing in every box
+    function tally(vs, n, frac) {
+      if (vs.length < n) return null;
       var out = { glyphs: [], boxes: vs[vs.length - 1].boxes, score: 0 };
       for (var i = 0; i < 12; i++) {
         var cnt = {}, sum = {}, best = -1;
         vs.forEach(function (v) { var q = v.glyphs[i]; cnt[q.k] = (cnt[q.k] || 0) + 1; sum[q.k] = (sum[q.k] || 0) + q.conf; });
         Object.keys(cnt).forEach(function (k) { if (best < 0 || cnt[k] > cnt[best] || (cnt[k] === cnt[best] && sum[k] > sum[best])) best = +k; });
-        if (cnt[best] < Math.ceil(vs.length * 0.75)) return null;
+        if (cnt[best] < Math.ceil(vs.length * frac)) return null;
         out.glyphs.push({ k: best, conf: (sum[best] / cnt[best]) * (cnt[best] / vs.length) });
       }
       return out;
     }
-    // the whole frame, kept for reading the galaxy name (it sits outside the glyph boxes)
-    function lastFrame() { var c = document.createElement("canvas"); c.width = video.videoWidth; c.height = video.videoHeight; try { c.getContext("2d").drawImage(video, 0, 0); } catch (e) {} return c; }
-    function stopScan() { scanning = false; if (stream) stream.getTracks().forEach(function (t) { t.stop(); }); stream = null; live.hidden = true; }
-    function scanTick() {
-      if (!scanning) return;
-      if (!video.videoWidth) { setTimeout(scanTick, 200); return; }
-      // read the 12 boxes of the guide (plus a margin, in case the line-up is a little off)
+    // where the 12 guide boxes are in the camera picture (the video is shown cropped to fill the screen)
+    function geom() {
       var vw = video.videoWidth, vh = video.videoHeight, vr = video.getBoundingClientRect(), gr = guide.getBoundingClientRect();
       var sc = Math.max(vr.width / vw, vr.height / vh), ox = vr.left + (vr.width - vw * sc) / 2, oy = vr.top + (vr.height - vh * sc) / 2;
       var G = [(gr.left - ox) / sc, (gr.top - oy) / sc, (gr.right - ox) / sc, (gr.bottom - oy) / sc];
@@ -829,45 +843,180 @@
       var g = [Math.max(0, G[0] - gw * 0.04), Math.max(0, G[1] - gh * 1.2), 0, 0];
       g[2] = Math.min(vw, G[2] + gw * 0.04) - g[0]; g[3] = Math.min(vh, G[3] + gh * 1.2) - g[1];
       if (!(g[2] > 20 && g[3] > 8)) g = [0, 0, vw, vh];
-      var k = Math.min(1400 / g[2], Math.max(1, 90 / gh));
-      grab.width = Math.round(g[2] * k); grab.height = Math.round(g[3] * k);
-      var gx = grab.getContext("2d"); gx.imageSmoothingQuality = "high"; gx.drawImage(video, g[0], g[1], g[2], g[3], 0, 0, grab.width, grab.height);
-      var cells = [(G[0] - g[0]) * k, (G[2] - g[0]) * k, (G[1] - g[1]) * k, (G[3] - g[1]) * k];
-      var r = null; try { r = readFromImageData(gx.getImageData(0, 0, grab.width, grab.height), { cells: cells }); } catch (e) {}
-      if (r && r.score >= 0.8 && r.glyphs.every(function (q) { return q.s >= 0.6; })) {
-        // each box votes over the last few camera frames, so one blurry frame can't swap a glyph
+      var k = Math.min(1400 / g[2], Math.max(1, 90 / Math.max(1, gh)));
+      return { G: G, g: g, k: k, cells: [(G[0] - g[0]) * k, (G[2] - g[0]) * k, (G[1] - g[1]) * k, (G[3] - g[1]) * k] };
+    }
+    // one frame: the guide area at reading size (+ optionally the whole picture, smaller, for the galaxy name)
+    function grabFrame(q, full) {
+      var c = document.createElement("canvas"); c.width = Math.round(q.g[2] * q.k); c.height = Math.round(q.g[3] * q.k);
+      var cx = c.getContext("2d"); cx.imageSmoothingQuality = "high"; cx.drawImage(video, q.g[0], q.g[1], q.g[2], q.g[3], 0, 0, c.width, c.height);
+      var f = { c: c, q: q, sharp: sharpOf(c, q.cells) };
+      if (full) f.full = lastFrame(1400);
+      return f;
+    }
+    // sharpness of the glyph row: average edge strength (a shaken, blurred frame scores low)
+    function sharpOf(c, cells) {
+      var x0 = Math.max(0, cells[0]), y0 = Math.max(0, cells[2]), w0 = Math.max(4, Math.min(c.width, cells[1]) - x0), h0 = Math.max(4, Math.min(c.height, cells[3]) - y0);
+      var sw = 320, sh = Math.max(8, Math.round(h0 * sw / w0)), t = document.createElement("canvas"); t.width = sw; t.height = sh;
+      var tx = t.getContext("2d"); tx.drawImage(c, x0, y0, w0, h0, 0, 0, sw, sh);
+      return lapMean(tx.getImageData(0, 0, sw, sh).data, sw, sh).v;
+    }
+    function lapMean(d, w, h) {
+      var L = new Float32Array(w * h), i, j, s = 0, n = 0;
+      for (i = 0, j = 0; i < L.length; i++, j += 4) L[i] = 0.299 * d[j] + 0.587 * d[j + 1] + 0.114 * d[j + 2];
+      for (var y = 1; y < h - 1; y++) for (var x = 1; x < w - 1; x++) { i = y * w + x; s += Math.abs(4 * L[i] - L[i - 1] - L[i + 1] - L[i - w] - L[i + w]); n++; }
+      return { v: n ? s / n : 0, L: L };
+    }
+    // read a frame inside the 12 boxes; null unless it is a clean read
+    function readFrame(f, minScore, minGlyph) {
+      var r = null;
+      try { r = readFromImageData(f.c.getContext("2d").getImageData(0, 0, f.c.width, f.c.height), { cells: f.q.cells }); } catch (e) {}
+      return r && r.score >= minScore && r.glyphs.every(function (q) { return q.s >= minGlyph; }) ? r : null;
+    }
+    // the whole frame (kept in memory only), for the galaxy name and for a manual snap that needs a drag-box
+    function lastFrame(maxW) {
+      var vw = video.videoWidth, vh = video.videoHeight, s = maxW ? Math.min(1, maxW / vw) : 1;
+      var c = document.createElement("canvas"); c.width = Math.round(vw * s); c.height = Math.round(vh * s);
+      try { c.getContext("2d").drawImage(video, 0, 0, c.width, c.height); } catch (e) {}
+      c.vs = s; return c;
+    }
+    // a quick burst of frames, sharpest first
+    function burst(n, gap) {
+      var out = [], q = geom();
+      return new Promise(function (res) {
+        (function one() {
+          if (!scanning) return res(out);
+          out.push(grabFrame(q, !out.length));
+          if (out.length >= n) { out.sort(function (a, b) { return b.sharp - a.sharp; }); res(out); }
+          else setTimeout(one, gap);
+        })();
+      });
+    }
+    // snap: burst, read the 3 sharpest, they (and the frame that turned the boxes green) vote
+    function snapRead(seed) {
+      return burst(8, 60).then(function (fr) {
+        var full = fr.length ? (fr.filter(function (f) { return f.full; })[0] || {}).full : null;
+        var reads = seed ? [seed] : [], best = null;
+        fr.slice(0, 3).forEach(function (f) { var r = readFrame(f, 0.72, 0.55); if (r) { reads.push(r); if (!best) best = { f: f, r: r }; } });
+        var vote = reads.length >= 2 ? tally(reads, 2, 0.6) : null;
+        if (!vote && !seed && reads.length === 1 && reads[0].score >= 0.8) vote = reads[0];
+        return { r: vote, f: best ? best.f : fr[0], full: full };
+      });
+    }
+    function finish(r, f, full) {
+      var q = f.q; stopScan(); try { navigator.vibrate && navigator.vibrate(60); } catch (e) {}
+      addr = r.glyphs.map(function (g) { return g.k; }); conf = r.glyphs.map(function (g) { return g.conf; }); render();
+      cur = { im: f.c, src: { canvas: f.c } }; stage.hidden = false; rescanB.hidden = false; draw(r, [0, 0], 1);
+      var uns = r.glyphs.filter(function (g) { return g.conf < 0.5; }).length;
+      note(uns ? "Scanned — check the " + uns + " amber glyph" + (uns > 1 ? "s" : "") + " against the screen." : "Scanned! Check the glyphs match, then open it on the map.");
+      box.querySelector("#grSlots").scrollIntoView({ block: "center", behavior: "smooth" });
+      if (full) { var s2 = full.vs || 1; galaxyFrom(full, [q.G[0] * s2, q.G[1] * s2, q.G[2] * s2, q.G[3] * s2]); }
+    }
+    function stopScan() {
+      scanning = false; busy = false;
+      if (countT) { clearInterval(countT); countT = null; } countEl.hidden = true;
+      if (meterT) { clearInterval(meterT); meterT = null; }
+      if (stream) stream.getTracks().forEach(function (t) { t.stop(); });
+      stream = null; track = null; torchOn = false; live.hidden = true; video.style.transform = "";
+    }
+    function scanTick() {
+      if (!scanning) return;
+      if (!video.videoWidth || busy) { setTimeout(scanTick, 150); return; }
+      var f = grabFrame(geom(), false), r = readFrame(f, 0.8, 0.6);
+      if (r) {
+        // boxes go green: snap a burst straight away instead of waiting for a long steady hold
         misses = 0; votes.push(r); if (votes.length > 6) votes.shift();
-        var vote = tally(votes);
-        lst.textContent = vote ? "Got it!" : "Reading\u2026 hold steady";
-        guide.classList.add("lock");
-        if (vote) {
-          r = vote;
-          var shot = document.createElement("canvas"); shot.width = grab.width; shot.height = grab.height; shot.getContext("2d").drawImage(grab, 0, 0);
-          var frame = lastFrame(); stopScan(); try { navigator.vibrate && navigator.vibrate(60); } catch (e) {}
-          addr = r.glyphs.map(function (q) { return q.k; }); conf = r.glyphs.map(function (q) { return q.conf; }); render();
-          cur = { im: shot, src: { canvas: shot } }; stage.hidden = false; draw(r, [0, 0], 1);
-          var uns = r.glyphs.filter(function (q) { return q.conf < 0.5; }).length;
-          note(uns ? "Scanned \u2014 check the " + uns + " amber glyph" + (uns > 1 ? "s" : "") + " against the screen." : "Scanned! Check the glyphs match, then open it on the map.");
-          box.querySelector("#grSlots").scrollIntoView({ block: "center", behavior: "smooth" });
-          galaxyFrom(frame, [G[0], G[1], G[2], G[3]]);
-          return;
-        }
-      } else {
-        if (++misses >= 4) votes = [];
-        if (!votes.length) { guide.classList.remove("lock"); lst.textContent = "Looking for 12 glyphs\u2026 one in each box, keep it straight"; }
+        guide.classList.add("lock"); lst.textContent = "Got it — snapping…";
+        var vote = tally(votes, 3, 0.6);
+        if (vote) { var full = lastFrame(1400); return finish(vote, f, full); }
+        busy = true;
+        snapRead(r).then(function (res) {
+          busy = false; if (!scanning) return;
+          if (res.r) return finish(res.r, res.f, res.full);
+          lst.textContent = "Reading… hold steady"; setTimeout(scanTick, 100);
+        });
+        return;
       }
+      // a wobble no longer throws away what was already read; only a long run of misses does
+      if (++misses >= 12) votes = [];
+      if (!votes.length) { guide.classList.remove("lock"); lst.textContent = "Looking for 12 glyphs… one in each box, keep it straight"; }
       setTimeout(scanTick, 120);
     }
-    box.querySelector("#grScan").addEventListener("click", function () {
+    // shutter: snap now (or after the 3 s timer); if it still can't read the row, the sharpest frame
+    // opens below so the traveller can drag a box round the glyphs, like a screenshot
+    function shutter() {
+      if (!scanning || busy) return;
+      busy = true; lst.textContent = "Snapping…"; shutB.classList.add("go");
+      setTimeout(function () { shutB.classList.remove("go"); }, 300);
+      snapRead(null).then(function (res) {
+        busy = false; if (!scanning) return;
+        if (res.r) return finish(res.r, res.f, res.full);
+        var pic = res.full || res.f.c; stopScan(); rescanB.hidden = false; runRead(pic);
+      });
+    }
+    shutB.addEventListener("click", function () {
+      if (!scanning || busy) return;
+      if (countT) { clearInterval(countT); countT = null; countEl.hidden = true; return; } // tap again = cancel the timer
+      if (!timerOn) return shutter();
+      var n = 3; countEl.textContent = n; countEl.hidden = false; try { navigator.vibrate && navigator.vibrate(20); } catch (e) {}
+      countT = setInterval(function () {
+        if (--n > 0) { countEl.textContent = n; return; }
+        clearInterval(countT); countT = null; countEl.hidden = true; shutter();
+      }, 1000);
+    });
+    timerB.addEventListener("click", function () { timerOn = !timerOn; setTimerBtn(); try { localStorage.setItem("nms_translator_timer", timerOn ? "1" : "0"); } catch (e) {} });
+    torchB.addEventListener("click", function () {
+      if (!track) return; var want = !torchOn;
+      track.applyConstraints({ advanced: [{ torch: want }] }).then(function () { torchOn = want; torchB.setAttribute("aria-pressed", want ? "true" : "false"); torchB.classList.toggle("on", want); }).catch(function () {});
+    });
+    // zoom: the camera's own zoom when the phone offers it, otherwise the picture is enlarged on screen
+    function setZoom(v) {
+      zoomV.textContent = (+v).toFixed(1) + "×";
+      if (hwZoom && track) track.applyConstraints({ advanced: [{ zoom: +v }] }).catch(function () {});
+      else video.style.transform = +v > 1 ? "scale(" + v + ")" : "";
+    }
+    zoomEl.addEventListener("input", function () { setZoom(zoomEl.value); });
+    // steadiness meter: how sharp the glyph row is right now and how much the picture moved since last time
+    function meterTick() {
+      if (!scanning || !video.videoWidth) return;
+      var q = geom(), w = 160, gw = q.G[2] - q.G[0], gh = Math.max(4, q.G[3] - q.G[1]), h = Math.max(8, Math.round(gh * w / Math.max(1, gw)));
+      var t = meterTick.c || (meterTick.c = document.createElement("canvas")); t.width = w; t.height = h;
+      var tx = t.getContext("2d"); try { tx.drawImage(video, q.G[0], q.G[1], gw, gh, 0, 0, w, h); } catch (e) { return; }
+      var m = lapMean(tx.getImageData(0, 0, w, h).data, w, h), mv = 0;
+      if (prevSmall && prevSmall.length === m.L.length) { for (var i = 0; i < m.L.length; i++) mv += Math.abs(m.L[i] - prevSmall[i]); mv /= m.L.length; }
+      prevSmall = m.L; maxSharp = Math.max(maxSharp * 0.995, m.v);
+      var still = Math.max(0, Math.min(1, 1 - (mv - 2) / 14)), sharp = maxSharp ? Math.max(0, Math.min(1, m.v / (maxSharp * 0.8))) : 0;
+      var lvl = still * sharp, flat = maxSharp < 3; // nothing in the boxes yet: no verdict
+      if (flat) lvl = 0;
+      stBar.style.width = Math.round(lvl * 100) + "%";
+      stWrap.className = "gr-steady " + (flat ? "" : lvl > 0.7 ? "ok" : lvl > 0.4 ? "mid" : "low");
+      var lab = flat ? "Hold still" : lvl > 0.7 ? "Steady" : lvl > 0.4 ? "Hold still" : "Too shaky — rest your elbows on something";
+      if (lab !== meterTick.lab) { meterTick.lab = lab; stT.textContent = window.NMS_T ? window.NMS_T(lab) : lab; }
+    }
+    function startScan() {
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { cam.click(); return; }
-      live.hidden = false; lst.textContent = "Starting camera\u2026"; votes = []; misses = 0;
+      // the overlay sits on <body> so nothing on the page (tour prompt, Calm switch) can cover the camera
+      if (live.parentNode !== document.body) document.body.appendChild(live);
+      live.hidden = false; lst.textContent = "Starting camera…"; votes = []; misses = 0; busy = false; prevSmall = null; maxSharp = 0;
+      hwZoom = false; zoomEl.min = 1; zoomEl.max = 3; zoomEl.step = 0.1; zoomEl.value = 1; setZoom(1);
+      torchB.hidden = true; torchB.classList.remove("on"); torchB.setAttribute("aria-pressed", "false");
+      guide.classList.remove("lock"); stBar.style.width = "0%"; stWrap.className = "gr-steady low"; meterTick.lab = ""; stT.textContent = window.NMS_T ? window.NMS_T("Hold still") : "Hold still";
       loadTemplates(BASE).then(function () {
         return navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: "environment" }, width: { ideal: 1920 }, height: { ideal: 1080 } }, audio: false });
       }).then(function (st) {
-        stream = st; video.srcObject = st; scanning = true; return video.play();
-      }).then(function () { lst.textContent = "Looking for 12 glyphs\u2026"; setTimeout(scanTick, 300); })
-        .catch(function () { stopScan(); note("Couldn\u2019t open the camera \u2014 allow camera access, or take a single photo instead."); stage.hidden = false; cam.click(); });
-    });
+        stream = st; track = st.getVideoTracks()[0] || null;
+        var caps = {}; try { caps = track && track.getCapabilities ? track.getCapabilities() : {}; } catch (e) {}
+        if (caps.torch) torchB.hidden = false;
+        if (caps.zoom && caps.zoom.max > caps.zoom.min) {
+          hwZoom = true; zoomEl.min = caps.zoom.min; zoomEl.max = Math.min(caps.zoom.max, Math.max(caps.zoom.min * 4, 4)); zoomEl.step = caps.zoom.step || 0.1;
+          zoomEl.value = caps.zoom.min; zoomV.textContent = (+caps.zoom.min).toFixed(1) + "×";
+        }
+        video.srcObject = st; scanning = true; return video.play();
+      }).then(function () { lst.textContent = "Looking for 12 glyphs…"; setTimeout(scanTick, 300); meterT = setInterval(meterTick, 150); })
+        .catch(function () { stopScan(); note("Couldn’t open the camera — allow camera access, or take a single photo instead."); stage.hidden = false; cam.click(); });
+    }
+    box.querySelector("#grScan").addEventListener("click", startScan);
+    rescanB.addEventListener("click", startScan);
     box.querySelector("#grLiveX").addEventListener("click", stopScan);
     document.addEventListener("visibilitychange", function () { if (document.hidden && scanning) stopScan(); });
     drop.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); file.click(); } });

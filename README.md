@@ -17,7 +17,7 @@ Part of the [No Man's Sky Hub](https://nomansskyhub.app) family of fan tools.
 
   <img src="screenshots/08-update-bar.jpg" alt="The update bar at the bottom of the page on a phone: New version ready, tap to update, with a close button" width="390">
 
-- **Portal glyph reader.** Drop, paste or pick a screenshot showing the 12 portal glyphs in a row (photo mode, a discovery page, a Reddit post), or tap **Scan with camera** and point your phone at the screen: like a bank-card scanner it reads the live picture and fills the glyphs in by itself once every box agrees over several camera frames. The camera view shows 12 boxes: line up one glyph in each box and every box is read on its own, so glyphs that touch are kept apart. If the picture also shows the galaxy (for example "GALAXY 1. Euclid" on the Map's keypad), the galaxy is read and set too. The game's own boxed glyph bar works too. It finds the row, matches each glyph against the 16 portal glyph shapes, and marks any it isn't sure of in amber so you can tap to fix them. Then open the address on the [Galactic Map](https://map.nomansskyhub.app) or dial it on the Hub. Everything runs in your browser; the image is never uploaded (reading the galaxy name downloads a small text-reading engine the first time, but the picture stays on your device). If it can't find the row, drag a box around the glyphs. You can also tap the glyphs in yourself: the keypad is folded behind **Tap the glyphs yourself** (tapping an empty glyph box opens it), and closes again once all 12 are in. You can also type or paste the hex address straight into the **Hex** box (handy for fixing a glyph the camera misread): each digit updates its glyph box, and a `?` leaves one empty.
+- **Portal glyph reader.** Drop, paste or pick a screenshot showing the 12 portal glyphs in a row (photo mode, a discovery page, a Reddit post), or tap **Scan with camera** and point your phone at the screen: like a bank-card scanner, the moment the boxes turn green it snaps a quick burst of frames, keeps the sharpest and reads those, so you only need to hold still for a blink. The camera view shows 12 boxes: line up one glyph in each box and every box is read on its own, so glyphs that touch are kept apart. If the picture also shows the galaxy (for example "GALAXY 1. Euclid" on the Map's keypad), the galaxy is read and set too. The game's own boxed glyph bar works too. It finds the row, matches each glyph against the 16 portal glyph shapes, and marks any it isn't sure of in amber so you can tap to fix them. Then open the address on the [Galactic Map](https://map.nomansskyhub.app) or dial it on the Hub. Everything runs in your browser; the image is never uploaded (reading the galaxy name downloads a small text-reading engine the first time, but the picture stays on your device). If it can't find the row, drag a box around the glyphs. You can also tap the glyphs in yourself: the keypad is folded behind **Tap the glyphs yourself** (tapping an empty glyph box opens it), and closes again once all 12 are in. You can also type or paste the hex address straight into the **Hex** box (handy for fixing a glyph the camera misread): each digit updates its glyph box, and a `?` leaves one empty.
 - **Planet tile.** Once 12 glyphs are in, a tile under the hex and galaxy shows the planet that address lands on: its picture, real name, type, weather, sentinels, fauna and flora counts, the system it's in, and the address as glyphs. The data comes from [NMS Almanac](https://nmsalmanac.com), looked up through the Galactic Map's server so the Almanac key never reaches your browser. If a traveller has edited that planet on the Galactic Map, their edit is shown instead. Under it, **🖼 Planet card** gives you the Almanac's own picture of that planet (disc, name, facts, galaxy and glyphs): on a phone it opens the share sheet so you can send it to a chat, elsewhere it opens the picture to save.
 
   ![Planet tile under the hex and galaxy: Horimalas Beta, Overgrown Planet, Lethal Humidity Outbreaks, sentinels, fauna and flora, the address as glyphs, then the Open on Galactic Map button and the folded keypad](screenshots/06-planet-tile.jpg)
@@ -30,6 +30,21 @@ Part of the [No Man's Sky Hub](https://nomansskyhub.app) family of fan tools.
 ![Portal glyph reader: a phone photo of the Galactic Map keypad read as 101BE646D310, galaxy Calypso](screenshots/03-portal-glyph-reader.jpg)
 
 <img src="screenshots/04-camera-scan.jpg" alt="Scan with camera: line up one glyph in each of the 12 boxes" width="300">
+
+### Camera snap for shaky hands
+
+Scanning used to need the phone held still for a second or more. Now it works like a card scanner:
+
+- **Auto snap.** As soon as the 12 boxes turn green, it grabs about 8 frames in half a second, keeps the 3 sharpest and lets them vote, then freezes the picture and fills in the glyphs.
+- **Shutter button** (the big round one). Snap whenever you like. If it can't line the row up, the sharpest frame opens below so you can drag a box round the glyphs, like with a screenshot.
+- **3 s timer.** Tap the shutter and it snaps 3 seconds later, so the tap itself doesn't shake the picture. Tap again to cancel. Your choice is remembered.
+- **Steadiness meter** under the boxes: red, amber, green. It goes green when the picture is sharp and still.
+- **Zoom** slider (the camera's own zoom where the phone has one) and a **Torch** button on phones that have a light.
+- **↻ Rescan** under the frozen picture reopens the camera.
+
+Nothing is ever saved to your gallery or uploaded: the snapped frames live only in the page's memory and are gone when you leave it.
+
+<img src="screenshots/09-camera-snap.jpg" alt="Camera view with the steadiness meter, zoom slider, torch, 3 s timer, shutter and cancel buttons" width="560">
 
 <img src="screenshots/05-languages.jpg" alt="The translator on a phone in English (left) and Français (right)" width="560">
 
