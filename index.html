@@ -6,13 +6,14 @@
 <title>NMS Alphabet Translator &amp; Portal Glyph Reader — No Man's Sky</title>
 <script src="/calm.js?v=1"></script>
 <script src="/lang.js?v=2"></script>
-<script src="/nms-update.js?v=1" defer></script>
-<meta name="description" content="Free No Man's Sky alphabet translator. Type English and see it in the NMS font, or decode NMS text back to English. Plus a portal glyph reader: drop a screenshot of 12 portal glyphs and open the address on the Galactic Map.">
+<script src="/nms-update.js?v=2" defer></script>
+<meta name="robots" content="max-image-preview:large">
+<meta name="description" content="Free No Man's Sky alphabet translator: write English in the NMS font or decode it back, and read portal glyphs from a screenshot straight onto the Galactic Map.">
 <link rel="canonical" href="https://translator.nomansskyhub.app/">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://translator.nomansskyhub.app/">
 <meta property="og:title" content="NMS Alphabet Translator — No Man's Sky Hub">
-<meta property="og:description" content="Free No Man's Sky alphabet translator. Type English and see it in the NMS font, or decode NMS text back to English. Plus a portal glyph reader: drop a screenshot of 12 portal glyphs and open the address on the Galactic Map.">
+<meta property="og:description" content="Free No Man's Sky alphabet translator: write English in the NMS font or decode it back, and read portal glyphs from a screenshot straight onto the Galactic Map.">
 <meta property="og:image" content="https://translator.nomansskyhub.app/og-image.jpg">
 <meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
@@ -158,6 +159,77 @@
   .alpha-cell.num .glyph{color:var(--gold)}
   .tip{text-align:center;font-size:11.5px;color:var(--cyan-dim);margin-top:14px}
 </style><link rel="stylesheet" href="hub-skin.css"><link rel="stylesheet" href="glyph-reader.css?v=20261027">
+<style>
+  /* FAQ fold (2026-10-27): closed by default; text is in the page so search engines read it */
+  .chart.faq{margin-top:18px}
+  .chart.faq>summary{list-style:none}.chart.faq>summary::-webkit-details-marker{display:none}
+  .chart.faq[open]{border-color:var(--cyan)}
+  .chart.faq[open] .arr{transform:rotate(180deg)}
+  .faq-body{padding:0 14px 10px}
+  .faq-q{border-top:1px solid var(--border-soft)}
+  .faq-q summary{cursor:pointer;padding:11px 0;color:var(--white);font-size:13.5px;list-style:none;display:flex;gap:8px}
+  .faq-q summary::-webkit-details-marker{display:none}
+  .faq-q summary::before{content:"\25B8";color:var(--cyan);transition:transform .25s;display:inline-block;flex:none;width:10px;line-height:1.4}
+  .faq-q[open] summary::before{transform:rotate(90deg)}
+  .faq-q p{margin:0 0 12px 18px;color:var(--text-dim);font-size:13px;line-height:1.55}
+  @media (prefers-reduced-motion:reduce){.faq-q summary::before{transition:none}}
+</style>
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@type": "FAQPage",
+ "mainEntity": [
+  {
+   "@type": "Question",
+   "name": "What is the No Man's Sky alphabet?",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "It's the blocky alien lettering you see on signs, menus and loading screens in No Man's Sky. Every English letter A–Z and digit 0–9 has its own shape, so any word can be written in it."
+   }
+  },
+  {
+   "@type": "Question",
+   "name": "How do I write English in the NMS font?",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "Type in the Live Translator box. Your text appears in the NMS font as you type, and Copy puts it on your clipboard for Discord, Reddit or a base sign."
+   }
+  },
+  {
+   "@type": "Question",
+   "name": "How do I decode NMS text I saw in the game?",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "Switch to NMS Font → Text and tap the tile that matches each shape. The English appears underneath, letter by letter."
+   }
+  },
+  {
+   "@type": "Question",
+   "name": "How do I read portal glyphs from a screenshot?",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "Open the Portal glyphs tab and choose a screenshot, or use Scan with camera. You get the 12-digit hex address, the planet from the NMS Almanac and a button to open it on the Galactic Map."
+   }
+  },
+  {
+   "@type": "Question",
+   "name": "Can it translate Gek, Korvax or Vy'keen?",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "No. Those are languages you learn word by word in the game. This tool translates the NMS alphabet font, which spells English letters."
+   }
+  },
+  {
+   "@type": "Question",
+   "name": "Is it free?",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "Yes. No account and no sign-up, and it installs as an app on your phone or computer."
+   }
+  }
+ ]
+}
+</script>
 </head>
 <body>
 <div class="page">
@@ -238,6 +310,11 @@
     </div>
     <div class="tip" id="tipGlyph">Spotted this font in-game? Match each shape to a tile below to decode it.</div>
   </div>
+
+  <details class="chart faq" id="faq">
+    <summary class="chart-head"><span class="pip"></span><span class="kick" id="kickFaq">Help</span><span class="ttl" id="ttlFaq">How it works &middot; FAQ</span><span class="arr">&#9662;</span></summary>
+    <div class="faq-body"><details class="faq-q"><summary>What is the No Man's Sky alphabet?</summary><p>It's the blocky alien lettering you see on signs, menus and loading screens in No Man's Sky. Every English letter A–Z and digit 0–9 has its own shape, so any word can be written in it.</p></details><details class="faq-q"><summary>How do I write English in the NMS font?</summary><p>Type in the Live Translator box. Your text appears in the NMS font as you type, and Copy puts it on your clipboard for Discord, Reddit or a base sign.</p></details><details class="faq-q"><summary>How do I decode NMS text I saw in the game?</summary><p>Switch to NMS Font → Text and tap the tile that matches each shape. The English appears underneath, letter by letter.</p></details><details class="faq-q"><summary>How do I read portal glyphs from a screenshot?</summary><p>Open the Portal glyphs tab and choose a screenshot, or use Scan with camera. You get the 12-digit hex address, the planet from the NMS Almanac and a button to open it on the Galactic Map.</p></details><details class="faq-q"><summary>Can it translate Gek, Korvax or Vy'keen?</summary><p>No. Those are languages you learn word by word in the game. This tool translates the NMS alphabet font, which spells English letters.</p></details><details class="faq-q"><summary>Is it free?</summary><p>Yes. No account and no sign-up, and it installs as an app on your phone or computer.</p></details></div>
+  </details>
 
   <footer style="margin-top:26px;padding-top:14px;border-top:1px solid var(--border-soft);text-align:center">
     <div translate="no" style="font-family:'Orbitron',monospace;font-size:10px;letter-spacing:1px;color:var(--text-dim)">Built by elegra1965 &middot; Traveller T672B774 &middot; Friend code MGD8-C6PP-XKFGT</div>
