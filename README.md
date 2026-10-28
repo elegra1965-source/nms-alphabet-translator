@@ -70,6 +70,8 @@ Nothing is ever saved to your gallery or uploaded: the snapped frames live only 
 
 First-time visitors get a small **New here? ▶ Take the tour / Dive in** box (shown once, never again). The tour dims the page and spotlights the three modes, the text box, your NMS text, portal glyphs, the alphabet chart and the language picker, one step at a time with Back / Next / Skip. Replay it any time from the **▷ TOUR** button. The phone's Back button closes it, and it's translated into every language the site offers. Shared `nms-tour.js`, the same file on every nomansskyhub.app site.
 
+**Back to top.** Once you scroll down, a teal ⇧ arrow appears in the bottom-right corner. Tap it to glide back to the top (instant with reduced motion). It's the same arrow on every No Man's Sky Hub site.
+
 <img src="screenshots/07-tour.jpg" alt="Left: the New here? Take the tour prompt. Right: tour step 2 of 6, Type here" width="560">
 
 ## How it's built
