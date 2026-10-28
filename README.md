@@ -8,7 +8,21 @@ Part of the [No Man's Sky Hub](https://nomansskyhub.app) family of fan tools.
 
 ![NMS Alphabet Translator home screen](screenshots/01-home.jpg)
 
+**Contents** — long sections are folded; tap to open.
+
+- [What it does](#what-it-does)
+- [New here? Take the tour](#new-here-take-the-tour)
+- [How it's built](#how-its-built)
+- [Credits](#credits)
+- [Using this code?](#using-this-code)
+- [Licence](#licence)
+
+<!-- folded -->
+
 ## What it does
+
+<details>
+<summary>▸ Tap to open</summary>
 
 - **Text to NMS font.** Type and see your words rendered live in the NMS alphabet, then copy them.
 - **NMS font to text.** Tap glyph tiles to build a word and read it back in English.
@@ -49,6 +63,8 @@ Nothing is ever saved to your gallery or uploaded: the snapped frames live only 
 <img src="screenshots/09-camera-snap.jpg" alt="Camera view with the steadiness meter, zoom slider, torch, 3 s timer, shutter and cancel buttons" width="560">
 
 <img src="screenshots/05-languages.jpg" alt="The translator on a phone in English (left) and Français (right)" width="560">
+
+</details>
 
 ## New here? Take the tour
 
