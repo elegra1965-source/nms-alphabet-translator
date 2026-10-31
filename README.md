@@ -64,6 +64,10 @@ Nothing is ever saved to your gallery or uploaded: the snapped frames live only 
 
 <img src="screenshots/05-languages.jpg" alt="The translator on a phone in English (left) and Français (right)" width="560">
 
+- **★ Reviews & feedback.** The REVIEWS & FEEDBACK button in the footer, above the sister links, opens the same pop-up as the Hub: leave a review (stars, and an "OK to show" switch), report a bug (your device type and browser are added so it can be fixed faster) or ask for something new. This site is ticked for you. Everything goes to elegra1965 through the Hub, and nothing shows on the site without his OK. In all 8 languages; the question at the top now reads "What's it about, traveller?".
+
+  <img src="screenshots/10-reviews-feedback.jpg" alt="The Reviews and feedback button in the footer and the pop-up it opens, on a phone" width="560">
+
 </details>
 
 ## New here? Take the tour
