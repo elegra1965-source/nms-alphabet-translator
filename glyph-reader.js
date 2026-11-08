@@ -506,7 +506,7 @@
     box.innerHTML =
       '<div class="gr-panel">' +
       '<div class="gr-head"><span class="gr-kick">// Portal glyph reader //</span><h2>Read a portal address from a screenshot</h2>' +
-      '<p>Drop, paste or pick a screenshot showing the 12 glyphs in a row &mdash; from the game&rsquo;s photo mode, a base or discovery page, or a Reddit post. It&rsquo;s read on your device; nothing is uploaded.</p></div>' +
+      '<p>Drop, paste or pick a screenshot showing the 12 glyphs in a row. From the game&rsquo;s photo mode, a base or discovery page, or a Reddit post. It&rsquo;s read on your device; nothing is uploaded.</p></div>' +
       '<div class="gr-pick-row"><label class="gr-drop" id="grDrop" tabindex="0"><input type="file" accept="image/*" id="grFile" hidden>' +
       '<span class="gr-drop-ic">&#9635;</span><span class="gr-drop-t">Choose a screenshot</span><span class="gr-drop-s">or drag it here &middot; or paste (Ctrl+V)</span></label>' +
       '<button type="button" class="gr-drop gr-cam" id="grScan"><span class="gr-drop-ic">&#9673;</span><span class="gr-drop-t">Scan with camera</span><span class="gr-drop-s">point at the screen, it reads by itself</span></button></div>' +
@@ -570,7 +570,7 @@
       var h = "";
       for (var i = 0; i < 12; i++) {
         var k = addr[i], c = conf[i];
-        h += '<button type="button" class="gr-slot' + (k == null ? ' empty' : '') + (c != null && c < 0.5 ? ' unsure' : '') + '" data-i="' + i + '" title="' + (k == null ? 'Empty' : NAMES[k] + ' (' + HEX[k] + ')' + (c != null && c < 0.5 ? ' &mdash; please check' : '')) + '">' + (k == null ? '<span>' + (i + 1) + '</span>' : glyphImg(k)) + '</button>';
+        h += '<button type="button" class="gr-slot' + (k == null ? ' empty' : '') + (c != null && c < 0.5 ? ' unsure' : '') + '" data-i="' + i + '" title="' + (k == null ? 'Empty' : NAMES[k] + ' (' + HEX[k] + ')' + (c != null && c < 0.5 ? ' · please check' : '')) + '">' + (k == null ? '<span>' + (i + 1) + '</span>' : glyphImg(k)) + '</button>';
       }
       slots.innerHTML = h;
       var full = addr.length === 12 && addr.every(function (k) { return k != null; });
@@ -612,7 +612,7 @@
         eds.forEach(function (x) { if (!eb && x && low(x.name) && low(x.name) === low(body.name)) eb = x; });
         if (!eb && eds[P - 1]) { var cand = eds[P - 1]; var clash = low(cand.name) && ((a.bodies || []).some(function (x) { return x !== body && low(x.name) === low(cand.name); })); if (!clash) eb = cand; }
         planetEl.textContent = "";
-        if (!a || !a.ok) { planetEl.appendChild(pEl("div", a && a.busy ? "NMS Almanac is busy right now — please try again later." : "Couldn't reach NMS Almanac right now. Try again later.", "gr-planet-wait")); return; }
+        if (!a || !a.ok) { planetEl.appendChild(pEl("div", a && a.busy ? "NMS Almanac is busy right now. Please try again later." : "Couldn't reach NMS Almanac right now. Try again later.", "gr-planet-wait")); return; }
         if (!a.found || !body) { planetEl.appendChild(pEl("div", "NMS Almanac has no planet at this address.", "gr-planet-wait")); return; }
         var name = eb && eb.name ? eb.name : body.name;
         var desc = eb && eb.biome ? eb.biome + (eb.subtype ? " (" + eb.subtype + ")" : "") : body.desc;
@@ -750,10 +750,10 @@
         if (r && r.score < 0.68) r = null;
         draw(r, off, cropK);
         if (!r || r.score < 0.75) {
-          note(r ? "Not sure about this one — drag a box around just the 12 glyphs to read them again, or fix glyphs by tapping them." : "Couldn’t find 12 glyphs in a row. Drag a box around them on the picture, or tap them in below.");
+          note(r ? "Not sure about this one. Drag a box around just the 12 glyphs to read them again, or fix glyphs by tapping them." : "Couldn’t find 12 glyphs in a row. Drag a box around them on the picture, or tap them in below.");
         } else {
           var unsure = r.glyphs.filter(function (g) { return g.conf < 0.5; }).length;
-          note(unsure ? "Read it — " + unsure + " glyph" + (unsure > 1 ? "s" : "") + " marked amber: please check " + (unsure > 1 ? "them" : "it") + " against your screenshot." : "Read it! Check the glyphs match, then open it on the map.");
+          note(unsure ? "Read it · " + unsure + " glyph" + (unsure > 1 ? "s" : "") + " marked amber: please check " + (unsure > 1 ? "them" : "it") + " against your screenshot." : "Read it! Check the glyphs match, then open it on the map.");
         }
         if (r) {
           addr = r.glyphs.map(function (g) { return g.k; }); conf = r.glyphs.map(function (g) { return g.conf; }); render();
@@ -908,7 +908,7 @@
       addr = r.glyphs.map(function (g) { return g.k; }); conf = r.glyphs.map(function (g) { return g.conf; }); render();
       cur = { im: f.c, src: { canvas: f.c } }; stage.hidden = false; rescanB.hidden = false; draw(r, [0, 0], 1);
       var uns = r.glyphs.filter(function (g) { return g.conf < 0.5; }).length;
-      note(uns ? "Scanned — check the " + uns + " amber glyph" + (uns > 1 ? "s" : "") + " against the screen." : "Scanned! Check the glyphs match, then open it on the map.");
+      note(uns ? "Scanned. Check the " + uns + " amber glyph" + (uns > 1 ? "s" : "") + " against the screen." : "Scanned! Check the glyphs match, then open it on the map.");
       box.querySelector("#grSlots").scrollIntoView({ block: "center", behavior: "smooth" });
       if (full) { var s2 = full.vs || 1; galaxyFrom(full, [q.G[0] * s2, q.G[1] * s2, q.G[2] * s2, q.G[3] * s2]); }
     }
@@ -926,7 +926,7 @@
       if (r) {
         // boxes go green: snap a burst straight away instead of waiting for a long steady hold
         misses = 0; votes.push(r); if (votes.length > 6) votes.shift();
-        guide.classList.add("lock"); lst.textContent = "Got it — snapping…";
+        guide.classList.add("lock"); lst.textContent = "Got it. Snapping…";
         var vote = tally(votes, 3, 0.6);
         if (vote) { var full = lastFrame(1400); return finish(vote, f, full); }
         busy = true;
@@ -990,7 +990,7 @@
       if (flat) lvl = 0;
       stBar.style.width = Math.round(lvl * 100) + "%";
       stWrap.className = "gr-steady " + (flat ? "" : lvl > 0.7 ? "ok" : lvl > 0.4 ? "mid" : "low");
-      var lab = flat ? "Hold still" : lvl > 0.7 ? "Steady" : lvl > 0.4 ? "Hold still" : "Too shaky — rest your elbows on something";
+      var lab = flat ? "Hold still" : lvl > 0.7 ? "Steady" : lvl > 0.4 ? "Hold still" : "Too shaky. Rest your elbows on something";
       if (lab !== meterTick.lab) { meterTick.lab = lab; stT.textContent = window.NMS_T ? window.NMS_T(lab) : lab; }
     }
     function startScan() {
@@ -1013,7 +1013,7 @@
         }
         video.srcObject = st; scanning = true; return video.play();
       }).then(function () { lst.textContent = "Looking for 12 glyphs…"; setTimeout(scanTick, 300); meterT = setInterval(meterTick, 150); })
-        .catch(function () { stopScan(); note("Couldn’t open the camera — allow camera access, or take a single photo instead."); stage.hidden = false; cam.click(); });
+        .catch(function () { stopScan(); note("Couldn’t open the camera. allow camera access, or take a single photo instead."); stage.hidden = false; cam.click(); });
     }
     box.querySelector("#grScan").addEventListener("click", startScan);
     rescanB.addEventListener("click", startScan);
