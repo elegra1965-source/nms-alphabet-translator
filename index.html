@@ -320,6 +320,11 @@
     <div translate="no" style="font-family:'Orbitron',monospace;font-size:10px;letter-spacing:1px;color:var(--text-dim)">Built by elegra1965 &middot; Traveller T672B774 &middot; Friend code MGD8-C6PP-XKFGT</div>
     <div style="font-size:10.5px;color:var(--text-dim);margin-top:8px;line-height:1.5">A free, fan-made project inspired by the aesthetic of No Man's Sky. Not affiliated with, sponsored by, or endorsed by Hello Games.<br>NMS Alphabet font by seontonppa (built with FontStruct), used with permission.</div>
     <div style="margin-top:14px"><button type="button" class="install-btn nms-fb-btn" id="fbOpenBtn" data-nms-feedback aria-haspopup="dialog"><img class="nms-fb-ico" src="/nms-feedback/fb-ico-review.webp" srcset="/nms-feedback/fb-ico-review@2x.webp 2x" alt="" width="20" height="20"><span data-fbt="REVIEWS &amp; FEEDBACK">REVIEWS &amp; FEEDBACK</span></button></div>
+    <div class="share-row" translate="no" style="display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:10px">
+      <a class="install-btn" style="text-decoration:none" id="shareX" target="_blank" rel="noopener" href="https://x.com/intent/tweet?text=NMS%20Alphabet%20Translator&amp;url=https%3A%2F%2Ftranslator.nomansskyhub.app%2F">&#8599; X</a>
+      <a class="install-btn" style="text-decoration:none" id="shareReddit" target="_blank" rel="noopener" href="https://www.reddit.com/submit?url=https%3A%2F%2Ftranslator.nomansskyhub.app%2F&amp;title=NMS%20Alphabet%20Translator">&#8599; Reddit</a>
+      <a class="install-btn" style="text-decoration:none" id="shareDiscord" target="_blank" rel="noopener" href="https://discord.com/app" title="Copies the link, then opens Discord so you can paste it in any server or DM"><span id="shareDiscordLbl">&#8599; Discord</span></a>
+    </div>
     <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:12px">
       <a href="https://nomansskyhub.app" target="_blank" rel="noopener" style="color:var(--cyan);text-decoration:none;font-size:10.5px;letter-spacing:.5px">&#9670; No Man's Sky Hub</a>
       <a href="https://nomansskyhub.app/atlas" target="_blank" rel="noopener" style="color:var(--cyan);text-decoration:none;font-size:10.5px;letter-spacing:.5px">&#9670; ATLAS AI</a>
@@ -851,6 +856,14 @@
     lbl.textContent = msg; btn.classList.add("copied");
     setTimeout(function(){ lbl.textContent = old; btn.classList.remove("copied"); }, 1300);
   }
+  /* Discord has no share link: copy the message + link, then open Discord so they paste it in any server or DM */
+  (function(){
+    var d = document.getElementById("shareDiscord"), l = document.getElementById("shareDiscordLbl");
+    if(!d || !l) return;
+    d.addEventListener("click", function(){
+      copyText("NMS Alphabet Translator https://translator.nomansskyhub.app/", function(){ flash(d, l, I18N[currentLang].copiedMsg); });
+    });
+  })();
 
   var deferredInstallPrompt = null;
   var installPairs = [

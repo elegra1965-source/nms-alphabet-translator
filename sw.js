@@ -1,5 +1,5 @@
 // NMS Alphabet Translator — Service Worker v2
-const CACHE = 'nms-alphabet-v36';
+const CACHE = 'nms-alphabet-v37';
 
 const CORE_FILES = [
   '/',

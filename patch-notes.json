@@ -1,34 +1,33 @@
 {
- "version": "v36",
- "date": "2026-11-06",
+ "version": "v37",
+ "date": "2026-11-27",
  "site": "NMS ALPHABET TRANSLATOR",
  "lastToday": false,
  "items": [
   {
    "tag": "new",
    "text": {
-    "en": "Medals on the Galactic Map: chart new systems for daily, weekly and monthly streak medals",
-    "es": "Medallas en el Mapa Galáctico: cartografía sistemas nuevos y gana medallas de racha diarias, semanales y mensuales",
-    "de": "Medaillen auf der Galaktischen Karte: Kartiere neue Systeme für tägliche, wöchentliche und monatliche Serienmedaillen",
-    "nl": "Medailles op de Galactische Kaart: breng nieuwe systemen in kaart voor dag-, week- en maandreeksmedailles",
-    "pl": "Medale na Mapie Galaktycznej: oznaczaj nowe układy i zdobywaj medale za serie dzienne, tygodniowe i miesięczne",
-    "fr": "Des médailles sur la Carte galactique : cartographie de nouveaux systèmes pour des médailles de série quotidiennes, hebdomadaires et mensuelles",
-    "pt-BR": "Medalhas no Mapa Galáctico: mapeie sistemas novos e ganhe medalhas de sequência diárias, semanais e mensais",
-    "it": "Medaglie sulla Mappa galattica: mappa nuovi sistemi per medaglie di serie giornaliere, settimanali e mensili"
-   },
-   "url": "https://map.nomansskyhub.app/"
+    "en": "Share the translator on X, Reddit or Discord from the footer",
+    "es": "Comparte el traductor en X, Reddit o Discord desde el pie de página",
+    "de": "Teile den Übersetzer auf X, Reddit oder Discord über die Fußzeile",
+    "nl": "Deel de vertaler op X, Reddit of Discord via de voettekst",
+    "pl": "Udostępnij tłumacz na X, Reddicie lub Discordzie ze stopki",
+    "fr": "Partage le traducteur sur X, Reddit ou Discord depuis le pied de page",
+    "pt-BR": "Compartilhe o tradutor no X, Reddit ou Discord pelo rodapé",
+    "it": "Condividi il traduttore su X, Reddit o Discord dal piè di pagina"
+   }
   },
   {
    "tag": "new",
    "text": {
-    "en": "Patch notes like these after each big update",
-    "es": "Notas como estas después de cada gran actualización",
-    "de": "Patch-Notes wie diese nach jedem großen Update",
-    "nl": "Patchnotes zoals deze na elke grote update",
-    "pl": "Takie informacje o zmianach po każdej dużej aktualizacji",
-    "fr": "Des notes comme celles-ci après chaque grosse mise à jour",
-    "pt-BR": "Notas como estas depois de cada grande atualização",
-    "it": "Note come queste dopo ogni grande aggiornamento"
+    "en": "Reviews & feedback has a 4th Other chip and an optional reply email, used only to answer you and never saved",
+    "es": "Reseñas y comentarios tiene una cuarta opción, Otro, y un correo de respuesta opcional, que solo sirve para responderte y nunca se guarda",
+    "de": "Bewertungen & Feedback hat jetzt einen vierten Chip, Sonstiges, und eine optionale Antwort-E-Mail, die nur für deine Antwort genutzt und nie gespeichert wird",
+    "nl": "Reviews & feedback heeft een vierde optie, Anders, en een optioneel antwoordadres dat alleen dient om je te antwoorden en nooit wordt opgeslagen",
+    "pl": "Opinie i uwagi mają czwartą opcję, Inne, oraz opcjonalny e-mail do odpowiedzi, używany tylko do odpisania ci i nigdy nie zapisywany",
+    "fr": "Avis et retours a maintenant une 4e option, Autre, et un e-mail de réponse facultatif, utilisé uniquement pour te répondre et jamais enregistré",
+    "pt-BR": "Avaliações e feedback ganhou uma 4ª opção, Outro, e um e-mail de resposta opcional, usado só para responder a você e nunca guardado",
+    "it": "Recensioni e feedback ha una quarta opzione, Altro, e un'email di risposta facoltativa, usata solo per risponderti e mai salvata"
    }
   }
  ]
