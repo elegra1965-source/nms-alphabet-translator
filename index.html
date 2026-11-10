@@ -230,11 +230,12 @@
  ]
 }
 </script>
+<style id="phoneFix">@media (max-width:760px){.install-btn,.mode-btn,#installLbl,.group-label,.latin{font-size:11px!important}.install-btn{min-height:40px}.mode-btn{min-height:40px}}</style>
 </head>
 <body>
 <div class="page">
   <h1>NMS Alphabet Translator</h1>
-  <div class="sub" id="modeSub">Start typing to expand the NMS alphabet reference below</div>
+  <div class="sub" id="modeSub">Start typing to open the NMS alphabet</div>
 
   <div class="lang-row">
     <span class="lang-ic" aria-hidden="true">&#127760;</span>
@@ -255,7 +256,7 @@
         </button>
       </div>
       <div class="install-hint" id="installHint" style="display:none"></div>
-      <input class="trans-input" id="inp" type="text" maxlength="60" placeholder="Type here e.g. EXPLORE THE ATLAS" autocomplete="off" spellcheck="false">
+      <input class="trans-input" id="inp" type="text" maxlength="60" placeholder="Type here" autocomplete="off" spellcheck="false">
       <div class="trans-output" id="out"></div>
       <div class="trans-bottom">
         <span class="trans-hint" id="transHint">Type in English or many other languages. Auto-converted to A&ndash;Z. Letters, digits, period and colon are supported.</span>
@@ -351,13 +352,14 @@
 
   var I18N = {
     en: {
-      subDefault: "Start typing to expand the NMS alphabet reference below",
+      subDefault: "Start typing to open the NMS alphabet",
       subGlyphMode: "Tap tiles to build a word",
+      subPortal: "Read a portal address from a screenshot or camera",
       modeEnBtn: "Text \u2192 NMS Font",
       modeGlyphBtn: "NMS Font \u2192 Text",
       liveTranslatorLbl: "Live Translator",
       transHint: "Type in English or many other languages. Auto-converted to A\u2013Z. Letters, digits, period and colon are supported.",
-      inputPlaceholder: "Type here e.g. EXPLORE THE ATLAS",
+      inputPlaceholder: "Type here",
       backspaceLbl: "Backspace",
       clearLbl: "Clear",
       copyLbl: "Copy",
@@ -378,13 +380,14 @@
       installHintOther: "One-tap install isn\u2019t available in this browser. Use your browser menu\u2019s \u201cInstall app\u201d or \u201cAdd to Home Screen\u201d option instead."
     },
     es: {
-      subDefault: "Empieza a escribir para desplegar la referencia del alfabeto NMS",
+      subDefault: "Escribe para abrir el alfabeto NMS",
       subGlyphMode: "Toca las casillas para formar una palabra",
+      subPortal: "Lee una direcci\u00f3n de portal desde una captura o la c\u00e1mara",
       modeEnBtn: "Texto \u2192 Fuente NMS",
       modeGlyphBtn: "Fuente NMS \u2192 Texto",
       liveTranslatorLbl: "Traductor en vivo",
       transHint: "Escribe en espa\u00f1ol o en muchos otros idiomas. Se convierte autom\u00e1ticamente a A\u2013Z. Se admiten letras, n\u00fameros, punto y dos puntos.",
-      inputPlaceholder: "Escribe aqu\u00ed, p. ej. EXPLORE THE ATLAS",
+      inputPlaceholder: "Escribe aqu\u00ed",
       backspaceLbl: "Borrar",
       clearLbl: "Limpiar",
       copyLbl: "Copiar",
@@ -405,13 +408,14 @@
       installHintOther: "La instalaci\u00f3n con un toque no est\u00e1 disponible en este navegador. Usa la opci\u00f3n \u201cInstalar app\u201d o \u201cA\u00f1adir a pantalla de inicio\u201d del men\u00fa de tu navegador."
     },
     fr: {
-      subDefault: "Commencez \u00e0 taper pour afficher la r\u00e9f\u00e9rence de l\u2019alphabet NMS ci-dessous",
+      subDefault: "Tapez pour afficher l\u2019alphabet NMS",
       subGlyphMode: "Touchez les cases pour former un mot",
+      subPortal: "Lisez une adresse de portail depuis une capture ou la cam\u00e9ra",
       modeEnBtn: "Texte \u2192 Police NMS",
       modeGlyphBtn: "Police NMS \u2192 Texte",
       liveTranslatorLbl: "Traducteur en direct",
       transHint: "Tapez en fran\u00e7ais ou dans de nombreuses autres langues. Converti automatiquement en A\u2013Z. Lettres, chiffres, point et deux-points pris en charge.",
-      inputPlaceholder: "Tapez ici, ex. EXPLORE THE ATLAS",
+      inputPlaceholder: "Tapez ici",
       backspaceLbl: "Effacer",
       clearLbl: "Vider",
       copyLbl: "Copier",
@@ -432,13 +436,14 @@
       installHintOther: "L'installation en un clic n'est pas disponible dans ce navigateur. Utilisez l'option \u00ab\u00a0Installer l'application\u00a0\u00bb ou \u00ab\u00a0Ajouter \u00e0 l'\u00e9cran d'accueil\u00a0\u00bb du menu de votre navigateur."
     },
     de: {
-      subDefault: "Tippe los, um die NMS-Alphabet-Referenz unten aufzuklappen",
+      subDefault: "Tippe los, um das NMS-Alphabet zu \u00f6ffnen",
       subGlyphMode: "Kacheln antippen, um ein Wort zu bilden",
+      subPortal: "Portaladresse aus Screenshot oder Kamera lesen",
       modeEnBtn: "Text \u2192 NMS-Schrift",
       modeGlyphBtn: "NMS-Schrift \u2192 Text",
       liveTranslatorLbl: "Live-\u00dcbersetzer",
       transHint: "Auf Deutsch oder in vielen anderen Sprachen tippen. Wird automatisch in A\u2013Z umgewandelt. Buchstaben, Ziffern, Punkt und Doppelpunkt werden unterst\u00fctzt.",
-      inputPlaceholder: "Hier tippen, z. B. EXPLORE THE ATLAS",
+      inputPlaceholder: "Hier tippen",
       backspaceLbl: "L\u00f6schen",
       clearLbl: "Leeren",
       copyLbl: "Kopieren",
@@ -459,13 +464,14 @@
       installHintOther: "Die Ein-Klick-Installation ist in diesem Browser nicht verf\u00fcgbar. Nutze stattdessen die Option \u201eApp installieren\u201c oder \u201eZum Startbildschirm hinzuf\u00fcgen\u201c im Men\u00fc deines Browsers."
     },
     pt: {
-      subDefault: "Comece a digitar para expandir a refer\u00eancia do alfabeto NMS abaixo",
+      subDefault: "Digite para abrir o alfabeto NMS",
       subGlyphMode: "Toque nos blocos para formar uma palavra",
+      subPortal: "Leia um endere\u00e7o de portal por captura de tela ou c\u00e2mera",
       modeEnBtn: "Texto \u2192 Fonte NMS",
       modeGlyphBtn: "Fonte NMS \u2192 Texto",
       liveTranslatorLbl: "Tradutor ao vivo",
       transHint: "Digite em portugu\u00eas ou em muitos outros idiomas. Convertido automaticamente para A\u2013Z. Letras, n\u00fameros, ponto e dois-pontos s\u00e3o suportados.",
-      inputPlaceholder: "Digite aqui, ex. EXPLORE THE ATLAS",
+      inputPlaceholder: "Digite aqui",
       backspaceLbl: "Apagar",
       clearLbl: "Limpar",
       copyLbl: "Copiar",
@@ -486,13 +492,14 @@
       installHintOther: "A instala\u00e7\u00e3o com um toque n\u00e3o est\u00e1 dispon\u00edvel neste navegador. Use a op\u00e7\u00e3o \u201cInstalar app\u201d ou \u201cAdicionar \u00e0 tela inicial\u201d no menu do seu navegador."
     },
     nl: {
-      subDefault: "Begin met typen om het NMS-alfabet hieronder te openen",
+      subDefault: "Typ om het NMS-alfabet te openen",
       subGlyphMode: "Tik op tegels om een woord te maken",
+      subPortal: "Lees een portaladres uit een screenshot of camera",
       modeEnBtn: "Tekst \u2192 NMS-lettertype",
       modeGlyphBtn: "NMS-lettertype \u2192 Tekst",
       liveTranslatorLbl: "Live vertaler",
       transHint: "Typ in het Nederlands of een andere taal. Wordt automatisch omgezet naar A\u2013Z. Letters, cijfers, punt en dubbele punt worden ondersteund.",
-      inputPlaceholder: "Typ hier, bijv. EXPLORE THE ATLAS",
+      inputPlaceholder: "Typ hier",
       backspaceLbl: "Wissen",
       clearLbl: "Leegmaken",
       copyLbl: "Kopi\u00ebren",
@@ -513,13 +520,14 @@
       installHintOther: "Installeren met \u00e9\u00e9n tik kan niet in deze browser. Gebruik \u201cApp installeren\u201d of \u201cToevoegen aan startscherm\u201d in het browsermenu."
     },
     pl: {
-      subDefault: "Zacznij pisa\u0107, aby rozwin\u0105\u0107 poni\u017cej alfabet NMS",
+      subDefault: "Pisz, aby otworzy\u0107 alfabet NMS",
       subGlyphMode: "Stukaj w kafelki, aby u\u0142o\u017cy\u0107 s\u0142owo",
+      subPortal: "Odczytaj adres portalu ze zrzutu ekranu lub aparatu",
       modeEnBtn: "Tekst \u2192 czcionka NMS",
       modeGlyphBtn: "Czcionka NMS \u2192 tekst",
       liveTranslatorLbl: "T\u0142umacz na \u017cywo",
       transHint: "Pisz po polsku lub w wielu innych j\u0119zykach. Tekst zamienia si\u0119 automatycznie na A\u2013Z. Obs\u0142ugiwane s\u0105 litery, cyfry, kropka i dwukropek.",
-      inputPlaceholder: "Pisz tutaj, np. EXPLORE THE ATLAS",
+      inputPlaceholder: "Pisz tutaj",
       backspaceLbl: "Cofnij",
       clearLbl: "Wyczy\u015b\u0107",
       copyLbl: "Kopiuj",
@@ -540,13 +548,14 @@
       installHintOther: "Instalacja jednym stukni\u0119ciem nie dzia\u0142a w tej przegl\u0105darce. U\u017cyj w menu opcji \u201eZainstaluj aplikacj\u0119\u201d lub \u201eDodaj do ekranu g\u0142\u00f3wnego\u201d."
     },
     it: {
-      subDefault: "Inizia a scrivere per aprire qui sotto l'alfabeto NMS",
+      subDefault: "Scrivi per aprire l'alfabeto NMS",
       subGlyphMode: "Tocca le tessere per comporre una parola",
+      subPortal: "Leggi un indirizzo di portale da screenshot o fotocamera",
       modeEnBtn: "Testo \u2192 Font NMS",
       modeGlyphBtn: "Font NMS \u2192 Testo",
       liveTranslatorLbl: "Traduttore dal vivo",
       transHint: "Scrivi in italiano o in tante altre lingue. Viene convertito in automatico in A\u2013Z. Sono supportati lettere, cifre, punto e due punti.",
-      inputPlaceholder: "Scrivi qui, es. EXPLORE THE ATLAS",
+      inputPlaceholder: "Scrivi qui",
       backspaceLbl: "Cancella",
       clearLbl: "Svuota",
       copyLbl: "Copia",
@@ -567,13 +576,14 @@
       installHintOther: "L'installazione con un tocco non \u00e8 disponibile in questo browser. Usa \u201cInstalla app\u201d o \u201cAggiungi a schermata Home\u201d dal menu del browser."
     },
     zh: {
-      subDefault: "\u5f00\u59cb\u8f93\u5165\u5373\u53ef\u5c55\u5f00\u4e0b\u65b9\u7684 NMS \u5b57\u6bcd\u5bf9\u7167\u8868",
+      subDefault: "\u8f93\u5165\u5373\u53ef\u5c55\u5f00 NMS \u5b57\u6bcd\u5bf9\u7167\u8868",
       subGlyphMode: "\u70b9\u51fb\u65b9\u5757\u62fc\u51fa\u5355\u8bcd",
+      subPortal: "\u4ece\u622a\u56fe\u6216\u76f8\u673a\u8bfb\u53d6\u4f20\u9001\u95e8\u5730\u5740",
       modeEnBtn: "\u6587\u5b57 \u2192 NMS \u5b57\u4f53",
       modeGlyphBtn: "NMS \u5b57\u4f53 \u2192 \u6587\u5b57",
       liveTranslatorLbl: "\u5b9e\u65f6\u7ffb\u8bd1",
       transHint: "\u8f93\u5165\u62fc\u97f3\u6216\u5176\u4ed6\u62c9\u4e01\u5b57\u6bcd\u8bed\u8a00 · \u4f1a\u81ea\u52a8\u8f6c\u6362\u4e3a A\u2013Z\u3002\u652f\u6301\u5b57\u6bcd\u3001\u6570\u5b57\u3001\u53e5\u70b9\u548c\u5192\u53f7\u3002",
-      inputPlaceholder: "\u5728\u6b64\u8f93\u5165\uff0c\u4f8b\u5982 EXPLORE THE ATLAS",
+      inputPlaceholder: "\u5728\u6b64\u8f93\u5165",
       backspaceLbl: "\u9000\u683c",
       clearLbl: "\u6e05\u9664",
       copyLbl: "\u590d\u5236",
@@ -594,13 +604,14 @@
       installHintOther: "\u6b64\u6d4f\u89c8\u5668\u4e0d\u652f\u6301\u4e00\u952e\u5b89\u88c5 · \u8bf7\u4f7f\u7528\u6d4f\u89c8\u5668\u83dc\u5355\u4e2d\u7684\u201c\u5b89\u88c5\u5e94\u7528\u201d\u6216\u201c\u6dfb\u52a0\u5230\u4e3b\u5c4f\u5e55\u201d\u9009\u9879\u3002"
     },
     ru: {
-      subDefault: "\u041d\u0430\u0447\u043d\u0438\u0442\u0435 \u0432\u0432\u043e\u0434\u0438\u0442\u044c, \u0447\u0442\u043e\u0431\u044b \u0443\u0432\u0438\u0434\u0435\u0442\u044c \u0442\u0430\u0431\u043b\u0438\u0446\u0443",
+      subDefault: "\u041d\u0430\u0447\u043d\u0438\u0442\u0435 \u0432\u0432\u043e\u0434\u0438\u0442\u044c, \u0447\u0442\u043e\u0431\u044b \u043e\u0442\u043a\u0440\u044b\u0442\u044c \u0430\u043b\u0444\u0430\u0432\u0438\u0442 NMS",
       subGlyphMode: "\u041d\u0430\u0436\u0438\u043c\u0430\u0439\u0442\u0435 \u043d\u0430 \u043f\u043b\u0438\u0442\u043a\u0438, \u0447\u0442\u043e\u0431\u044b \u0441\u043e\u0441\u0442\u0430\u0432\u0438\u0442\u044c \u0441\u043b\u043e\u0432\u043e",
+      subPortal: "\u0421\u0447\u0438\u0442\u0430\u0439\u0442\u0435 \u0430\u0434\u0440\u0435\u0441 \u043f\u043e\u0440\u0442\u0430\u043b\u0430 \u0441\u043e \u0441\u043a\u0440\u0438\u043d\u0448\u043e\u0442\u0430 \u0438\u043b\u0438 \u043a\u0430\u043c\u0435\u0440\u044b",
       modeEnBtn: "\u0422\u0435\u043a\u0441\u0442 \u2192 \u0428\u0440\u0438\u0444\u0442 NMS",
       modeGlyphBtn: "\u0428\u0440\u0438\u0444\u0442 NMS \u2192 \u0422\u0435\u043a\u0441\u0442",
       liveTranslatorLbl: "\u0416\u0438\u0432\u043e\u0439 \u043f\u0435\u0440\u0435\u0432\u043e\u0434\u0447\u0438\u043a",
       transHint: "\u0412\u0432\u0435\u0434\u0438\u0442\u0435 \u0442\u0435\u043a\u0441\u0442 \u043d\u0430 \u0440\u0443\u0441\u0441\u043a\u043e\u043c \u0438\u043b\u0438 \u043c\u043d\u043e\u0433\u0438\u0445 \u0434\u0440\u0443\u0433\u0438\u0445 \u044f\u0437\u044b\u043a\u0430\u0445 · \u0430\u0432\u0442\u043e\u043c\u0430\u0442\u0438\u0447\u0435\u0441\u043a\u0438 \u043f\u0440\u0435\u043e\u0431\u0440\u0430\u0437\u0443\u0435\u0442\u0441\u044f \u0432 A\u2013Z. \u041f\u043e\u0434\u0434\u0435\u0440\u0436\u0438\u0432\u0430\u044e\u0442\u0441\u044f \u0431\u0443\u043a\u0432\u044b, \u0446\u0438\u0444\u0440\u044b, \u0442\u043e\u0447\u043a\u0430 \u0438 \u0434\u0432\u043e\u0435\u0442\u043e\u0447\u0438\u0435.",
-      inputPlaceholder: "\u0412\u0432\u0435\u0434\u0438\u0442\u0435 \u0437\u0434\u0435\u0441\u044c, \u043d\u0430\u043f\u0440. EXPLORE THE ATLAS",
+      inputPlaceholder: "\u0412\u0432\u0435\u0434\u0438\u0442\u0435 \u0437\u0434\u0435\u0441\u044c",
       backspaceLbl: "\u0421\u0442\u0435\u0440\u0435\u0442\u044c",
       clearLbl: "\u041e\u0447\u0438\u0441\u0442\u0438\u0442\u044c",
       copyLbl: "\u041a\u043e\u043f\u0438\u0440\u043e\u0432\u0430\u0442\u044c",
@@ -715,7 +726,7 @@
     var elModeSub = document.getElementById("modeSub");
     if(elModeSub){
       var inGlyphMode = glyphModeBox && glyphModeBox.style.display !== "none";
-      elModeSub.textContent = inGlyphMode ? t.subGlyphMode : t.subDefault;
+      var pm = document.getElementById("portalMode"); elModeSub.textContent = (pm && pm.style.display !== "none") ? t.subPortal : (inGlyphMode ? t.subGlyphMode : t.subDefault);
     }
 
     relabelGroups(document.getElementById("refGrids"));
@@ -903,6 +914,9 @@
     glyphMode.style.display=""; enMode.style.display="none";
     modeSub.textContent=I18N[currentLang].subGlyphMode;
   });
+
+  var modeTog=document.querySelector(".mode-toggle");
+  if(modeTog) modeTog.addEventListener("click", function(e){ if(e.target.closest && e.target.closest("#modePortalBtn")) modeSub.textContent=I18N[currentLang].subPortal; });
 
   // Language selector: populate options, wire change handler, apply saved/browser language
   var langSel = document.getElementById("langSel");
