@@ -74,6 +74,8 @@ Nothing is ever saved to your gallery or uploaded: the snapped frames live only 
 
   <img src="screenshots/11-feedback-other-reply-email.jpg" alt="The feedback window with four chips (Review, Bug, Idea / request, Other) and the optional reply email, example text" width="360">
 
+- **Share.** Share the translator on X, Reddit or Discord from the footer.
+
 - **New crystal icons.** Every icon on the translator has been redrawn in one faceted crystal style, so all six sites match, and every picture has a text description for screen readers. The icons are toned down a little so they don't shout over the content.
 
   <img src="screenshots/icons-crystal.jpg" alt="The new crystal icons on the translator: buttons and menus drawn as faceted cyan crystals with amber accents" width="300">
