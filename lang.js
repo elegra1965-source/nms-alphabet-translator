@@ -58,7 +58,7 @@
     'pt-BR':['IDIOMA','Lembra seu idioma neste dispositivo e em todos os sites do NMS Hub. Nomes, glifos e endereços continuam como estão.'],
     it:['LINGUA','Ricorda la tua lingua su questo dispositivo e su tutti i siti NMS Hub. Nomi, glifi e indirizzi restano come sono.']
   };
-  var PACK_V = '1';
+  var PACK_V = '2';
   var K = 'nms_lang', host = location.hostname;
   var CODES = LANGS.map(function(l){ return l[0]; });
   var SELF = (document.currentScript && document.currentScript.src) || location.href;
@@ -377,7 +377,7 @@
     if(!c || c === 'en' || !OFFER[c]) return;
     var o = OFFER[c], d = document.createElement('div');
     d.id = 'nmsLangOffer'; d.setAttribute('role', 'region'); d.setAttribute('lang', c); d.setAttribute('translate', 'no');
-    d.innerHTML = '<span>🌐 ' + o[0] + '</span><button class="y" type="button">' + o[1] + '</button><button type="button">' + o[2] + '</button>';
+    d.innerHTML = '<span><img src="/nms-ci/ci-globe.webp?v=20261111" alt="" width="18" height="18" style="width:18px;height:18px;vertical-align:middle;margin-right:6px">' + o[0] + '</span><button class="y" type="button">' + o[1] + '</button><button type="button">' + o[2] + '</button>';
     var bs = d.querySelectorAll('button');
     bs[0].onclick = function(){ d.remove(); setLang(c); };
     bs[1].onclick = function(){ d.remove(); save('en'); };

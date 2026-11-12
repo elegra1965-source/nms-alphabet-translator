@@ -640,7 +640,7 @@
         // Phones: share sheet with the picture's link (chats show the picture); elsewhere it opens to save.
         if (body.card) {
           var cb = pEl("button", null, "gr-btn gr-planet-card"); cb.type = "button";
-          var ci = pEl("span", "🖼 "); ci.setAttribute("aria-hidden", "true");
+          var ci = pEl("span", ""); ci.setAttribute("aria-hidden", "true"); var cim = document.createElement("img"); cim.src = "/nms-ci/ci-camera.webp?v=20261111"; cim.alt = ""; cim.width = 18; cim.height = 18; cim.style.cssText = "width:18px;height:18px;vertical-align:middle;margin-right:6px"; ci.appendChild(cim);
           cb.appendChild(ci); cb.appendChild(pEl("span", "Planet card"));
           cb.addEventListener("click", function () {
             if (navigator.share) { navigator.share({ title: name || "Planet", text: (name || "Planet") + " · " + hex, url: body.card }).catch(function () {}); }
