@@ -513,7 +513,7 @@
       '<label class="gr-photo-link"><input type="file" accept="image/*" capture="environment" id="grCamFile" hidden>or take a single photo instead</label>' +
       '<details class="gr-tipd"><summary><span aria-hidden="true">&#9432;</span> <span>Tips</span></summary><p class="gr-tip">Best results: a screenshot, or a photo taken straight-on and close so the 12 glyphs fill the width. Glyphs in boxes, like the game&rsquo;s own address bar, are fine.</p></details>' +
       '<div class="gr-stage" id="grStage" hidden><canvas id="grCanvas"></canvas><div class="gr-stage-note" id="grNote"></div>' +
-      '<button type="button" class="gr-btn gr-rescan" id="grRescan" hidden><span aria-hidden="true">&#8635;</span> <span>Rescan</span></button></div>' +
+      '<button type="button" class="gr-btn gr-rescan" id="grRescan" hidden><img src="/crystal/ci-refresh.webp?v=20261112" alt="Rescan" width="18" height="18" style="vertical-align:middle"> <span>Rescan</span></button></div>' +
       '<div class="gr-result">' +
       '<div class="gr-lbl">Glyph address <span class="gr-help">tap a glyph to change it</span></div>' +
       '<div class="gr-slots" id="grSlots"></div>' +
@@ -670,7 +670,7 @@
     // keypad
     var pad = box.querySelector("#grPad"), padBtn = box.querySelector("#grPadBtn"), ph = "";
     for (var k = 0; k < 16; k++) ph += '<button type="button" class="gr-key" data-k="' + k + '" title="' + NAMES[k] + ' (' + HEX[k] + ')">' + glyphImg(k) + '<i>' + HEX[k] + '</i></button>';
-    ph += '<button type="button" class="gr-key gr-back" title="Backspace">&#9003;</button>';
+    ph += '<button type="button" class="gr-key gr-back" title="Backspace"><img src="/crystal/ci-backspace.webp?v=20261112" alt="Backspace" width="20" height="20"></button>';
     pad.innerHTML = ph;
     padBtn.addEventListener("click", function () { setPad(pad.hidden); });
     pad.addEventListener("click", function (e) {

@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>NMS Alphabet Translator &amp; Portal Glyph Reader | No Man's Sky</title>
 <script src="/calm.js?v=3"></script>
-<script src="/lang.js?v=4"></script>
+<script src="/lang.js?v=5"></script>
 <script src="/nms-update.js?v=5" defer></script>
 <meta name="robots" content="max-image-preview:large">
 <meta name="description" content="Free No Man's Sky alphabet translator: write English in the NMS font or decode it back, and read portal glyphs from a screenshot straight onto the Galactic Map.">
@@ -79,7 +79,8 @@
   .lang-sel{background:var(--bg3);color:var(--text);border:1px solid var(--border-soft);border-radius:7px;
     font-family:'Segoe UI',sans-serif;font-size:12px;padding:6px 10px;cursor:pointer;outline:none;max-width:200px}
   .lang-sel:focus{border-color:var(--cyan);box-shadow:0 0 10px rgba(0,229,255,.3)}
-  .lang-ic{font-size:14px;opacity:.85}
+  .lang-ic{font-size:14px;opacity:.85;display:inline-flex}
+  .ci{vertical-align:middle;flex:none;object-fit:contain}.copy-btn,.install-btn{display:inline-flex;align-items:center;justify-content:center;gap:6px}.copy-btn.small .ci{width:18px;height:18px}
 
   .mode-toggle{display:flex;gap:2px;background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:3px;margin-bottom:16px}
   .mode-btn{flex:1;background:transparent;border:none;color:var(--text);font-family:'Segoe UI',sans-serif;font-weight:600;
@@ -241,7 +242,7 @@
   <div class="sub" id="modeSub">Start typing to open the NMS alphabet</div>
 
   <div class="lang-row">
-    <span class="lang-ic" aria-hidden="true">&#127760;</span>
+    <span class="lang-ic"><img class="ci" src="/crystal/ci-globe.webp?v=20261112" alt="Language" width="18" height="18"></span>
     <select class="lang-sel" id="langSel" aria-label="Language" translate="no"></select>
   </div>
 
@@ -255,7 +256,7 @@
       <div class="trans-head">
         <div class="trans-label" id="liveTranslatorLbl">Live Translator</div>
         <button class="install-btn" id="installBtn" type="button" style="display:none">
-          <span aria-hidden="true">&#128241;</span><span id="installLbl">Install app</span>
+          <span><img class="ci" src="/crystal/ci-install.webp?v=20261112" alt="Install app" width="20" height="20"></span><span id="installLbl">Install app</span>
         </button>
       </div>
       <div class="install-hint" id="installHint" style="display:none"></div>
@@ -264,9 +265,9 @@
       <div class="trans-bottom">
         <span class="trans-hint" id="transHint">Type in English or many other languages. Auto-converted to A&ndash;Z. Letters, digits, period and colon are supported.</span>
         <div class="btn-group">
-          <button class="copy-btn small gold" id="enBackspaceBtn" type="button" aria-label="Backspace" title="Backspace">&#9003;</button>
-          <button class="copy-btn small gold" id="enClearBtn" type="button" aria-label="Clear" title="Clear">&#8635;</button>
-          <button class="copy-btn" id="copyBtn" type="button" aria-label="Copy text"><span>&#10697;</span><span id="copyLbl">Copy</span></button>
+          <button class="copy-btn small gold" id="enBackspaceBtn" type="button" aria-label="Backspace" title="Backspace"><img class="ci" src="/crystal/ci-backspace.webp?v=20261112" alt="Backspace" width="20" height="20"></button>
+          <button class="copy-btn small gold" id="enClearBtn" type="button" aria-label="Clear" title="Clear"><img class="ci" src="/crystal/ci-refresh.webp?v=20261112" alt="Clear" width="20" height="20"></button>
+          <button class="copy-btn" id="copyBtn" type="button" aria-label="Copy text"><span><img class="ci" src="/crystal/ci-copy.webp?v=20261112" alt="Copy" width="20" height="20"></span><span id="copyLbl">Copy</span></button>
         </div>
       </div>
     </div>
@@ -289,7 +290,7 @@
       <div class="trans-head">
         <div class="trans-label" id="tapTilesLbl">Tap tiles to build a word</div>
         <button class="install-btn" id="installBtn2" type="button" style="display:none">
-          <span aria-hidden="true">&#128241;</span><span id="installLbl2">Install app</span>
+          <span><img class="ci" src="/crystal/ci-install.webp?v=20261112" alt="Install app" width="20" height="20"></span><span id="installLbl2">Install app</span>
         </button>
       </div>
       <div class="install-hint" id="installHint2" style="display:none"></div>
@@ -297,9 +298,9 @@
       <div class="trans-label" id="decodedLbl" style="margin-top:16px">Decoded Text</div>
       <div class="trans-output decoded" id="decodedOut">&nbsp;</div>
       <div class="trans-bottom three">
-        <button class="copy-btn gold" id="backspaceBtn" type="button">&#9003; <span id="backspaceLbl2">Backspace</span></button>
-        <button class="copy-btn gold" id="clearBtn" type="button">&#8635; <span id="clearLbl2">Clear</span></button>
-        <button class="copy-btn" id="copyBtn2" type="button" aria-label="Copy text"><span>&#10697;</span><span id="copyLbl2">Copy</span></button>
+        <button class="copy-btn gold" id="backspaceBtn" type="button"><img class="ci" src="/crystal/ci-backspace.webp?v=20261112" alt="Backspace" width="20" height="20"> <span id="backspaceLbl2">Backspace</span></button>
+        <button class="copy-btn gold" id="clearBtn" type="button"><img class="ci" src="/crystal/ci-refresh.webp?v=20261112" alt="Clear" width="20" height="20"> <span id="clearLbl2">Clear</span></button>
+        <button class="copy-btn" id="copyBtn2" type="button" aria-label="Copy text"><span><img class="ci" src="/crystal/ci-copy.webp?v=20261112" alt="Copy" width="20" height="20"></span><span id="copyLbl2">Copy</span></button>
       </div>
     </div>
 
@@ -961,7 +962,7 @@
   }
 </script>
 <script src="hub-skin.js"></script>
-<script src="glyph-reader.js?v=20261111"></script>
+<script src="glyph-reader.js?v=20261112"></script>
 <script src="/nms-tour.js?v=3"></script>
 <script>NMSTour.init({id:'translator',button:{after:'#langSel',className:'install-btn',label:'▷ TOUR'},steps:[{"sel": ".mode-toggle", "title": "Pick a mode", "body": "Turn text into the NMS font, decode NMS text you've spotted, or read portal glyphs."}, {"sel": "#inp", "title": "Type here", "body": "Type in English (or many other languages) and it converts as you go."}, {"sel": "#out", "title": "Your NMS text", "body": "Here's your message in the NMS font. Tap COPY to paste it anywhere."}, {"sel": "#modePortalBtn", "title": "Portal glyphs", "body": "Scan or tap in a 12-glyph portal address to get its hex code and open it on the Galactic Map."}, {"sel": "#chart", "title": "Alphabet chart", "body": "The full NMS alphabet, letter by letter. It opens when you start typing."}, {"sel": "#fbOpenBtn", "title": "Reviews & feedback", "body": "Tell us what you think, report a bug or ask for something new."}, {"sel": "#langSel", "title": "Language", "body": "Choose the language for this page."}]});</script>
 <script src="/nms-totop.js?v=3" defer></script>
