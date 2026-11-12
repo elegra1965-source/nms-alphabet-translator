@@ -1,34 +1,47 @@
 {
- "version": "v37",
- "date": "2026-11-27",
- "site": "NMS ALPHABET TRANSLATOR",
- "lastToday": false,
- "items": [
-  {
-   "tag": "new",
-   "text": {
-    "en": "Share the translator on X, Reddit or Discord from the footer",
-    "es": "Comparte el traductor en X, Reddit o Discord desde el pie de página",
-    "de": "Teile den Übersetzer auf X, Reddit oder Discord über die Fußzeile",
-    "nl": "Deel de vertaler op X, Reddit of Discord via de voettekst",
-    "pl": "Udostępnij tłumacz na X, Reddicie lub Discordzie ze stopki",
-    "fr": "Partage le traducteur sur X, Reddit ou Discord depuis le pied de page",
-    "pt-BR": "Compartilhe o tradutor no X, Reddit ou Discord pelo rodapé",
-    "it": "Condividi il traduttore su X, Reddit o Discord dal piè di pagina"
-   }
-  },
-  {
-   "tag": "new",
-   "text": {
-    "en": "Reviews & feedback has a 4th Other chip and an optional reply email, used only to answer you and never saved",
-    "es": "Reseñas y comentarios tiene una cuarta opción, Otro, y un correo de respuesta opcional, que solo sirve para responderte y nunca se guarda",
-    "de": "Bewertungen & Feedback hat jetzt einen vierten Chip, Sonstiges, und eine optionale Antwort-E-Mail, die nur für deine Antwort genutzt und nie gespeichert wird",
-    "nl": "Reviews & feedback heeft een vierde optie, Anders, en een optioneel antwoordadres dat alleen dient om je te antwoorden en nooit wordt opgeslagen",
-    "pl": "Opinie i uwagi mają czwartą opcję, Inne, oraz opcjonalny e-mail do odpowiedzi, używany tylko do odpisania ci i nigdy nie zapisywany",
-    "fr": "Avis et retours a maintenant une 4e option, Autre, et un e-mail de réponse facultatif, utilisé uniquement pour te répondre et jamais enregistré",
-    "pt-BR": "Avaliações e feedback ganhou uma 4ª opção, Outro, e um e-mail de resposta opcional, usado só para responder a você e nunca guardado",
-    "it": "Recensioni e feedback ha una quarta opzione, Altro, e un'email di risposta facoltativa, usata solo per risponderti e mai salvata"
-   }
-  }
- ]
+  "version": "v37",
+  "date": "2026-11-27",
+  "site": "NMS ALPHABET TRANSLATOR",
+  "lastToday": false,
+  "items": [
+    {
+      "tag": "new",
+      "text": {
+        "en": "Share the translator on X, Reddit or Discord from the footer",
+        "es": "Comparte el traductor en X, Reddit o Discord desde el pie de página",
+        "de": "Teile den Übersetzer auf X, Reddit oder Discord über die Fußzeile",
+        "nl": "Deel de vertaler op X, Reddit of Discord via de voettekst",
+        "pl": "Udostępnij tłumacz na X, Reddicie lub Discordzie ze stopki",
+        "fr": "Partage le traducteur sur X, Reddit ou Discord depuis le pied de page",
+        "pt-BR": "Compartilhe o tradutor no X, Reddit ou Discord pelo rodapé",
+        "it": "Condividi il traduttore su X, Reddit o Discord dal piè di pagina"
+      }
+    },
+    {
+      "tag": "new",
+      "text": {
+        "en": "Reviews & feedback has a 4th Other chip and an optional reply email, used only to answer you and never saved",
+        "es": "Reseñas y comentarios tiene una cuarta opción, Otro, y un correo de respuesta opcional, que solo sirve para responderte y nunca se guarda",
+        "de": "Bewertungen & Feedback hat jetzt einen vierten Chip, Sonstiges, und eine optionale Antwort-E-Mail, die nur für deine Antwort genutzt und nie gespeichert wird",
+        "nl": "Reviews & feedback heeft een vierde optie, Anders, en een optioneel antwoordadres dat alleen dient om je te antwoorden en nooit wordt opgeslagen",
+        "pl": "Opinie i uwagi mają czwartą opcję, Inne, oraz opcjonalny e-mail do odpowiedzi, używany tylko do odpisania ci i nigdy nie zapisywany",
+        "fr": "Avis et retours a maintenant une 4e option, Autre, et un e-mail de réponse facultatif, utilisé uniquement pour te répondre et jamais enregistré",
+        "pt-BR": "Avaliações e feedback ganhou uma 4ª opção, Outro, e um e-mail de resposta opcional, usado só para responder a você e nunca guardado",
+        "it": "Recensioni e feedback ha una quarta opzione, Altro, e un'email di risposta facoltativa, usata solo per risponderti e mai salvata"
+      }
+    },
+    {
+      "tag": "improved",
+      "text": {
+        "en": "All icons redesigned: a new crystal style across buttons, menus and pop-ups, with a text description on every picture for screen readers",
+        "es": "Todos los iconos rediseñados: un nuevo estilo de cristal en botones, menús y ventanas, con una descripción de texto en cada imagen para lectores de pantalla",
+        "de": "Alle Icons neu gestaltet: ein neuer Kristallstil für Buttons, Menüs und Pop-ups, mit Textbeschreibung für jedes Bild für Screenreader",
+        "nl": "Alle iconen opnieuw ontworpen: een nieuwe kristalstijl voor knoppen, menu's en pop-ups, met een tekstbeschrijving bij elke afbeelding voor schermlezers",
+        "pl": "Wszystkie ikony przeprojektowane: nowy kryształowy styl przycisków, menu i okien, z opisem tekstowym przy każdym obrazku dla czytników ekranu",
+        "fr": "Toutes les icônes repensées : un nouveau style cristal pour les boutons, menus et fenêtres, avec une description textuelle sur chaque image pour les lecteurs d'écran",
+        "pt-BR": "Todos os ícones redesenhados: um novo estilo de cristal em botões, menus e janelas, com descrição em texto em cada imagem para leitores de tela",
+        "it": "Tutte le icone ridisegnate: un nuovo stile cristallo per pulsanti, menu e finestre, con una descrizione testuale su ogni immagine per gli screen reader"
+      }
+    }
+  ]
 }
