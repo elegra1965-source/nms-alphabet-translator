@@ -72,8 +72,8 @@
   body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.5;
     background-image:linear-gradient(rgba(0,229,255,0.035) 1px,transparent 1px),linear-gradient(90deg,rgba(0,229,255,0.035) 1px,transparent 1px);background-size:42px 42px}
   .page{max-width:720px;margin:0 auto;position:relative;z-index:1}
-  h1 .h1-ic{width:32px;height:32px;flex:none;border-radius:50%}
-  h1{display:flex;align-items:center;justify-content:center;gap:10px;font-family:'Orbitron','Segoe UI',sans-serif;color:var(--white);text-align:center;font-size:clamp(18px,4.5vw,25px);letter-spacing:1px;margin:0 0 4px}
+  h1 .h1-ic{width:32px;height:32px;border-radius:50%;display:inline-block;vertical-align:middle;margin:0 10px 4px 0}
+  h1{display:block;font-family:'Orbitron','Segoe UI',sans-serif;color:var(--white);text-align:center;font-size:clamp(18px,4.5vw,25px);letter-spacing:1px;margin:0 0 4px}
   .sub{text-align:center;color:var(--cyan);letter-spacing:3px;text-transform:uppercase;font-size:11px;margin-bottom:18px}
   .lang-row{display:flex;justify-content:center;align-items:center;gap:8px;margin-bottom:14px}
   .lang-sel{background:var(--bg3);color:var(--text);border:1px solid var(--border-soft);border-radius:7px;
@@ -298,8 +298,8 @@
       <div class="trans-label" id="decodedLbl" style="margin-top:16px">Decoded Text</div>
       <div class="trans-output decoded" id="decodedOut">&nbsp;</div>
       <div class="trans-bottom three">
-        <button class="copy-btn gold" id="backspaceBtn" type="button"><img class="ci" src="/crystal/ci-backspace.webp?v=20261112" alt="Backspace" width="20" height="20"> <span id="backspaceLbl2">Backspace</span></button>
-        <button class="copy-btn gold" id="clearBtn" type="button"><img class="ci" src="/crystal/ci-refresh.webp?v=20261112" alt="Clear" width="20" height="20"> <span id="clearLbl2">Clear</span></button>
+        <button class="copy-btn gold" id="backspaceBtn" type="button" aria-label="Backspace" title="Backspace"><img class="ci" src="/crystal/ci-backspace.webp?v=20261112" alt="Backspace" width="20" height="20"></button>
+        <button class="copy-btn gold" id="clearBtn" type="button" aria-label="Clear" title="Clear"><img class="ci" src="/crystal/ci-refresh.webp?v=20261112" alt="Clear" width="20" height="20"></button>
         <button class="copy-btn" id="copyBtn2" type="button" aria-label="Copy text"><span><img class="ci" src="/crystal/ci-copy.webp?v=20261112" alt="Copy" width="20" height="20"></span><span id="copyLbl2">Copy</span></button>
       </div>
     </div>
@@ -718,8 +718,8 @@
     setAttrs("enClearBtn", t.clearLbl);
     setText("copyLbl", t.copyLbl);
     setText("copyLbl2", t.copyLbl);
-    setText("backspaceLbl2", t.backspaceLbl);
-    setText("clearLbl2", t.clearLbl);
+    setAttrs("backspaceBtn", t.backspaceLbl);
+    setAttrs("clearBtn", t.clearLbl);
     setText("installLbl", t.installLbl);
     setText("installLbl2", t.installLbl);
     setText("kickRef", t.kickRef);
